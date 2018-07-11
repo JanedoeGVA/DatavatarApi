@@ -19,6 +19,13 @@ import pojo.fitbit.Profil;
 @Path("/fitbit")
 public class Fitbit {
 	
+	@Path("/test")
+	@GET
+	@Produces(MediaType.TEXT_HTML)
+	public String test() {
+		return "it works !!!";
+	}
+	
 	@Path("/authorisation")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
