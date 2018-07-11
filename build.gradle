@@ -57,12 +57,9 @@ dependencies {
 }
 
 gretty {
-    jvmArgs = [*debugArgs]
-
     httpPort = 7575
     contextPath = ''
     servletContainer = 'tomcat8'
-
     contextConfigFile = 'tomcat-config.xml'
 }
 
