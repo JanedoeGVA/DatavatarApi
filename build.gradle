@@ -12,6 +12,7 @@ apply plugin: 'java-library'
 
 apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
+apply from: 'https://raw.github.com/gretty-gradle-plugin/gretty/master/pluginScripts/gretty.plugin'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -53,5 +54,15 @@ dependencies {
     
     project.webAppDirName = 'WebContent'
     
+}
+
+gretty {
+    jvmArgs = [*debugArgs]
+
+    httpPort = 7575
+    contextPath = ''
+    servletContainer = 'tomcat8'
+
+    contextConfigFile = 'tomcat-config.xml'
 }
 
