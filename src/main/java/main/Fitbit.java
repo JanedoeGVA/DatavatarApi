@@ -36,10 +36,9 @@ public class Fitbit {
 			//return "it works !!! Client id=" + clientId;
 			return "it works !!";
 		} catch (DockerSecretLoadException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return "catch " + e;	
 		}
-		return "A problem occured";
 	}
 	
 	@Path("/authorisation")
