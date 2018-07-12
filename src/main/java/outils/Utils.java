@@ -11,10 +11,22 @@ import java.util.Set;
 import org.apache.commons.math3.analysis.function.Log;
 import org.json.JSONObject;
 
+import com.cars.framework.secrets.DockerSecretLoadException;
+import com.cars.framework.secrets.DockerSecrets;
 import com.fasterxml.jackson.core.JsonParser;
 import com.google.gson.JsonElement;
 
 public class Utils {
+	
+	public static String getProps (String propsName, String value) {
+		try {
+			Map<String, String> secrets = DockerSecrets.loadFromFile(propsName);
+			return secrets.get(value);
+		} catch (DockerSecretLoadException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	private static ArrayList<String> lstElement;
 	

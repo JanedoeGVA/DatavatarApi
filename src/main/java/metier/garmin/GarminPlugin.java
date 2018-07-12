@@ -80,7 +80,7 @@ public class GarminPlugin {
 	}
 	
 	private static OAuth10aService getService() {
-		final OAuth10aService service = Plugin.getOauth1Service(Constant.GARMIN_PATH_FILE_OAUTH_CONFIG,Constant.GARMIN_CALLBACK_URL,GarminApi_OAouth10.instance());
+		final OAuth10aService service = Plugin.getOauth1Service(Constant.GARMIN_PROPS,Constant.GARMIN_CALLBACK_URL,GarminApi_OAouth10.instance());
 		return service;
 	}
 

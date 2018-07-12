@@ -48,11 +48,12 @@ public class SymmetricAESKey {
     }
 
     private static Key getKey() {
-    	String keyStr = Utils.filesProperties("resources/key.properties").getProperty("key");
+    	
+    	String keyStr = Utils.getProps("key.properties","key");
     	return new SecretKeySpec(Base64.decodeBase64(keyStr),KEY_ALGORITHM);
     }
     
-    //permet de genérer une clé d'encryption lors d'une nouvelle installation
+    //permet de genï¿½rer une clï¿½ d'encryption lors d'une nouvelle installation
     //attention si elle change tous les token des apps ne seront plus valable
     private static String generateKeyAES () throws NoSuchAlgorithmException {
     	KeyGenerator keyGen = KeyGenerator.getInstance(KEY_ALGORITHM);

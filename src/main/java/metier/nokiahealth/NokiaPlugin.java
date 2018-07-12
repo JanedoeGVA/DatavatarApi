@@ -34,7 +34,7 @@ public class NokiaPlugin {
 	}
 
 	private static OAuth10aService getService() {
-		final OAuth10aService service = Plugin.getOauth1Service(Constant.NOKIA_HEALTH_PATH_FILE_OAUTH_CONFIG,Constant.NOKIA_HEALTH_CALLBACK_URL,NokiaApi_OAouth10.instance());
+		final OAuth10aService service = Plugin.getOauth1Service(Constant.NOKIA_HEALTH_PROPS,Constant.NOKIA_HEALTH_CALLBACK_URL,NokiaApi_OAouth10.instance());
 		return service;
 	}
 	/*
@@ -61,7 +61,7 @@ public class NokiaPlugin {
 			response = service.execute(request);
 			System.out.println("response " + response.getCode() + response.getBody());
 			if (new JSONObject(response.getBody()).getInt("status") == Constant.STATUS_TOKEN_NOT_FIND) {
-				//token a été révoqué
+				//token a ï¿½tï¿½ rï¿½voquï¿½
 				protectedDataOauth.getOauthAccessTokenT().setIsValide(false);
 				return protectedDataOauth;
 			}

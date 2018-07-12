@@ -1,23 +1,16 @@
 package main;
 
-import java.util.Map;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import com.cars.framework.secrets.DockerSecretLoadException;
-import com.cars.framework.secrets.DockerSecrets;
-
 import domaine.oauth.ProtectedDataOauth;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
-import domaine.oauth2.ProtectedDataOauth2;
 import metier.fitbit.FitbitPlugin;
 import pojo.fitbit.Profil;
 
@@ -28,15 +21,7 @@ public class Fitbit {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String test() {
-		try {
-			Map<String, String> secrets = DockerSecrets.loadFromFile("fitbit.properties");
-			String clientId = secrets.get("client_id");
-			System.out.println(clientId); // readonly
-			return "it works !!! Client id=" + clientId;
-		} catch (DockerSecretLoadException e) {
-			e.printStackTrace();
-			return "catch " + e;	
-		}
+		return "it works";
 	}
 	
 	@Path("/authorisation")

@@ -140,23 +140,21 @@ public class Plugin {
 		
 	}
 
-	public static OAuth10aService getOauth1Service(String propertiesPath,String callBackURL,DefaultApi10a api) {
-		Properties config = Utils.filesProperties(propertiesPath);
-		System.out.println("@getOauth1Service api = "+ api + "propertiesPath = " + propertiesPath);
-		final OAuth10aService service = new ServiceBuilder(config.getProperty(OAuthConstants.CLIENT_ID))
-				.apiSecret(config.getProperty(OAuthConstants.CLIENT_SECRET))
+	public static OAuth10aService getOauth1Service(String props,String callBackURL,DefaultApi10a api) {
+		System.out.println("@getOauth1Service api = "+ api);
+		final OAuth10aService service = new ServiceBuilder(Utils.getProps(props,OAuthConstants.CLIENT_ID))
+				.apiSecret(Utils.getProps(props,OAuthConstants.CLIENT_SECRET))
 				.callback(callBackURL)
 				.debug()
 				.build(api);
 		return service;
 	}
 
-	public static OAuth20Service getOauth2Service(String propertiesPath,String callBackUrl,DefaultApi20 api) {
-    	Properties config = Utils.filesProperties(propertiesPath);
+	public static OAuth20Service getOauth2Service(String props,String callBackUrl,DefaultApi20 api) {
     	final String secretState = "secret" + new Random().nextInt(999_999);
-    	final OAuth20Service service = new ServiceBuilder(config.getProperty(OAuthConstants.CLIENT_ID))
-                .apiSecret(config.getProperty(OAuthConstants.CLIENT_SECRET))
-                .scope(config.getProperty(OAuthConstants.SCOPE))
+    	final OAuth20Service service = new ServiceBuilder(Utils.getProps(props,OAuthConstants.CLIENT_ID))
+                .apiSecret(Utils.getProps(props,OAuthConstants.CLIENT_SECRET))
+                .scope(Utils.getProps(props,OAuthConstants.SCOPE))
                 .callback(callBackUrl)
                 .state(secretState)
                 .debug()
@@ -187,14 +185,14 @@ public class Plugin {
         Map<String, Object> properties = new HashMap<>();
         properties.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
         properties.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
-        properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true); // Uniquement nécessaire si on veut Marshall
+        properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true); // Uniquement nï¿½cessaire si on veut Marshall
         T t = null;
 		try {
 			JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[]{classT,ObjectFactory.class}, properties);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 			StreamSource jsonSource = new StreamSource(new StringReader(response.getBody()));
 		    t = unmarshaller.unmarshal(jsonSource, classT).getValue();
-		    //Ne sert à rien illustre juste comment on peut passer de l'objet au JSON
+		    //Ne sert ï¿½ rien illustre juste comment on peut passer de l'objet au JSON
 	        Marshaller marshaller = jaxbContext.createMarshaller();
 	        marshaller.marshal(t,System.out);
 	        System.out.println();
@@ -213,14 +211,14 @@ public class Plugin {
         Map<String, Object> properties = new HashMap<>();
         properties.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
         properties.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
-        properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true); // Uniquement nécessaire si on veut Marshall
+        properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true); // Uniquement nï¿½cessaire si on veut Marshall
         ArrayList<T> lstT = new ArrayList<>();
 		try {
 			JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[]{classT,ObjectFactory.class}, properties);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 	        StreamSource jsonSource = new StreamSource(new StringReader(response.getBody()));
 	        lstT = (ArrayList<T>)unmarshaller.unmarshal(jsonSource, classT).getValue();
-	        //Ne sert à rien illustre juste comment on peut passer de l'objet au JSON
+	        //Ne sert ï¿½ rien illustre juste comment on peut passer de l'objet au JSON
 	        Marshaller marshaller = jaxbContext.createMarshaller();
 	        marshaller.marshal(lstT,System.out);
 	        System.out.println();
@@ -336,7 +334,7 @@ public class Plugin {
 		try {
 			response = service.execute(request);
 			System.out.println("response " + response.getCode() + response.getBody());
-			//TODO si le toke a été revoke trouver un moyen de récupérer l'erreur et envoyer le token invalider
+			//TODO si le toke a ï¿½tï¿½ revoke trouver un moyen de rï¿½cupï¿½rer l'erreur et envoyer le token invalider
 		} catch (InterruptedException | ExecutionException | IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

@@ -40,16 +40,16 @@ public class NokiaApi_OAouth10 extends DefaultApi10a {
 
 	@Override
 	public String getAuthorizationUrl(OAuth1RequestToken requestToken) {
-		Properties config = Utils.filesProperties(Constant.NOKIA_HEALTH_PATH_FILE_OAUTH_CONFIG);
+		//Properties config = Utils.filesProperties(Constant.NOKIA_HEALTH_PROPS);
 		final ParameterList parameters = new ParameterList();
 		parameters.add(OAuthConstants.TOKEN, requestToken.getToken());
 		parameters.add(OAuthConstants.NONCE, getTimestampService().getNonce());
 		parameters.add(OAuthConstants.SIGN_METHOD, getSignatureService().getSignatureMethod());
 		parameters.add(OAuthConstants.TIMESTAMP, getTimestampService().getTimestampInSeconds());
-		parameters.add(OAuthConstants.VERSION,config.getProperty(OAuthConstants.VERSION));
-		parameters.add(OAuthConstants.CLIENT_ID,config.getProperty(OAuthConstants.CLIENT_ID));
+		parameters.add(OAuthConstants.VERSION,Utils.getProps(Constant.NOKIA_HEALTH_PROPS,OAuthConstants.VERSION));
+		parameters.add(OAuthConstants.CLIENT_ID,Utils.getProps(Constant.NOKIA_HEALTH_PROPS,OAuthConstants.CLIENT_ID));
 		final String baseUrl = parameters.appendTo(getAuthorizationBaseUrl());
-		final String signature = getSignatureService().getSignature(baseUrl, config.getProperty(OAuthConstants.CLIENT_SECRET), "");
+		final String signature = getSignatureService().getSignature(baseUrl, Utils.getProps(Constant.NOKIA_HEALTH_PROPS,OAuthConstants.CLIENT_SECRET), "");
 		parameters.add(OAuthConstants.SIGNATURE,signature);
 		return parameters.appendTo(getAuthorizationBaseUrl());
 	}

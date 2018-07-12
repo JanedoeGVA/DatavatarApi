@@ -31,7 +31,7 @@ public class FitbitPlugin {
     }
 	
     private static OAuth20Service getService() {
-    	final OAuth20Service service = Plugin.getOauth2Service(Constant.FITBIT_PATH_FILE_OAUTH_CONFIG,Constant.FITBIT_CALLBACK_URL,FitbitApi_OAuth20.instance());
+    	final OAuth20Service service = Plugin.getOauth2Service(Constant.FITBIT_PROPS,Constant.FITBIT_CALLBACK_URL,FitbitApi_OAuth20.instance());
     	return service;
     }
     
