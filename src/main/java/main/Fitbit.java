@@ -30,9 +30,11 @@ public class Fitbit {
 	public String test() {
 		try {
 			Map<String, String> secrets = DockerSecrets.loadFromFile("fitbit.properties");
-			String clientId = secrets.get("client_id");
-			System.out.println(clientId); // readonly
-			return "it works !!! Client id=" + clientId;
+			
+			//String clientId = secrets.get("client_id");
+			//System.out.println(clientId); // readonly
+			//return "it works !!! Client id=" + clientId;
+			return "it works !!";
 		} catch (DockerSecretLoadException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
