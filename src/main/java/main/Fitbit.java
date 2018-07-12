@@ -29,7 +29,7 @@ public class Fitbit {
 	@Produces(MediaType.TEXT_HTML)
 	public String test() {
 		try {
-			Map<String, String> secrets = DockerSecrets.loadFromFile("fitbit");
+			Map<String, String> secrets = DockerSecrets.loadFromFile("fitbit.properties");
 			String clientId = secrets.get("client_id");
 			System.out.println(clientId); // readonly
 			return "it works !!! Client id=" + clientId;
