@@ -1,5 +1,7 @@
 package main;
 
+import java.util.Map;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -8,6 +10,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
+import com.cars.framework.secrets.DockerSecretLoadException;
+import com.cars.framework.secrets.DockerSecrets;
 
 import domaine.oauth.ProtectedDataOauth;
 import domaine.oauth2.Oauth2AccessToken;
@@ -23,7 +28,16 @@ public class Fitbit {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String test() {
-		return "it works !!!";
+		try {
+			Map<String, String> secrets = DockerSecrets.loadFromFile("fitbit");
+			String clientId = secrets.get("client_id");
+			System.out.println(clientId); // readonly
+			return "it works !!! Client id=" + clientId;
+		} catch (DockerSecretLoadException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "A problem occured";
 	}
 	
 	@Path("/authorisation")
