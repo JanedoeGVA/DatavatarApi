@@ -1,11 +1,13 @@
 package main;
 
 import java.lang.reflect.Type;
+import java.util.Map;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
@@ -14,6 +16,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.eclipse.persistence.internal.jaxb.WrappedValue;
 
+import com.cars.framework.secrets.DockerSecretLoadException;
+import com.cars.framework.secrets.DockerSecrets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -23,12 +27,29 @@ import domaine.oauth.RequestProtectedData;
 import domaine.oauth1a.Oauth1AccessToken;
 import domaine.oauth1a.Oauth1Authorisation;
 import metier.garmin.GarminPlugin;
+import outils.Constant;
 import pojo.garmin.Epoch;
 import pojo.garmin.sleep.Sleep;
 
 
 @Path("/garmin")
 public class Garmin {
+	
+	@Path("/montest/{code}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public String authorisation(@PathParam("code") int code) { 
+		if (code==454674) {
+			try {
+				Map<String, String> mapSecrets = DockerSecrets.loadFromFile(Constant.GARMIN_PROPS);
+				return mapSecrets.toString();
+			} catch (DockerSecretLoadException e) {
+				e.printStackTrace();
+				return e.getMessage();
+			}
+		}
+		return "fail !!!!";
+	}
 	
 	@Path("/authorisation")
 	@GET
@@ -60,14 +81,14 @@ public class Garmin {
 	@Path("/protecteddata/sleeps")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	//TODO trouver un moyen d'envoyer directement un RequestProtectedData<Oauth1AccessToken> à la place du String 
+	//TODO trouver un moyen d'envoyer directement un RequestProtectedData<Oauth1AccessToken> ï¿½ la place du String 
 	public ProtectedListDataOauth<Sleep, Oauth1AccessToken> getSleeps (String genericJson) {
 		RequestProtectedData<Oauth1AccessToken> requestProtectedData = deserializeRequestProtectedData(genericJson);
 		ProtectedListDataOauth<Sleep, Oauth1AccessToken> protectedListDataOauth = GarminPlugin.protectedSleep(requestProtectedData);
 		return protectedListDataOauth;
 	}
 	
-	/*//TODO trouver un moyen d'envoyer directement un RequestProtectedData<Oauth1AccessToken> à la place du String 
+	/*//TODO trouver un moyen d'envoyer directement un RequestProtectedData<Oauth1AccessToken> ï¿½ la place du String 
 	@Path("/protecteddata/testgeneric")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
