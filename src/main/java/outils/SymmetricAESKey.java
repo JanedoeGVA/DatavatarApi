@@ -16,8 +16,10 @@ import java.security.NoSuchAlgorithmException;
 
 public class SymmetricAESKey {
 
-    public static final String CIPHER_ALGORITHM = "AES";
-    public static final String KEY_ALGORITHM = "AES"; 
+    private static final String CIPHER_ALGORITHM = "AES";
+    private static final String KEY_ALGORITHM = "AES"; 
+    private static final String PROPS_FILE = "key.properties";
+    private static final String PROPS_VALUE_KEY ="key";
 
     public static String encrypt(String message) {
         try {
@@ -49,7 +51,7 @@ public class SymmetricAESKey {
 
     private static Key getKey() {
     	
-    	String keyStr = Utils.getProps("key.properties","key");
+    	String keyStr = Utils.getProps(PROPS_FILE,PROPS_VALUE_KEY);
     	return new SecretKeySpec(Base64.decodeBase64(keyStr),KEY_ALGORITHM);
     }
     

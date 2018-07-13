@@ -35,22 +35,6 @@ import pojo.garmin.sleep.Sleep;
 @Path("/garmin")
 public class Garmin {
 	
-	@Path("/montest/{code}")
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public String authorisation(@PathParam("code") int code) { 
-		if (code==454674) {
-			try {
-				Map<String, String> mapSecrets = DockerSecrets.loadFromFile(Constant.GARMIN_PROPS);
-				return mapSecrets.toString();
-			} catch (DockerSecretLoadException e) {
-				e.printStackTrace();
-				return e.getMessage();
-			}
-		}
-		return "fail !!!!";
-	}
-	
 	@Path("/authorisation")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
