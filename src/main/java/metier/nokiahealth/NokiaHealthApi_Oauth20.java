@@ -23,7 +23,7 @@ public class NokiaHealthApi_Oauth20 extends DefaultApi20 {
     
     @Override
     public String getAccessTokenEndpoint() {
-        return Constant.NOKIA_HEALTH_TOKEN_ACCES_ENDPOINT_URL;
+        return Constant.NOKIA_HEALTH_TOKEN_ENDPOINT_URL;
     }
 
     @Override
