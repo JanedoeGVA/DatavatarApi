@@ -1,13 +1,17 @@
 package metier.nokiahealth;
 
 import com.github.scribejava.core.oauth.OAuth10aService;
+import com.github.scribejava.core.oauth.OAuth20Service;
 
 import domaine.oauth.ProtectedDataOauth;
 import domaine.oauth1a.Oauth1AccessToken;
 import domaine.oauth1a.Oauth1Authorisation;
+import domaine.oauth2.Oauth2Authorisation;
 import metier.Plugin;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.json.JSONObject;
@@ -23,20 +27,27 @@ import pojo.nokiahealth.ActivityMeasures;
 
 public class NokiaPlugin {
 	
-	public static Oauth1Authorisation getOauth1Authorisation() {
-		Oauth1Authorisation oauth1Auth = Plugin.oauth10Authorisation(Constant.NOKIA_HEALTH_API_NAME, getService());
-		return oauth1Auth;
-	}
+	public static Oauth2Authorisation urlVerification() {
+		Oauth2Authorisation oauth2Auth = Plugin.oauth20UrlVerification(Constant.NOKIA_HEALTH_API_NAME, getService());
+        return oauth2Auth;
+	}	    
 	
+	/*
 	public static Oauth1AccessToken getAccessToken(String requestTokenKey,String encryptedRequestTokenSecret,String verifier) {
 		Oauth1AccessToken accessToken = Plugin.oauth10AccessToken(Constant.NOKIA_HEALTH_API_NAME,requestTokenKey, encryptedRequestTokenSecret, verifier, getService());
 		return accessToken;
-	}
+	}*/
 
+	/*
 	private static OAuth10aService getService() {
 		final OAuth10aService service = Plugin.getOauth1Service(Constant.NOKIA_HEALTH_PROPS,Constant.NOKIA_HEALTH_CALLBACK_URL,NokiaApi_OAouth10.instance());
 		return service;
-	}
+	}*/
+	
+	private static OAuth20Service getService() {
+    		final OAuth20Service service = Plugin.getOauth2Service(Constant.NOKIA_HEALTH_PROPS,Constant.NOKIA_HEALTH_CALLBACK_URL,NokiaHealthApi_Oauth20.instance());
+    		return service;
+    }
 	/*
 	public static ProtectedDataOauth<ActivityMeasures, Oauth1AccessToken> getActivityMeasures(Oauth1AccessToken accessToken) {
 		String url = "http://api.health.nokia.com/measure?action=getmeas";
@@ -44,11 +55,11 @@ public class NokiaPlugin {
 		return protectedAct;
 	}*/
 	
-	public static ProtectedDataOauth<ActivityMeasures, Oauth1AccessToken> getActivityMeasures(Oauth1AccessToken accessToken) {
+	/*public static ProtectedDataOauth<ActivityMeasures, Oauth1AccessToken> getActivityMeasures(Oauth1AccessToken accessToken) {
 		String url = Constant.NOKIAHEALTH_ACTIVITIES;
 		ProtectedDataOauth<ActivityMeasures, Oauth1AccessToken> protectedAct = getProtectedDataT(accessToken, getService(), ActivityMeasures.class, url);
 		return protectedAct;
-	}
+	}*/
 	
 	private static <T>ProtectedDataOauth<T, Oauth1AccessToken> getProtectedDataT(Oauth1AccessToken accessToken,OAuth10aService service, Class<T> classT, String urlRequest) {
 		final OAuth1AccessToken oAuth1AccessToken = new OAuth1AccessToken(SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()),SymmetricAESKey.decrypt(accessToken.getAccessTokenSecret()));

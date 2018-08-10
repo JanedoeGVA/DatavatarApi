@@ -71,9 +71,9 @@ public class Plugin {
 	}
 	
 	public static Oauth2Authorisation oauth20UrlVerification(String apiName,OAuth20Service service) {
-    	Oauth2Authorisation oauth2Auth = new Oauth2Authorisation();
-    	oauth2Auth.setApi(apiName);
-    	oauth2Auth.setUrlVerification(service.getAuthorizationUrl());
+    		Oauth2Authorisation oauth2Auth = new Oauth2Authorisation();
+    		oauth2Auth.setApi(apiName);
+    		oauth2Auth.setUrlVerification(service.getAuthorizationUrl());
         return oauth2Auth;
     }
 	

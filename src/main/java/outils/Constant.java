@@ -20,13 +20,13 @@ public class Constant {
 	public static final String NOKIA_HEALTH_PROPS = "nokiahealth.properties";
 	public static final String NOKIA_HEALTH_API_NAME = "nokia_health";
 	
-	private static final String NOKIA_HEALTH_BASE_URL = "https://developer.health.nokia.com/account";
+	private static final String NOKIA_HEALTH_BASE_URL = "https://account.health.nokia.com/oauth2_user";
 	
 	public static final String NOKIA_HEALTH_TOKEN_ACCES_ENDPOINT_URL = NOKIA_HEALTH_BASE_URL+ "/access_token";
 	public static final String NOKIA_HEALTH_TOKEN_REQUEST_ENDPOINT_URL = NOKIA_HEALTH_BASE_URL + "/request_token";
-	public static final String NOKIA_HEALTH_BASE_AUTH_URL = NOKIA_HEALTH_BASE_URL + "/authorize";
+	public static final String NOKIA_HEALTH_BASE_AUTH_URL = NOKIA_HEALTH_BASE_URL + "/authorize2";
 	
-	public static final String NOKIA_HEALTH_CALLBACK_URL = "datavatarapp://nokia_health/oauth1/verification";
+	public static final String NOKIA_HEALTH_CALLBACK_URL = "datavatarapp://nokia_health/oauth2/verification";
 	
 	public static final String NOKIAHEALTH_ACTIVITIES = "http://api.health.nokia.com/measure?action=getmeas";
 	
