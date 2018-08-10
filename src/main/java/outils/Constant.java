@@ -12,7 +12,7 @@ public class Constant {
 	public static final String FITBIT_TOKEN_ENDPOINT_URL = "https://api.fitbit.com/oauth2/token";
 	public static final String FITBIT_REVOKE_ENDPOINT_URL= "https://api.fitbit.com/oauth2/revoke";
     
-    public static final String FITBIT_CALLBACK_URL = "datavatarapp://fitbit/verification";
+    public static final String FITBIT_CALLBACK_URL = "datavatarapp://fitbit/oauth2/verification";
     
 	public static final String FITBIT_PROTECTED_RESOURCE_PROFIL_URL = " https://api.fitbit.com/1/user/-/profile.json";
 	
@@ -26,7 +26,7 @@ public class Constant {
 	public static final String NOKIA_HEALTH_TOKEN_REQUEST_ENDPOINT_URL = NOKIA_HEALTH_BASE_URL + "/request_token";
 	public static final String NOKIA_HEALTH_BASE_AUTH_URL = NOKIA_HEALTH_BASE_URL + "/authorize";
 	
-	public static final String NOKIA_HEALTH_CALLBACK_URL = "datavatarapp://nokia_health/verification";
+	public static final String NOKIA_HEALTH_CALLBACK_URL = "datavatarapp://nokia_health/oauth1/verification";
 	
 	public static final String NOKIAHEALTH_ACTIVITIES = "http://api.health.nokia.com/measure?action=getmeas";
 	
@@ -42,7 +42,7 @@ public class Constant {
 	public static final String GARMIN_TOKEN_REQUEST_ENDPOINT_URL = GARMIN_BASE_URL + "/request_token";
 	public static final String GARMIN_BASE_AUTH_URL = "https://connect.garmin.com/oauthConfirm";
 	
-	public static final String GARMIN_CALLBACK_URL = "datavatarapp://garmin/verification";
+	public static final String GARMIN_CALLBACK_URL = "datavatarapp://garmin/oauth1/verification";
 	
 	public static final String GARMIN_EPOCHS = "https://healthapi.garmin.com/wellness-api/rest/epochs?"
 			+ "uploadStartTimeInSeconds=%s&"
