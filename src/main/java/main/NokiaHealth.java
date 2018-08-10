@@ -5,10 +5,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import domaine.oauth.ProtectedDataOauth;
 import domaine.oauth1a.Oauth1AccessToken;
+import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
+import metier.fitbit.FitbitPlugin;
 import metier.nokiahealth.NokiaPlugin;
 import pojo.nokiahealth.ActivityMeasures;
 
@@ -22,15 +25,13 @@ public class NokiaHealth {
 		return NokiaPlugin.urlVerification();
 	}
 	
-	/*@Path("/verification")
+	@Path("/verification")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Oauth1AccessToken verification (
-			@QueryParam ("req_token_key") String requestTokenKey,
-			@QueryParam ("req_token_secret") String requestTokenSecret,
-			@QueryParam ("verifier") String verifier) {
-		return NokiaPlugin.getAccessToken(requestTokenKey,requestTokenSecret,verifier);
-	}*/
+	public Oauth2AccessToken verification (@QueryParam ("code") String code) {
+		return NokiaPlugin.accessToken(code);
+		
+	}
 	
 	/*@Path("/protecteddata/activitymeasures")
 	@POST

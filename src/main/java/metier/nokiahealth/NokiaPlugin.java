@@ -6,6 +6,7 @@ import com.github.scribejava.core.oauth.OAuth20Service;
 import domaine.oauth.ProtectedDataOauth;
 import domaine.oauth1a.Oauth1AccessToken;
 import domaine.oauth1a.Oauth1Authorisation;
+import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.Plugin;
 
@@ -30,7 +31,12 @@ public class NokiaPlugin {
 	public static Oauth2Authorisation urlVerification() {
 		Oauth2Authorisation oauth2Auth = Plugin.oauth20UrlVerification(Constant.NOKIA_HEALTH_API_NAME, getService());
         return oauth2Auth;
-	}	    
+	}
+	
+	public static Oauth2AccessToken accessToken (String code) {
+    		Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(Constant.NOKIA_HEALTH_API_NAME,code, getService());
+    		return accessToken;
+    }
 	
 	/*
 	public static Oauth1AccessToken getAccessToken(String requestTokenKey,String encryptedRequestTokenSecret,String verifier) {

@@ -2,14 +2,12 @@ package metier.nokiahealth;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.util.concurrent.ExecutionException;
 
 import com.github.scribejava.core.builder.api.DefaultApi20;
 import com.github.scribejava.core.extractors.OAuth2AccessTokenJsonExtractor;
 import com.github.scribejava.core.httpclient.HttpClient;
 import com.github.scribejava.core.httpclient.HttpClientConfig;
-import com.github.scribejava.core.java8.Base64;
 import com.github.scribejava.core.model.OAuthConstants;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
@@ -35,12 +33,6 @@ public class NokiaHealthApi_OAuth20_ServiceImpl extends OAuth20Service {
 	       request.addParameter(OAuthConstants.CLIENT_SECRET, getApiSecret());
 	       request.addParameter(OAuthConstants.CODE, code);
 	       request.addParameter(OAuthConstants.REDIRECT_URI, getCallback());
-	       final String scope = getScope();
-	       if(scope != null) {
-	           request.addParameter(OAuthConstants.SCOPE, scope);
-	       }
-	       //this is non-OAuth2 standard, but Fitbit requires it
-	       request.addHeader(OAuthConstants.HEADER, OAuthConstants.BASIC + " " + getKeyBytesForFitbitAuth());;
 	       request.addParameter(OAuthConstants.GRANT_TYPE, OAuthConstants.AUTHORIZATION_CODE);
 	       return request;
 	  	}
@@ -57,7 +49,7 @@ public class NokiaHealthApi_OAuth20_ServiceImpl extends OAuth20Service {
 	        request.addParameter(OAuthConstants.REFRESH_TOKEN, refreshToken);
 	        request.addParameter(OAuthConstants.GRANT_TYPE, OAuthConstants.REFRESH_TOKEN);
 	        //this is non-OAuth2 standard, but Fitbit requires it
-	        request.addHeader(OAuthConstants.HEADER, OAuthConstants.BASIC + " " + getKeyBytesForFitbitAuth());
+	        //request.addHeader(OAuthConstants.HEADER, OAuthConstants.BASIC + " " + getKeyBytesForFitbitAuth());
 	        return request;
 	    }
 	    
@@ -67,7 +59,7 @@ public class NokiaHealthApi_OAuth20_ServiceImpl extends OAuth20Service {
 	    	this.getApi().getClientAuthenticationType().addClientAuthentication(request, getApiKey(), getApiSecret());
 	        request.addParameter("token", tokenToRevoke);
 	        //this is non-OAuth2 standard, but Fitbit requires it
-	        request.addHeader(OAuthConstants.HEADER, OAuthConstants.BASIC + " " + getKeyBytesForFitbitAuth());
+	        //request.addHeader(OAuthConstants.HEADER, OAuthConstants.BASIC + " " + getKeyBytesForFitbitAuth());
 	        System.out.println("@createRevokeTokenRequest to string " + request.toString());
 	       
 	        return request;
@@ -92,10 +84,6 @@ public class NokiaHealthApi_OAuth20_ServiceImpl extends OAuth20Service {
 
 		
 
-		private String getKeyBytesForFitbitAuth() {
-	    	String keyAndSecret = String.format("%s:%s", new Object[] {getApiKey(), getApiSecret()});
-	    	byte[] keyBytes = Base64.getEncoder().encode(keyAndSecret.getBytes(Charset.forName("UTF-8")));
-	    	return new String(keyBytes);
-		}
+		
 
 	}
