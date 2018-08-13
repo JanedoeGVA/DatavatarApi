@@ -33,12 +33,12 @@ public class NokiaHealth {
 		
 	}
 	
-	/*@Path("/protecteddata/activitymeasures")
+	@Path("/protecteddata/activitymeasures")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public ProtectedDataOauth<ActivityMeasures, Oauth1AccessToken> protectedData (Oauth1AccessToken oauth1AccessToken) {
-		return NokiaPlugin.getActivityMeasures(oauth1AccessToken);
-	} */
+	public ProtectedDataOauth<ActivityMeasures, Oauth2AccessToken> protectedData (Oauth2AccessToken oauth2AccessToken) {
+		return NokiaPlugin.getActivityMeasures(oauth2AccessToken);
+	}
 	
 }
  

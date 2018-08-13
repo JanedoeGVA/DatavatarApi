@@ -54,8 +54,6 @@ public class FitbitApi_OAuth20_ServiceImpl extends OAuth20Service {
         this.getApi().getClientAuthenticationType().addClientAuthentication(request, getApiKey(), getApiSecret());
         request.addParameter(OAuthConstants.REFRESH_TOKEN, refreshToken);
         request.addParameter(OAuthConstants.GRANT_TYPE, OAuthConstants.REFRESH_TOKEN);
-        request.addParameter(OAuthConstants.REFRESH_TOKEN, refreshToken);
-        request.addParameter(OAuthConstants.GRANT_TYPE, OAuthConstants.REFRESH_TOKEN);
         //this is non-OAuth2 standard, but Fitbit requires it
         request.addHeader(OAuthConstants.HEADER, OAuthConstants.BASIC + " " + getKeyBytesForFitbitAuth());
         return request;

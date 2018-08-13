@@ -33,12 +33,7 @@ public class NokiaHealthApi_Oauth20 extends DefaultApi20 {
     
 	@Override
 	public String getRefreshTokenEndpoint() {
-		return Constant.FITBIT_TOKEN_ENDPOINT_URL;
-	}
-
-	@Override
-	public String getRevokeTokenEndpoint() {
-		return Constant.FITBIT_REVOKE_ENDPOINT_URL;
+		return Constant.NOKIA_HEALTH_TOKEN_ENDPOINT_URL;
 	}
 
 	@Override

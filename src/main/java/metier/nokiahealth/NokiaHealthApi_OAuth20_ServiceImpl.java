@@ -39,48 +39,21 @@ public class NokiaHealthApi_OAuth20_ServiceImpl extends OAuth20Service {
 	   
 	    @Override
 	    protected OAuthRequest createRefreshTokenRequest(String refreshToken) {
-	    	if (refreshToken == null || refreshToken.isEmpty()) {
-	            throw new IllegalArgumentException("The refreshToken cannot be null or empty");
-	        }
+		    	if (refreshToken == null || refreshToken.isEmpty()) {
+		    		throw new IllegalArgumentException("The refreshToken cannot be null or empty");
+		    	}
 	        final OAuthRequest request = new OAuthRequest(Verb.POST, this.getApi().getRefreshTokenEndpoint());
 	        this.getApi().getClientAuthenticationType().addClientAuthentication(request, getApiKey(), getApiSecret());
+	        request.addParameter(OAuthConstants.CLIENT_ID, getApiKey());
+		    request.addParameter(OAuthConstants.CLIENT_SECRET, getApiSecret());
 	        request.addParameter(OAuthConstants.REFRESH_TOKEN, refreshToken);
 	        request.addParameter(OAuthConstants.GRANT_TYPE, OAuthConstants.REFRESH_TOKEN);
-	        request.addParameter(OAuthConstants.REFRESH_TOKEN, refreshToken);
-	        request.addParameter(OAuthConstants.GRANT_TYPE, OAuthConstants.REFRESH_TOKEN);
-	        //this is non-OAuth2 standard, but Fitbit requires it
-	        //request.addHeader(OAuthConstants.HEADER, OAuthConstants.BASIC + " " + getKeyBytesForFitbitAuth());
 	        return request;
 	    }
 	    
-		@Override
-	    protected OAuthRequest createRevokeTokenRequest(String tokenToRevoke, TokenTypeHint tokenTypeHint) {
-	    	final OAuthRequest request = new OAuthRequest(Verb.POST, this.getApi().getRevokeTokenEndpoint());
-	    	this.getApi().getClientAuthenticationType().addClientAuthentication(request, getApiKey(), getApiSecret());
-	        request.addParameter("token", tokenToRevoke);
-	        //this is non-OAuth2 standard, but Fitbit requires it
-	        //request.addHeader(OAuthConstants.HEADER, OAuthConstants.BASIC + " " + getKeyBytesForFitbitAuth());
-	        System.out.println("@createRevokeTokenRequest to string " + request.toString());
-	       
-	        return request;
-	    }
+	
 
-		//Just for print when revoking
-		@Override
-		public void revokeToken(String tokenToRevoke) throws IOException, InterruptedException, ExecutionException {
-			System.out.println("Revoking token..." );
-			final OAuthRequest request = createRevokeTokenRequest(tokenToRevoke, null);
-	        checkForErrorRevokeToken(execute(request));
-		}
 
-		//Just for print when revoking
-		private void checkForErrorRevokeToken(Response response) throws IOException {
-			System.out.println("Body revoke token = " + response.getBody());
-			System.out.println("Code revoke token = " + response.getCode());
-	        if (response.getCode() != 200) {
-	            OAuth2AccessTokenJsonExtractor.instance().generateError(response.getBody());
-	        }
-	    }
 
 		
 

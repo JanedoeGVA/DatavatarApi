@@ -18,12 +18,14 @@ import java.util.concurrent.ExecutionException;
 import org.json.JSONObject;
 
 import com.github.scribejava.core.model.OAuth1AccessToken;
+import com.github.scribejava.core.model.OAuthConstants;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 
 import outils.Constant;
 import outils.SymmetricAESKey;
+import pojo.fitbit.Profil;
 import pojo.nokiahealth.ActivityMeasures;
 
 public class NokiaPlugin {
@@ -38,28 +40,61 @@ public class NokiaPlugin {
     		return accessToken;
     }
 	
-	/*
-	public static Oauth1AccessToken getAccessToken(String requestTokenKey,String encryptedRequestTokenSecret,String verifier) {
-		Oauth1AccessToken accessToken = Plugin.oauth10AccessToken(Constant.NOKIA_HEALTH_API_NAME,requestTokenKey, encryptedRequestTokenSecret, verifier, getService());
-		return accessToken;
-	}*/
-
-	/*
-	private static OAuth10aService getService() {
-		final OAuth10aService service = Plugin.getOauth1Service(Constant.NOKIA_HEALTH_PROPS,Constant.NOKIA_HEALTH_CALLBACK_URL,NokiaApi_OAouth10.instance());
-		return service;
-	}*/
-	
 	private static OAuth20Service getService() {
     		final OAuth20Service service = Plugin.getOauth2Service(Constant.NOKIA_HEALTH_PROPS,Constant.NOKIA_HEALTH_CALLBACK_URL,NokiaHealthApi_Oauth20.instance());
     		return service;
     }
-	/*
-	public static ProtectedDataOauth<ActivityMeasures, Oauth1AccessToken> getActivityMeasures(Oauth1AccessToken accessToken) {
+
+	public static ProtectedDataOauth<ActivityMeasures,Oauth2AccessToken> getActivityMeasures (Oauth2AccessToken accessToken) {
 		String url = "http://api.health.nokia.com/measure?action=getmeas";
-		ProtectedDataOauth<ActivityMeasures, Oauth1AccessToken> protectedAct = Plugin.getGenericProtectedRessources(accessToken, getService(), ActivityMeasures.class, Verb.GET, url);
-		return protectedAct;
-	}*/
+		ProtectedDataOauth<ActivityMeasures,Oauth2AccessToken> activityMeasures = getGenericProtectedRessources(accessToken, getService(), ActivityMeasures.class, Verb.GET, url);
+    	return activityMeasures;
+    }
+	
+	public static <T> ProtectedDataOauth<T,Oauth2AccessToken> getGenericProtectedRessources(Oauth2AccessToken accessToken, OAuth20Service service, Class<T> classT, Verb verb, String urlRequest) { 
+        OAuthRequest request = new OAuthRequest(verb, urlRequest);
+        request.addQuerystringParameter(OAuthConstants.ACCESS_TOKEN, SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
+        /* for getmeas
+        		&meastype=[INTEGER]
+        		&category=[INT]
+        		&startdate=[INT]
+        		&enddate=[INT]
+        		&offset=[INT]*/
+        Response response = null;
+		try {
+			response = service.execute(request);
+		} catch (InterruptedException | ExecutionException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        System.out.println("Response code/message : " + response.getCode() + response.getMessage());
+        ProtectedDataOauth<T,Oauth2AccessToken> protectedDataOauth = new ProtectedDataOauth<>();
+        if (response.getCode() == javax.ws.rs.core.Response.Status.UNAUTHORIZED.getStatusCode()) {
+        	System.out.println("Refreshing processing...");
+        	Plugin.refreshAccessToken(accessToken, service);
+        	if (accessToken.getIsValide()) {
+        		request = new OAuthRequest(verb, urlRequest);
+                request.addHeader("x-li-format", "json");
+                //add header for authentication (Fitbit complication..... :()
+                request.addHeader("Authorization", "Bearer " + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
+            	try {
+    				response = service.execute(request);
+    			} catch (InterruptedException | ExecutionException | IOException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+        	} else {
+        		protectedDataOauth.setOauthAccessTokenT(accessToken);
+        		System.out.println("Invalide token...");
+        		return protectedDataOauth;
+        	}
+        }
+        T t = Plugin.unMarshallGenericJSON(response,classT);
+        protectedDataOauth.setOauthAccessTokenT(accessToken);
+        protectedDataOauth.setProtectedDataT(t);
+        System.out.println("is valide : " + accessToken.getIsValide()); 
+        return protectedDataOauth;
+	}
 	
 	/*public static ProtectedDataOauth<ActivityMeasures, Oauth1AccessToken> getActivityMeasures(Oauth1AccessToken accessToken) {
 		String url = Constant.NOKIAHEALTH_ACTIVITIES;
