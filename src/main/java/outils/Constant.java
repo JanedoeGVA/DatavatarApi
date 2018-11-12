@@ -7,6 +7,7 @@ public class Constant {
 	/**Fitbit*/
 	public static final String FITBIT_PROPS = "fitbit.properties";
 	public static final String FITBIT_API_NAME = "fitbit";
+	public static final String FITBIT_PROVIDER = "Fitbit";
 	
 	public static final String FITBIT_BASE_URL = "https://www.fitbit.com/oauth2/authorize";
 	public static final String FITBIT_TOKEN_ENDPOINT_URL = "https://api.fitbit.com/oauth2/token";

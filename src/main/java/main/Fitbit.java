@@ -41,7 +41,6 @@ public class Fitbit {
 	@Path("/revoke")
 	@DELETE
 	public void revoke(Oauth2AccessToken oauth2AccessToken ) {
-		System.out.println("Coucou1");
 		FitbitPlugin.revoke(oauth2AccessToken);
 	}
 	

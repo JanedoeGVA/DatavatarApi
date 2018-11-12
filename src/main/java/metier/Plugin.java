@@ -51,7 +51,7 @@ import outils.Utils;
 
 public class Plugin {
 	
-	public static Oauth1Authorisation oauth10Authorisation(String apiName,OAuth10aService service) {
+	public static Oauth1Authorisation oauth10Authorisation(String provider,OAuth10aService service) {
 		OAuth1RequestToken oauth1AuthRequest = null;
 		try {
 			oauth1AuthRequest = service.getRequestToken();
@@ -66,13 +66,13 @@ public class Plugin {
 		oauth1Auth.setRequestTokenSecret(SymmetricAESKey.encrypt(oauth1AuthRequest.getTokenSecret()));
 		oauth1Auth.setUrlVerification(service.getAuthorizationUrl(oauth1AuthRequest));
 		oauth1Auth.setVerifier("");
-		oauth1Auth.setApi(apiName);
+		oauth1Auth.setProvider(provider);
 		return oauth1Auth;
 	}
 	
-	public static Oauth2Authorisation oauth20UrlVerification(String apiName,OAuth20Service service) {
+	public static Oauth2Authorisation oauth20UrlVerification(String provider,OAuth20Service service) {
     		Oauth2Authorisation oauth2Auth = new Oauth2Authorisation();
-    		oauth2Auth.setApi(apiName);
+    		oauth2Auth.setProvider(provider);
     		oauth2Auth.setUrlVerification(service.getAuthorizationUrl());
         return oauth2Auth;
     }

@@ -56,24 +56,24 @@ public class FitbitPlugin {
         System.out.println("Response code/message : " + response.getCode() + response.getMessage());
         ProtectedDataOauth<T,Oauth2AccessToken> protectedDataOauth = new ProtectedDataOauth<>();
         if (response.getCode() == javax.ws.rs.core.Response.Status.UNAUTHORIZED.getStatusCode()) {
-        	System.out.println("Refreshing processing...");
-        	Plugin.refreshAccessToken(accessToken, service);
-        	if (accessToken.getIsValide()) {
-        		request = new OAuthRequest(verb, urlRequest);
+        		System.out.println("Refreshing processing...");
+        		Plugin.refreshAccessToken(accessToken, service);
+        		if (accessToken.getIsValide()) {
+        			request = new OAuthRequest(verb, urlRequest);
                 request.addHeader("x-li-format", "json");
                 //add header for authentication (Fitbit complication..... :()
                 request.addHeader("Authorization", "Bearer " + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
-            	try {
-    				response = service.execute(request);
-    			} catch (InterruptedException | ExecutionException | IOException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
-        	} else {
-        		protectedDataOauth.setOauthAccessTokenT(accessToken);
-        		System.out.println("Invalide token...");
-        		return protectedDataOauth;
-        	}
+            		try {
+            			response = service.execute(request);
+            		} catch (InterruptedException | ExecutionException | IOException e) {
+            			// TODO Auto-generated catch block
+            			e.printStackTrace();
+            		}
+        		} else {
+        			protectedDataOauth.setOauthAccessTokenT(accessToken);
+        			System.out.println("Invalide token...");
+        			return protectedDataOauth;
+        		}
         }
         T t = Plugin.unMarshallGenericJSON(response,classT);
         protectedDataOauth.setOauthAccessTokenT(accessToken);
