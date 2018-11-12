@@ -15,8 +15,8 @@ import metier.fitbit.FitbitPlugin;
 import metier.withings.WithingsPlugin;
 import pojo.withings.ActivityMeasures;
 
-@Path("/nokia_health")
-public class NokiaHealth {
+@Path("/withings")
+public class Withings {
 
 	@Path("/authorisation")
 	@GET
