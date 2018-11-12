@@ -21,12 +21,12 @@ import pojo.fitbit.Profil;
 public class FitbitPlugin {
 	
 	public static Oauth2Authorisation urlVerification() {
-		Oauth2Authorisation oauth2Auth = Plugin.oauth20UrlVerification(Constant.FITBIT_API_NAME, getService());
+		Oauth2Authorisation oauth2Auth = Plugin.oauth20UrlVerification(Constant.FITBIT_PROVIDER, getService());
         return oauth2Auth;
 	}	    
     
 	public static Oauth2AccessToken accessToken (String code) {
-    	Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(Constant.FITBIT_API_NAME,code, getService());
+    	Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(Constant.FITBIT_PROVIDER,code, getService());
     	return accessToken;
     }
 	
