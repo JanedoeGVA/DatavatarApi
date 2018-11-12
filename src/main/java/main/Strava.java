@@ -8,7 +8,6 @@ import javax.ws.rs.core.MediaType;
 
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
-import metier.fitbit.FitbitPlugin;
 import metier.strava.StravaPlugin;
 
 @Path("/strava")
