@@ -35,7 +35,7 @@ public class Constant {
 	/**Garmin*/
 	public static final String GARMIN_PROPS = "garmin.properties";
 	
-	public static final String GARMIN_API_NAME = "garmin";
+	public static final String GARMIN_PROVIDER = "Garmin";
 	
 	private static final String GARMIN_BASE_URL = "https://connectapi.garmin.com/oauth-service/oauth";
 	

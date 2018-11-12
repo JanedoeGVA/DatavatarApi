@@ -26,12 +26,12 @@ import pojo.garmin.sleep.Sleep;
 public class GarminPlugin {
 	
 	public static Oauth1Authorisation getOauth1Authorisation() {
-		Oauth1Authorisation oauth1Auth = Plugin.oauth10Authorisation(Constant.GARMIN_API_NAME, getService());
+		Oauth1Authorisation oauth1Auth = Plugin.oauth10Authorisation(Constant.GARMIN_PROVIDER, getService());
 		return oauth1Auth;
 	}
 	
 	public static Oauth1AccessToken getAccessToken(String requestTokenKey,String encryptedRequestTokenSecret,String verifier) {
-		Oauth1AccessToken accessToken = Plugin.oauth10AccessToken(Constant.GARMIN_API_NAME,requestTokenKey, encryptedRequestTokenSecret, verifier, getService());
+		Oauth1AccessToken accessToken = Plugin.oauth10AccessToken(Constant.GARMIN_PROVIDER,requestTokenKey, encryptedRequestTokenSecret, verifier, getService());
 		return accessToken;
 	}
 	
