@@ -1,4 +1,4 @@
-package metier.nokiahealth;
+package metier.withings;
 
 import com.github.scribejava.core.oauth.OAuth10aService;
 import com.github.scribejava.core.oauth.OAuth20Service;
@@ -26,22 +26,22 @@ import com.github.scribejava.core.model.Verb;
 import outils.Constant;
 import outils.SymmetricAESKey;
 import pojo.fitbit.Profil;
-import pojo.nokiahealth.ActivityMeasures;
+import pojo.withings.ActivityMeasures;
 
-public class NokiaPlugin {
+public class WithingsPlugin {
 	
 	public static Oauth2Authorisation urlVerification() {
-		Oauth2Authorisation oauth2Auth = Plugin.oauth20UrlVerification(Constant.NOKIA_HEALTH_API_NAME, getService());
+		Oauth2Authorisation oauth2Auth = Plugin.oauth20UrlVerification(Constant.WITHINGS_PROVIDER, getService());
         return oauth2Auth;
 	}
 	
 	public static Oauth2AccessToken accessToken (String code) {
-    		Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(Constant.NOKIA_HEALTH_API_NAME,code, getService());
+    		Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(Constant.WITHINGS_PROVIDER,code, getService());
     		return accessToken;
     }
 	
 	private static OAuth20Service getService() {
-    		final OAuth20Service service = Plugin.getOauth2Service(Constant.NOKIA_HEALTH_PROPS,Constant.NOKIA_HEALTH_CALLBACK_URL,NokiaHealthApi_Oauth20.instance());
+    		final OAuth20Service service = Plugin.getOauth2Service(Constant.WITHINGS_PROPS,Constant.WITHINGS_CALLBACK_URL,WithingsApi_Oauth20.instance());
     		return service;
     }
 

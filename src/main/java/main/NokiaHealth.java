@@ -12,8 +12,8 @@ import domaine.oauth1a.Oauth1AccessToken;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.fitbit.FitbitPlugin;
-import metier.nokiahealth.NokiaPlugin;
-import pojo.nokiahealth.ActivityMeasures;
+import metier.withings.WithingsPlugin;
+import pojo.withings.ActivityMeasures;
 
 @Path("/nokia_health")
 public class NokiaHealth {
@@ -22,14 +22,14 @@ public class NokiaHealth {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Oauth2Authorisation authorisation() { 
-		return NokiaPlugin.urlVerification();
+		return WithingsPlugin.urlVerification();
 	}
 	
 	@Path("/verification")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Oauth2AccessToken verification (@QueryParam ("code") String code) {
-		return NokiaPlugin.accessToken(code);
+		return WithingsPlugin.accessToken(code);
 		
 	}
 	
@@ -37,7 +37,7 @@ public class NokiaHealth {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public ProtectedDataOauth<ActivityMeasures, Oauth2AccessToken> protectedData (Oauth2AccessToken oauth2AccessToken) {
-		return NokiaPlugin.getActivityMeasures(oauth2AccessToken);
+		return WithingsPlugin.getActivityMeasures(oauth2AccessToken);
 	}
 	
 }

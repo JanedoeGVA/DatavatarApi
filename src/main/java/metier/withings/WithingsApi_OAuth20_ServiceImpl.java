@@ -1,4 +1,4 @@
-package metier.nokiahealth;
+package metier.withings;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,9 +15,9 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.github.scribejava.core.revoke.TokenTypeHint;
 
-public class NokiaHealthApi_OAuth20_ServiceImpl extends OAuth20Service {
+public class WithingsApi_OAuth20_ServiceImpl extends OAuth20Service {
 
-	   public NokiaHealthApi_OAuth20_ServiceImpl(DefaultApi20 api, String apiKey, String apiSecret, String callback,
+	   public WithingsApi_OAuth20_ServiceImpl(DefaultApi20 api, String apiKey, String apiSecret, String callback,
 				String scope, OutputStream debugStream, String state, String responseType, String userAgent,
 				HttpClientConfig httpClientConfig, HttpClient httpClient) {
 			super(api, apiKey, apiSecret, callback, scope, debugStream, state, responseType, userAgent, httpClientConfig,

@@ -1,4 +1,4 @@
-package pojo.nokiahealth;
+package pojo.withings;
 
 public class Measure {
 	

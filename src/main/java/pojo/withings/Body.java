@@ -1,4 +1,4 @@
-package pojo.nokiahealth;
+package pojo.withings;
 
 import java.util.List;
 
