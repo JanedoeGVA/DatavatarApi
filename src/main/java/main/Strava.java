@@ -13,7 +13,7 @@ import metier.strava.StravaPlugin;
 @Path("/strava")
 public class Strava {
 	
-	@Path("/authorisation")
+	@Path("/authorization")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Oauth2Authorisation authorisation() { 

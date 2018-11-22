@@ -23,7 +23,7 @@ public class Fitbit {
 		return "it works";
 	}
 	
-	@Path("/authorisation")
+	@Path("/authorization")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Oauth2Authorisation authorisation() { 

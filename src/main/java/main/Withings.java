@@ -18,7 +18,7 @@ import pojo.withings.ActivityMeasures;
 @Path("/withings")
 public class Withings {
 
-	@Path("/authorisation")
+	@Path("/authorization")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Oauth2Authorisation authorisation() { 
