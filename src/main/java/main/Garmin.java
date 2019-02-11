@@ -35,7 +35,7 @@ import pojo.garmin.sleep.Sleep;
 @Path("/garmin")
 public class Garmin {
 	
-	@Path("/authorisation")
+	@Path("/authorization")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Oauth1Authorisation authorisation() { 
