@@ -9,12 +9,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 
-@Path("/")
+
+@Path("/test")
 public class Test {
 	
 	private static final Logger LOG = Logger.getLogger(Test.class.getName());
 	
-	@Path("/test")
+	// @Path("/test")
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String test() {
