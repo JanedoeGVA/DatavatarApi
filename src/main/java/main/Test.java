@@ -8,17 +8,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import metier.fitbit.FitbitApi_OAuth20_ServiceImpl;
 
-
-
-
-@Path("/test")
+@Path("/")
 public class Test {
 	
 	private static final Logger LOG = Logger.getLogger(Test.class.getName());
 	
-
+	@Path("/test")
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String test() {
