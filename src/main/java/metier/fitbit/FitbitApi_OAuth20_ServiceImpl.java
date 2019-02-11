@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 import com.github.scribejava.core.builder.api.DefaultApi20;
 import com.github.scribejava.core.extractors.OAuth2AccessTokenJsonExtractor;
@@ -20,6 +21,8 @@ import com.github.scribejava.core.model.Verb;
 
 public class FitbitApi_OAuth20_ServiceImpl extends OAuth20Service {
 
+	private static final Logger LOG = Logger.getLogger(FitbitApi_OAuth20_ServiceImpl.class.getName());
+	
    public FitbitApi_OAuth20_ServiceImpl(DefaultApi20 api, String apiKey, String apiSecret, String callback,
 			String scope, OutputStream debugStream, String state, String responseType, String userAgent,
 			HttpClientConfig httpClientConfig, HttpClient httpClient) {
