@@ -18,7 +18,7 @@ public class Test {
 	// @Path("/test")
 	@GET
 	@Produces(MediaType.TEXT_HTML)
-	public String test() {
+	public String message() {
 		LOG.log(Level.INFO, "Test");
 		return "it works";
 		

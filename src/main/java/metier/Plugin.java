@@ -10,7 +10,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;
@@ -45,11 +46,14 @@ import domaine.oauth1a.Oauth1Authorisation;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import domaine.oauth2.ProtectedDataOauth2;
+import metier.fitbit.FitbitApi_OAuth20_ServiceImpl;
 import outils.SymmetricAESKey;
 import outils.Utils;
 
 
 public class Plugin {
+	
+	private static final Logger LOG = Logger.getLogger(Plugin.class.getName());
 	
 	public static Oauth1Authorisation oauth10Authorisation(String provider,OAuth10aService service) {
 		OAuth1RequestToken oauth1AuthRequest = null;
@@ -60,8 +64,8 @@ public class Plugin {
 			e.printStackTrace();
 		}
 		Oauth1Authorisation oauth1Auth = new Oauth1Authorisation();
-		System.out.println("@oauth10Authorisation Request token = " + oauth1AuthRequest.getToken());
-        System.out.println("@oauth10Authorisation Request Secret = " + oauth1AuthRequest.getTokenSecret());
+		LOG.log(Level.INFO, "Request token = " + oauth1AuthRequest.getToken());
+		LOG.log(Level.INFO,"Request Secret = " + oauth1AuthRequest.getTokenSecret());
 		oauth1Auth.setRequestTokenKey(oauth1AuthRequest.getToken());
 		oauth1Auth.setRequestTokenSecret(SymmetricAESKey.encrypt(oauth1AuthRequest.getTokenSecret()));
 		oauth1Auth.setUrlVerification(service.getAuthorizationUrl(oauth1AuthRequest));
@@ -79,8 +83,8 @@ public class Plugin {
 	
 	public static Oauth1AccessToken oauth10AccessToken(String api,String requestTokenKey,String encryptedRequestTokenSecret,String verifier,OAuth10aService service) {
 		final OAuth1RequestToken requestToken = new OAuth1RequestToken(requestTokenKey, SymmetricAESKey.decrypt(encryptedRequestTokenSecret));
-		System.out.println("@oauth10AccessToken Request token = " + requestToken.getToken());
-        System.out.println("@oauth10AccessToken Request Secret = " + requestToken.getTokenSecret());
+		LOG.log(Level.INFO,"Request token = " + requestToken.getToken());
+		LOG.log(Level.INFO,"Request Secret = " + requestToken.getTokenSecret());
         OAuth1AccessToken oauth1AccessToken = null;
 		try {
 			oauth1AccessToken = service.getAccessToken(requestToken, verifier);
@@ -89,8 +93,8 @@ public class Plugin {
 			e.printStackTrace();
 		}
         Oauth1AccessToken accessToken = new Oauth1AccessToken(api,SymmetricAESKey.encrypt(oauth1AccessToken.getToken()),SymmetricAESKey.encrypt(oauth1AccessToken.getTokenSecret()),true);
-        System.out.println("@oauth10AccessToken Access Token = " + oauth1AccessToken.getToken());
-        System.out.println("@oauth10AccessToken AccessSecret = " + oauth1AccessToken.getTokenSecret());
+        LOG.log(Level.INFO,"Access Token = " + oauth1AccessToken.getToken());
+        LOG.log(Level.INFO,"AccessSecret = " + oauth1AccessToken.getTokenSecret());
         return accessToken;
 	}
 	
@@ -173,11 +177,11 @@ public class Plugin {
 		long expireTime = Utils.getJSONDecodedAccessToken(SymmetricAESKey.decrypt(oauth2AccessToken.getAccessTokenKey())).getJSONObject("part_02").getLong("exp");
 		long currentTime = new Date().getTime()/1000L;
 		boolean isExpired = expireTime<currentTime;
-		System.out.println("access token decrypt : " + SymmetricAESKey.decrypt(oauth2AccessToken.getAccessTokenKey()));
-		System.out.println("refresh access token decrypt : " + SymmetricAESKey.decrypt(oauth2AccessToken.getRefreshTokenKey()));
-		System.out.println("Expire time : "+ expireTime);
-		System.out.println("Current time : "+ currentTime);
-		System.out.println("expire in : " + (expireTime - currentTime) + "secondes");
+		LOG.log(Level.INFO,"access token decrypt : " + SymmetricAESKey.decrypt(oauth2AccessToken.getAccessTokenKey()));
+		LOG.log(Level.INFO,"refresh access token decrypt : " + SymmetricAESKey.decrypt(oauth2AccessToken.getRefreshTokenKey()));
+		LOG.log(Level.INFO,"Expire time : "+ expireTime);
+		LOG.log(Level.INFO,"Current time : "+ currentTime);
+		LOG.log(Level.INFO,"expire in : " + (expireTime - currentTime) + "secondes");
 	}
 	
 	/************************************************* Data******************************************************/
@@ -198,10 +202,11 @@ public class Plugin {
 	        System.out.println();
 	        StringWriter sw = new StringWriter();
 	        marshaller.marshal(t,sw);
-	        System.out.println("@marshallJson Marshall = " + sw.toString()); 
+	        LOG.log(Level.INFO,"Marshall = " + sw.toString()); 
 		} catch (JAXBException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			LOG.log(Level.SEVERE,e.getMessage(),e);
 		}    
         return t;
 	}
