@@ -72,17 +72,6 @@ public class Garmin {
 		return protectedListDataOauth;
 	}
 	
-	/*//TODO trouver un moyen d'envoyer directement un RequestProtectedData<Oauth1AccessToken> � la place du String 
-	@Path("/protecteddata/testgeneric")
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	public RequestProtectedData<Oauth1AccessToken> getAGeneric (String genericJson) {
-		//System.out.println("geneic entity" + genericEntity.getEntity().getOauthAccessToken().getAccessTokenKey());
-		RequestProtectedData<Oauth1AccessToken> requestProtectedData = deserializeRequestProtectedData(genericJson);
-		System.out.println("Cocuou");
-		return requestProtectedData;
-	}*/
-	
 	@Path("/revoke")
 	@DELETE
 	public void revoke(Oauth1AccessToken oauth1AccessToken ) {
