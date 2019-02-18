@@ -1,5 +1,8 @@
 package main;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -10,11 +13,14 @@ import javax.ws.rs.core.MediaType;
 import domaine.oauth.ProtectedDataOauth;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
+import metier.Plugin;
 import metier.fitbit.FitbitPlugin;
 import pojo.fitbit.Profil;
 
 @Path("/fitbit")
 public class Fitbit {
+	
+	private static final Logger LOG = Logger.getLogger(Fitbit.class.getName());
 	
 	@Path("/authorization")
 	@GET
@@ -44,6 +50,14 @@ public class Fitbit {
 		return FitbitPlugin.getProfil(oauth2AccessToken);
 	}
 	
+	@Path("/protecteddata/hearthrate")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Oauth2AccessToken protectedDataHearthRate (@QueryParam ("date") String date,Oauth2AccessToken oauth2AccessToken) {
+		LOG.log(Level.INFO, String.format("Request protectedDataHearthRate date : %s token :  %s", date,oauth2AccessToken.getAccessTokenKey()));
+		return oauth2AccessToken;
+		//return FitbitPlugin.getHearthRate(oauth2AccessToken,date);
+	}
 	
 
 }
