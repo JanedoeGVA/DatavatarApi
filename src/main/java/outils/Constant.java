@@ -15,6 +15,7 @@ public class Constant {
     public static final String FITBIT_CALLBACK_URL = "datavatarapp://fitbit/oauth2/verification";
     
 	public static final String FITBIT_PROTECTED_RESOURCE_PROFIL_URL = " https://api.fitbit.com/1/user/-/profile.json";
+	public static final String FITBIT_PROTECTED_RESOURCE_HEARTH_RATE_URL = "https://api.fitbit.com/1/user/-/activities/heart/date/%s.json";
 	
 	/**Withings*/
 	public static final String WITHINGS_PROPS = "withings.properties";

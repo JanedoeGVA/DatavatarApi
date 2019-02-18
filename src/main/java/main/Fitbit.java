@@ -16,6 +16,7 @@ import domaine.oauth2.Oauth2Authorisation;
 import metier.Plugin;
 import metier.fitbit.FitbitPlugin;
 import pojo.fitbit.Profil;
+import pojo.fitbit.hearthrate.HearthRateInterval;
 
 @Path("/fitbit")
 public class Fitbit {
@@ -53,10 +54,8 @@ public class Fitbit {
 	@Path("/protecteddata/hearthrate")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Oauth2AccessToken protectedDataHearthRate (@QueryParam ("date") String date,Oauth2AccessToken oauth2AccessToken) {
-		LOG.log(Level.INFO, String.format("Request protectedDataHearthRate date : %s token :  %s", date,oauth2AccessToken.getAccessTokenKey()));
-		return oauth2AccessToken;
-		//return FitbitPlugin.getHearthRate(oauth2AccessToken,date);
+	public ProtectedDataOauth<HearthRateInterval, Oauth2AccessToken> protectedDataHearthRate (@QueryParam ("date") String date,Oauth2AccessToken oauth2AccessToken) {
+		return FitbitPlugin.getHearthRate(oauth2AccessToken,date);
 	}
 	
 
