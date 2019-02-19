@@ -65,8 +65,9 @@ public class FitbitPlugin {
 		// add header for authentication (Fitbit complication..... :()
 		//request.addHeader("Authorization", "Bearer " + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
 		// request.addHeader("Authorization", "Bearer " + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
-		String tok = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMkNSVlQiLCJzdWIiOiI1SjNKM0wiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyYWN0IHJsb2MgcndlaSByaHIgcm51dCByc2xlIiwiZXhwIjoxNTUwNjE0OTk1LCJpYXQiOjE1NTA1ODYxOTV9.f2yZiV5eHhNTnqZYpevuf3ntULLh7_5A6k5QMIb8uB4";
-		request.addHeader("Authorization", "Bearer " + tok);
+		//String token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMkNSVlQiLCJzdWIiOiI1SjNKM0wiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyYWN0IHJsb2MgcndlaSByaHIgcm51dCByc2xlIiwiZXhwIjoxNTUwNjE0OTk1LCJpYXQiOjE1NTA1ODYxOTV9.f2yZiV5eHhNTnqZYpevuf3ntULLh7_5A6k5QMIb8uB4";
+		String token = SymmetricAESKey.decrypt(accessToken.getAccessTokenKey());
+		request.addHeader("Authorization", "Bearer " + token);
 		LOG.log(Level.INFO,"request : " + request.toString());
 		Response response = null;
 		try {
@@ -74,6 +75,8 @@ public class FitbitPlugin {
 			LOG.log(Level.INFO,"Response success");
 		} catch (InterruptedException | ExecutionException | IOException e1) {
 			LOG.log(Level.SEVERE,e1.getMessage(),e1);
+		} catch(Exception e) {
+			LOG.log(Level.SEVERE,e.getMessage(),e);
 		}
 		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
 		try {
