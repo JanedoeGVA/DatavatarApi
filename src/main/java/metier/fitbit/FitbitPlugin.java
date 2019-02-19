@@ -64,6 +64,7 @@ public class FitbitPlugin {
 		request.addHeader("x-li-format", "json");
 		// add header for authentication (Fitbit complication..... :()
 		request.addHeader("Authorization", "Bearer " + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
+		LOG.log(Level.INFO,"request : " + request.toString());
 		Response response = null;
 		try {
 			response = service.execute(request);
