@@ -49,14 +49,16 @@ public class FitbitPlugin {
 
 	public static ProtectedDataOauth<HearthRateInterval,Oauth2AccessToken> getHearthRate (Oauth2AccessToken accessToken, String date) {
 		String url =  String.format(Constant.FITBIT_PROTECTED_RESOURCE_HEARTH_RATE_URL,date);
+		LOG.log(Level.INFO,"URL : " + url);
 		ProtectedDataOauth<HearthRateInterval,Oauth2AccessToken> protectedHearthRate = getGenericProtectedRessources(accessToken, getService(), HearthRateInterval.class, Verb.GET, url);
 		return protectedHearthRate;
 	}
 
 	public static <T> ProtectedDataOauth<T,Oauth2AccessToken> getGenericProtectedRessources(Oauth2AccessToken accessToken, OAuth20Service service, Class<T> classT, Verb verb, String urlRequest) { 
+		LOG.log(Level.INFO,"Generate request... ");
 		OAuthRequest request = new OAuthRequest(verb, urlRequest);
 		request.addHeader("x-li-format", "json");
-		//add header for authentication (Fitbit complication..... :()
+		// add header for authentication (Fitbit complication..... :()
 		request.addHeader("Authorization", "Bearer " + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
 		Response response = null;
 		try {
