@@ -56,6 +56,8 @@ public class Fitbit {
 	@Produces(MediaType.APPLICATION_JSON)
 	public ProtectedDataOauth<HearthRateInterval, Oauth2AccessToken> protectedDataHearthRate (@QueryParam ("date") String date,Oauth2AccessToken oauth2AccessToken) {
 		LOG.log(Level.INFO,"requesting DataHearthRate");
+		LOG.log(Level.INFO,"date :" + date);
+		LOG.log(Level.INFO, "token : " + oauth2AccessToken.toString());
 		return FitbitPlugin.getHearthRate(oauth2AccessToken,date);
 	}
 	
