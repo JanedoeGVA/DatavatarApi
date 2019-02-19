@@ -91,6 +91,7 @@ public class FitbitPlugin {
 				return protectedDataOauth;
 			}
 		}
+		LOG.log(Level.INFO,"Response JSON = " + response);
 		T t = Plugin.unMarshallGenericJSON(response,classT);
 		protectedDataOauth.setOauthAccessTokenT(accessToken);
 		protectedDataOauth.setProtectedDataT(t);
