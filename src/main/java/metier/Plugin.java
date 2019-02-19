@@ -38,9 +38,9 @@ import outils.SymmetricAESKey;
 import outils.Utils;
 
 public class Plugin {
-	
+
 	private static final Logger LOG = Logger.getLogger(Plugin.class.getName());
-	
+
 	public static Oauth1Authorisation oauth10Authorisation(String provider,OAuth10aService service) {
 		LOG.log(Level.INFO, String.format("Performing authorisation OAUTH1 for %s", provider));
 		OAuth1RequestToken oauth1AuthRequest = null;
@@ -58,30 +58,30 @@ public class Plugin {
 		LOG.log(Level.INFO, "Request token created");
 		return oauth1Auth;
 	}
-	
+
 	public static Oauth2Authorisation oauth20UrlVerification(String provider,OAuth20Service service) {
 		LOG.log(Level.INFO, String.format("Setting URL verification OAUTH2 for %s", provider));
-    		Oauth2Authorisation oauth2Auth = new Oauth2Authorisation();
-    		oauth2Auth.setProvider(provider);
-    		oauth2Auth.setUrlVerification(service.getAuthorizationUrl());
-    		LOG.log(Level.INFO, String.format("URL verification is %s", oauth2Auth.getUrlVerification()));
-        return oauth2Auth;
-    }
-	
+		Oauth2Authorisation oauth2Auth = new Oauth2Authorisation();
+		oauth2Auth.setProvider(provider);
+		oauth2Auth.setUrlVerification(service.getAuthorizationUrl());
+		LOG.log(Level.INFO, String.format("URL verification is %s", oauth2Auth.getUrlVerification()));
+		return oauth2Auth;
+	}
+
 	public static Oauth1AccessToken oauth10AccessToken(String provider,String requestTokenKey,String encryptedRequestTokenSecret,String verifier,OAuth10aService service) {
 		LOG.log(Level.INFO, String.format("Performing AccessToken OAuth1 for", provider));
 		final OAuth1RequestToken requestToken = new OAuth1RequestToken(requestTokenKey, SymmetricAESKey.decrypt(encryptedRequestTokenSecret));
-        OAuth1AccessToken oauth1AccessToken = null;
+		OAuth1AccessToken oauth1AccessToken = null;
 		try {
 			oauth1AccessToken = service.getAccessToken(requestToken, verifier);
 		} catch (IOException | InterruptedException | ExecutionException e) {
 			LOG.log(Level.WARNING,e.getMessage(),e);
 		}
-        Oauth1AccessToken accessToken = new Oauth1AccessToken(provider,SymmetricAESKey.encrypt(oauth1AccessToken.getToken()),SymmetricAESKey.encrypt(oauth1AccessToken.getTokenSecret()),true);
-        LOG.log(Level.INFO, String.format("AccessToken Oauth1 for %s created successfull",provider));
-        return accessToken;
+		Oauth1AccessToken accessToken = new Oauth1AccessToken(provider,SymmetricAESKey.encrypt(oauth1AccessToken.getToken()),SymmetricAESKey.encrypt(oauth1AccessToken.getTokenSecret()),true);
+		LOG.log(Level.INFO, String.format("AccessToken Oauth1 for %s created successfull",provider));
+		return accessToken;
 	}
-	
+
 	public static Oauth2AccessToken oauth20AccessToken (String provider,String code,OAuth20Service service) {
 		LOG.log(Level.INFO, String.format("Performing AccessToken OAuth2 for %s", provider));
 		OAuth2AccessToken oauth2accessToken = null;
@@ -89,12 +89,15 @@ public class Plugin {
 			oauth2accessToken = service.getAccessToken(code);
 		} catch (IOException | InterruptedException | ExecutionException e) {
 			LOG.log(Level.WARNING, e.getMessage(),e);
+		} catch (Exception ex) {
+			LOG.log(Level.WARNING, ex.getMessage(),ex);
 		}
+		LOG.log(Level.INFO, "creating access token");
 		Oauth2AccessToken accessToken = new Oauth2AccessToken(provider,SymmetricAESKey.encrypt(oauth2accessToken.getAccessToken()),SymmetricAESKey.encrypt(oauth2accessToken.getRefreshToken()),true);
 		LOG.log(Level.INFO, String.format("AccessToken Oauth2 for %s created successfull",provider));
 		return accessToken;
-    }
-	
+	}
+
 	public static void refreshAccessToken (Oauth2AccessToken accessToken, OAuth20Service service) {
 		LOG.log(Level.INFO, String.format("Performing RefreshToken for", accessToken.getProvider()));
 		OAuth2AccessToken oauth2accessToken = null;
@@ -116,7 +119,7 @@ public class Plugin {
 		accessToken.setRefreshTokenKey(SymmetricAESKey.encrypt(oauth2accessToken.getRefreshToken()));
 		LOG.log(Level.INFO, String.format("AccessToken refreshed for %s",accessToken.getProvider()));
 	}
-	
+
 	public static void revoke(String tokenToRevoke,OAuth20Service service) {
 		LOG.log(Level.INFO, String.format("Revoking Token on %s", service.getApi().getRevokeTokenEndpoint()));
 		try {
@@ -125,7 +128,7 @@ public class Plugin {
 		} catch (IOException | InterruptedException | ExecutionException e) {
 			LOG.log(Level.INFO, String.format("Revoke fail %s",e.getMessage()),e);
 		}
-		
+
 	}
 
 	public static OAuth10aService getOauth1Service(String props,String callBackURL,DefaultApi10a api) {
@@ -147,15 +150,15 @@ public class Plugin {
 				.state(secretState)
 				.build(api);
 		return service;
-    }
-	
+	}
+
 	public static boolean isAccessTokenExpired (Oauth2AccessToken oauth2AccessToken) {
 		long expireTime = Utils.getJSONDecodedAccessToken(SymmetricAESKey.decrypt(oauth2AccessToken.getAccessTokenKey())).getJSONObject("part_02").getLong("exp");
 		long currentTime = new Date().getTime()/1000L;
 		boolean isExpired = expireTime<currentTime;
 		return isExpired; 
 	}
-	
+
 	public static void stateToken (Oauth2AccessToken oauth2AccessToken) {
 		long expireTime = Utils.getJSONDecodedAccessToken(SymmetricAESKey.decrypt(oauth2AccessToken.getAccessTokenKey())).getJSONObject("part_02").getLong("exp");
 		long currentTime = new Date().getTime()/1000L;
@@ -166,45 +169,45 @@ public class Plugin {
 		LOG.log(Level.INFO,"Current time : "+ currentTime);
 		LOG.log(Level.INFO,"expire in : " + (expireTime - currentTime) + "secondes");
 	}
-	
+
 	/************************************************* Data******************************************************/
 	public static <T> T unMarshallGenericJSON(Response response, Class<T> classT) {
 		LOG.log(Level.INFO, String.format("unMarshall processing for class %s", classT.getName()));
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
-        properties.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
-        properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true); // Uniquement n�cessaire si on veut Marshall
-        T t = null;
+		Map<String, Object> properties = new HashMap<>();
+		properties.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
+		properties.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
+		properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true); // Uniquement n�cessaire si on veut Marshall
+		T t = null;
 		try {
 			JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[]{classT,ObjectFactory.class}, properties);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 			StreamSource jsonSource = new StreamSource(new StringReader(response.getBody()));
-		    t = unmarshaller.unmarshal(jsonSource, classT).getValue();
-		    LOG.log(Level.INFO, String.format("unMarshall success for class %s", classT.getName()));
+			t = unmarshaller.unmarshal(jsonSource, classT).getValue();
+			LOG.log(Level.INFO, String.format("unMarshall success for class %s", classT.getName()));
 		} catch (JAXBException | IOException e) {
 			LOG.log(Level.SEVERE,e.getMessage(),e);
 		}    
-        return t;
+		return t;
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> ArrayList<T> unMarshallGenJSONArray(Response response, Class<T> classT) {
 		LOG.log(Level.INFO, String.format("unMarshall processing for an array of class %s", classT.getName()));
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
-        properties.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
-        properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true); // Uniquement n�cessaire si on veut Marshall
-        ArrayList<T> lstT = new ArrayList<>();
+		Map<String, Object> properties = new HashMap<>();
+		properties.put(JAXBContextProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
+		properties.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
+		properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, true); // Uniquement n�cessaire si on veut Marshall
+		ArrayList<T> lstT = new ArrayList<>();
 		try {
 			JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[]{classT,ObjectFactory.class}, properties);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-	        StreamSource jsonSource = new StreamSource(new StringReader(response.getBody()));
-	        lstT = (ArrayList<T>)unmarshaller.unmarshal(jsonSource, classT).getValue();
-	        LOG.log(Level.INFO, String.format("unMarshall success for an array of class %s", classT.getName()));
+			StreamSource jsonSource = new StreamSource(new StringReader(response.getBody()));
+			lstT = (ArrayList<T>)unmarshaller.unmarshal(jsonSource, classT).getValue();
+			LOG.log(Level.INFO, String.format("unMarshall success for an array of class %s", classT.getName()));
 		} catch (JAXBException | IOException e) {
 			LOG.log(Level.SEVERE,e.getMessage(),e);
 		}
-        return lstT;
+		return lstT;
 	}
-	
+
 }
