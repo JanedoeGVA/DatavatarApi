@@ -49,7 +49,8 @@ public class FitbitPlugin {
 
 	public static ProtectedDataOauth<HearthRateInterval,Oauth2AccessToken> getHearthRate (Oauth2AccessToken accessToken, String date) {
 		// String url =  String.format(Constant.FITBIT_PROTECTED_RESOURCE_HEARTH_RATE_URL,date);
-		String url = "https://api.fitbit.com/1/user/-/activities/heart/date/today/1d/1sec/time/12:05/12:06.json";
+		// String url = "https://api.fitbit.com/1/user/-/activities/heart/date/today/1d/1sec/time/12:05/12:06.json";
+		String url = "https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json";
 		LOG.log(Level.INFO,"URL : " + url);
 		ProtectedDataOauth<HearthRateInterval,Oauth2AccessToken> protectedHearthRate = getGenericProtectedRessources(accessToken, getService(), HearthRateInterval.class, Verb.GET, url);
 		return protectedHearthRate;
