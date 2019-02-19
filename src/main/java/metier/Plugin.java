@@ -64,7 +64,7 @@ public class Plugin {
     		Oauth2Authorisation oauth2Auth = new Oauth2Authorisation();
     		oauth2Auth.setProvider(provider);
     		oauth2Auth.setUrlVerification(service.getAuthorizationUrl());
-    		LOG.log(Level.INFO, String.format("URL verification is ", oauth2Auth.getUrlVerification()));
+    		LOG.log(Level.INFO, String.format("URL verification is %s", oauth2Auth.getUrlVerification()));
         return oauth2Auth;
     }
 	
@@ -75,7 +75,7 @@ public class Plugin {
 		try {
 			oauth1AccessToken = service.getAccessToken(requestToken, verifier);
 		} catch (IOException | InterruptedException | ExecutionException e) {
-			LOG.log(Level.WARNING, String.format("AccessToken OAuth1 creation failure %s",e.getMessage()),e);
+			LOG.log(Level.WARNING,e.getMessage(),e);
 		}
         Oauth1AccessToken accessToken = new Oauth1AccessToken(provider,SymmetricAESKey.encrypt(oauth1AccessToken.getToken()),SymmetricAESKey.encrypt(oauth1AccessToken.getTokenSecret()),true);
         LOG.log(Level.INFO, String.format("AccessToken Oauth1 for %s created successfull",provider));
@@ -83,7 +83,7 @@ public class Plugin {
 	}
 	
 	public static Oauth2AccessToken oauth20AccessToken (String provider,String code,OAuth20Service service) {
-		LOG.log(Level.INFO, String.format("Performing AccessToken OAuth2 for", provider));
+		LOG.log(Level.INFO, String.format("Performing AccessToken OAuth2 for %s", provider));
 		OAuth2AccessToken oauth2accessToken = null;
 		try {
 			oauth2accessToken = service.getAccessToken(code);
