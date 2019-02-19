@@ -61,11 +61,12 @@ public class FitbitPlugin {
 		LOG.log(Level.INFO,"Generate request... ");
 		OAuthRequest request = new OAuthRequest(verb, urlRequest);
 		LOG.log(Level.INFO,String.format("Access Token : key : %s , provider : %s , secret: %s , isValide : %s" , accessToken.getAccessTokenKey(),accessToken.getProvider(),accessToken.getRefreshTokenKey(),accessToken.getIsValide()));
-		//request.addHeader("x-li-format", "json");
+		request.addHeader("x-li-format", "json");
 		// add header for authentication (Fitbit complication..... :()
 		//request.addHeader("Authorization", "Bearer " + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
-		request.addHeader("accept", "application/json");
-		request.addHeader("authorization", "Bearer " + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
+		// request.addHeader("Authorization", "Bearer " + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
+		String tok = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMkNSVlQiLCJzdWIiOiI1SjNKM0wiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyYWN0IHJsb2MgcndlaSByaHIgcm51dCByc2xlIiwiZXhwIjoxNTUwNjE0OTk1LCJpYXQiOjE1NTA1ODYxOTV9.f2yZiV5eHhNTnqZYpevuf3ntULLh7_5A6k5QMIb8uB4";
+		request.addHeader("Authorization", "Bearer " + tok);
 		LOG.log(Level.INFO,"request : " + request.toString());
 		Response response = null;
 		try {
