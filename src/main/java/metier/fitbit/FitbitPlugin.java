@@ -76,7 +76,11 @@ public class FitbitPlugin {
 			LOG.log(Level.SEVERE,e1.getMessage(),e1);
 		}
 		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
-		LOG.log(Level.INFO,String.format("Body : %s ",response.getBody()));
+		try {
+			LOG.log(Level.INFO,String.format("Body : %s ",response.getBody()));
+		} catch (Exception e) {
+			LOG.log(Level.SEVERE,e.getMessage(),e);
+		}
 		ProtectedDataOauth<T,Oauth2AccessToken> protectedDataOauth = new ProtectedDataOauth<>();
 		if (response.getCode() == javax.ws.rs.core.Response.Status.UNAUTHORIZED.getStatusCode()) {
 			LOG.log(Level.INFO,"Refreshing token processing...");
