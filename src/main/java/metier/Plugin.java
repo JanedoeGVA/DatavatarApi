@@ -85,9 +85,6 @@ public class Plugin {
 	public static Oauth2AccessToken oauth20AccessToken (String provider,String code,OAuth20Service service) {
 		LOG.log(Level.INFO, String.format("Performing AccessToken OAuth2 for %s", provider));
 		OAuth2AccessToken oauth2accessToken = null;
-		LOG.log(Level.INFO, String.format("Code : %s", code));
-		LOG.log(Level.INFO, String.format("Service secret : %s", service.getApiSecret()));
-		LOG.log(Level.INFO, String.format("Service secret : %s", service.getApiKey()));
 		try {
 			oauth2accessToken = service.getAccessToken(code);
 		} catch (IOException | InterruptedException | ExecutionException e) {
