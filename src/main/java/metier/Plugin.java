@@ -88,7 +88,7 @@ public class Plugin {
 		try {
 			oauth2accessToken = service.getAccessToken(code);
 		} catch (IOException | InterruptedException | ExecutionException e) {
-			LOG.log(Level.WARNING, String.format("AccessToken OAuth2 creation failure %s",e.getMessage()),e);
+			LOG.log(Level.WARNING, e.getMessage(),e);
 		}
 		Oauth2AccessToken accessToken = new Oauth2AccessToken(provider,SymmetricAESKey.encrypt(oauth2accessToken.getAccessToken()),SymmetricAESKey.encrypt(oauth2accessToken.getRefreshToken()),true);
 		LOG.log(Level.INFO, String.format("AccessToken Oauth2 for %s created successfull",provider));
