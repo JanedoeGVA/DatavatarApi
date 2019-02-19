@@ -59,6 +59,7 @@ public class FitbitPlugin {
 	public static <T> ProtectedDataOauth<T,Oauth2AccessToken> getGenericProtectedRessources(Oauth2AccessToken accessToken, OAuth20Service service, Class<T> classT, Verb verb, String urlRequest) { 
 		LOG.log(Level.INFO,String.format("Generate request with %s to URL : %s",verb,urlRequest));
 		LOG.log(Level.INFO,"Generate request... ");
+		LOG.log(Level.INFO,"decrypt token" + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
 		OAuthRequest request = new OAuthRequest(verb, urlRequest);
 		LOG.log(Level.INFO,String.format("Access Token : key : %s , provider : %s , secret: %s , isValide : %s" , accessToken.getAccessTokenKey(),accessToken.getProvider(),accessToken.getRefreshTokenKey(),accessToken.getIsValide()));
 		request.addHeader("x-li-format", "json");
