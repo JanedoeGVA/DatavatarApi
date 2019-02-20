@@ -5,6 +5,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.core.Response;
+
+import org.glassfish.jersey.server.JSONP;
+import org.json.JSONObject;
+
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
@@ -14,7 +18,7 @@ import domaine.oauth2.Oauth2Authorisation;
 import metier.Plugin;
 import outils.Constant;
 import outils.SymmetricAESKey;
-import pojo.fitbit.hearthrate.HearthRateInterval;
+import pojo.fitbit.hearthrate.HearthRate;
 
 
 public class FitbitPlugin {
@@ -54,7 +58,7 @@ public class FitbitPlugin {
 	public static Response getHearthRate(String encryptToken, String startDate, String endDate,String detailLevel) {
 		String url = String.format(Constant.FITBIT_PROTECTED_RESOURCE_HEARTH_RATE_URL,startDate,endDate,detailLevel);
 		LOG.log(Level.INFO,"URL : " + url);
-		Response response = requestData(SymmetricAESKey.decrypt(encryptToken), getService(), HearthRateInterval.class, Verb.GET, url);
+		Response response = requestData(SymmetricAESKey.decrypt(encryptToken), getService(), HearthRate.class, Verb.GET, url);
 		return response;
 	}
 
@@ -76,12 +80,24 @@ public class FitbitPlugin {
 		}
 		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
 		if (response.getCode() == Response.Status.OK.getStatusCode()) {
-			T entityT = Plugin.unMarshallGenericJSON(response, classT);
-			// TODO: traitement sur entity ? parser ??
-			return Response
-					.status(response.getCode())
-					.entity(entityT)
-					.build();
+			try {
+				JSONObject jsonObj = new JSONObject(response.getBody());
+				JSONObject jsonParse = Parser.parseHearthRate(jsonObj);
+				T entityT = Plugin.unMarshallGenericJSON(jsonParse.toString(), classT);
+				// TODO: traitement sur entity ? parser ??
+				return Response
+						.status(response.getCode())
+						.entity(entityT)
+						.build();
+			} catch (Exception e) {
+				LOG.log(Level.WARNING,e.getMessage(),e);
+				return Response
+						.status(response.getCode())
+						.entity("error parsing")
+						.build();
+			}
+
+
 		} else {
 			String body = "error";
 			try {
@@ -95,57 +111,57 @@ public class FitbitPlugin {
 					.build();
 		}	
 	}
-	
-	
-		//		LOG.log(Level.INFO,"Generate request... ");
-		//		OAuthRequest request = new OAuthRequest(verb, urlRequest);
-		//		LOG.log(Level.INFO,String.format("Access Token : key : %s , provider : %s , secret: %s , isValide : %s" , accessToken.getAccessTokenKey(),accessToken.getProvider(),accessToken.getRefreshTokenKey(),accessToken.getIsValide()));
-		//		request.addHeader("x-li-format", "json");
-		//		String token = SymmetricAESKey.decrypt(accessToken.getAccessTokenKey());
-		//		request.addHeader("Authorization", "Bearer " + token);
-		//		LOG.log(Level.INFO,"request : " + request.toString());
-		//		com.github.scribejava.core.model.Response response = null;
-		//		try {
-		//			response = service.execute(request);
-		//			LOG.log(Level.INFO,"Response success");
-		//		} catch (InterruptedException | ExecutionException | IOException e1) {
-		//			LOG.log(Level.SEVERE,e1.getMessage(),e1);
-		//		} catch(Exception e) {
-		//			LOG.log(Level.SEVERE,e.getMessage(),e);
-		//		}
-		//		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
-		//		try {
-		//			LOG.log(Level.INFO,String.format("Body : %s ",response.getBody()));
-		//		} catch (Exception e) {
-		//			LOG.log(Level.SEVERE,e.getMessage(),e);
-		//		}
-		//		ProtectedDataOauth<T,Oauth2AccessToken> protectedDataOauth = new ProtectedDataOauth<>();
-		//		if (response.getCode() == javax.ws.rs.core.Response.Status.UNAUTHORIZED.getStatusCode()) {
-		//			LOG.log(Level.INFO,"Refreshing token processing...");
-		//			Plugin.refreshAccessToken(accessToken, service);
-		//			if (accessToken.getIsValide()) {
-		//				request = new OAuthRequest(verb, urlRequest);
-		//				request.addHeader("x-li-format", "json");
-		//				//add header for authentication (Fitbit complication..... :()
-		//				request.addHeader("Authorization", "Bearer " + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
-		//				try {
-		//					response = service.execute(request);
-		//					LOG.log(Level.INFO,String.format("Response refresh token code/message : %s / %s",response.getCode(),response.getMessage()));
-		//				} catch (InterruptedException | ExecutionException | IOException e) {
-		//					LOG.log(Level.SEVERE,e.getMessage(),e);
-		//				}
-		//			} else {
-		//				protectedDataOauth.setOauthAccessTokenT(accessToken);
-		//				LOG.log(Level.INFO,"Invalid token");
-		//				return protectedDataOauth;
-		//			}
-		//		}
-		//		LOG.log(Level.INFO,"Response JSON = " + response);
-		//		T t = Plugin.unMarshallGenericJSON(response,classT);
-		//		protectedDataOauth.setOauthAccessTokenT(accessToken);
-		//		protectedDataOauth.setProtectedDataT(t);
-		//		LOG.log(Level.INFO,"token isValide : " + accessToken.getIsValide());
-		//		return protectedDataOauth;
+
+
+	//		LOG.log(Level.INFO,"Generate request... ");
+	//		OAuthRequest request = new OAuthRequest(verb, urlRequest);
+	//		LOG.log(Level.INFO,String.format("Access Token : key : %s , provider : %s , secret: %s , isValide : %s" , accessToken.getAccessTokenKey(),accessToken.getProvider(),accessToken.getRefreshTokenKey(),accessToken.getIsValide()));
+	//		request.addHeader("x-li-format", "json");
+	//		String token = SymmetricAESKey.decrypt(accessToken.getAccessTokenKey());
+	//		request.addHeader("Authorization", "Bearer " + token);
+	//		LOG.log(Level.INFO,"request : " + request.toString());
+	//		com.github.scribejava.core.model.Response response = null;
+	//		try {
+	//			response = service.execute(request);
+	//			LOG.log(Level.INFO,"Response success");
+	//		} catch (InterruptedException | ExecutionException | IOException e1) {
+	//			LOG.log(Level.SEVERE,e1.getMessage(),e1);
+	//		} catch(Exception e) {
+	//			LOG.log(Level.SEVERE,e.getMessage(),e);
+	//		}
+	//		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
+	//		try {
+	//			LOG.log(Level.INFO,String.format("Body : %s ",response.getBody()));
+	//		} catch (Exception e) {
+	//			LOG.log(Level.SEVERE,e.getMessage(),e);
+	//		}
+	//		ProtectedDataOauth<T,Oauth2AccessToken> protectedDataOauth = new ProtectedDataOauth<>();
+	//		if (response.getCode() == javax.ws.rs.core.Response.Status.UNAUTHORIZED.getStatusCode()) {
+	//			LOG.log(Level.INFO,"Refreshing token processing...");
+	//			Plugin.refreshAccessToken(accessToken, service);
+	//			if (accessToken.getIsValide()) {
+	//				request = new OAuthRequest(verb, urlRequest);
+	//				request.addHeader("x-li-format", "json");
+	//				//add header for authentication (Fitbit complication..... :()
+	//				request.addHeader("Authorization", "Bearer " + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
+	//				try {
+	//					response = service.execute(request);
+	//					LOG.log(Level.INFO,String.format("Response refresh token code/message : %s / %s",response.getCode(),response.getMessage()));
+	//				} catch (InterruptedException | ExecutionException | IOException e) {
+	//					LOG.log(Level.SEVERE,e.getMessage(),e);
+	//				}
+	//			} else {
+	//				protectedDataOauth.setOauthAccessTokenT(accessToken);
+	//				LOG.log(Level.INFO,"Invalid token");
+	//				return protectedDataOauth;
+	//			}
+	//		}
+	//		LOG.log(Level.INFO,"Response JSON = " + response);
+	//		T t = Plugin.unMarshallGenericJSON(response,classT);
+	//		protectedDataOauth.setOauthAccessTokenT(accessToken);
+	//		protectedDataOauth.setProtectedDataT(t);
+	//		LOG.log(Level.INFO,"token isValide : " + accessToken.getIsValide());
+	//		return protectedDataOauth;
 	// }
 
 	//		public static <T> ProtectedDataOauth<T,Oauth2AccessToken> getGenericProtectedRessources(Oauth2AccessToken accessToken, OAuth20Service service, Class<T> classT, Verb verb, String urlRequest) { 

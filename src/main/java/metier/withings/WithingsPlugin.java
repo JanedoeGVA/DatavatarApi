@@ -83,8 +83,8 @@ public class WithingsPlugin {
 		}
 		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
 		if (response.getCode() == Response.Status.OK.getStatusCode()) {
-			T entityT = Plugin.unMarshallGenericJSON(response, classT);
-			// TODO: traitement sur entity ? parser ??
+			// TODO: ATTENTION IL FAUT ENVOYER LE JSON PARSE COMME POUR FITBIT
+			T entityT = Plugin.unMarshallGenericJSON("", classT);
 			return Response
 					.status(response.getCode())
 					.entity(entityT)
