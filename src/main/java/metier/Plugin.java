@@ -178,7 +178,9 @@ public class Plugin {
 		try {
 			JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[]{classT,ObjectFactory.class}, properties);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-			StreamSource jsonSource = new StreamSource(new StringReader(response.getBody()));
+			String body = response.getBody();
+			LOG.log(Level.INFO,"Body : " + body);
+			StreamSource jsonSource = new StreamSource(new StringReader(body));
 			t = unmarshaller.unmarshal(jsonSource, classT).getValue();
 			LOG.log(Level.INFO, String.format("unMarshall success for class %s", classT.getName()));
 		} catch (JAXBException | IOException e) {
