@@ -65,7 +65,7 @@ public class GarminPlugin {
 			System.out.println("response " + resp.getCode() + resp.getBody());
 		    System.out.println("Request body : " + resp.getBody());
 		    if (resp.getCode() == javax.ws.rs.core.Response.Status.FORBIDDEN.getStatusCode()) { //error 403 token has been revoke
-		    	protectedT.getOauthAccessToken().setIsValide(false);
+		    	// protectedT.getOauthAccessToken().setIsValide(false);
 		    	return protectedT;
 		    }
 		} catch (InterruptedException | ExecutionException | IOException e1) {
@@ -75,7 +75,7 @@ public class GarminPlugin {
 		System.out.println("Request code : " + resp.getCode());
 	    ArrayList<T> lstT = Plugin.unMarshallGenJSONArray(resp,classT);
 	    protectedT.setLstProtectedDataT(lstT);
-        System.out.println("is valide : " +protectedT.getOauthAccessToken().getIsValide());
+        // System.out.println("is valide : " +protectedT.getOauthAccessToken().getIsValide());
         return protectedT;
 	}
 	

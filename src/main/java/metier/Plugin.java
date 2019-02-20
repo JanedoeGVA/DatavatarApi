@@ -77,7 +77,7 @@ public class Plugin {
 		} catch (IOException | InterruptedException | ExecutionException e) {
 			LOG.log(Level.WARNING,e.getMessage(),e);
 		}
-		Oauth1AccessToken accessToken = new Oauth1AccessToken(provider,SymmetricAESKey.encrypt(oauth1AccessToken.getToken()),SymmetricAESKey.encrypt(oauth1AccessToken.getTokenSecret()),true);
+		Oauth1AccessToken accessToken = new Oauth1AccessToken(provider,SymmetricAESKey.encrypt(oauth1AccessToken.getToken()),SymmetricAESKey.encrypt(oauth1AccessToken.getTokenSecret()));
 		LOG.log(Level.INFO, String.format("AccessToken Oauth1 for %s created successfull",provider));
 		return accessToken;
 	}
@@ -93,31 +93,28 @@ public class Plugin {
 			LOG.log(Level.WARNING, ex.getMessage(),ex);
 		}
 		LOG.log(Level.INFO, "creating access token");
-		Oauth2AccessToken accessToken = new Oauth2AccessToken(provider,SymmetricAESKey.encrypt(oauth2accessToken.getAccessToken()),SymmetricAESKey.encrypt(oauth2accessToken.getRefreshToken()),true);
+		Oauth2AccessToken accessToken = new Oauth2AccessToken(provider,SymmetricAESKey.encrypt(oauth2accessToken.getAccessToken()),SymmetricAESKey.encrypt(oauth2accessToken.getRefreshToken()));
 		LOG.log(Level.INFO, String.format("AccessToken Oauth2 for %s created successfull",provider));
 		return accessToken;
 	}
 
-	public static void refreshAccessToken (Oauth2AccessToken accessToken, OAuth20Service service) {
-		LOG.log(Level.INFO, String.format("Performing RefreshToken for", accessToken.getProvider()));
-		OAuth2AccessToken oauth2accessToken = null;
+	public static Oauth2AccessToken refreshAccessToken (String provider,String refreshToken, OAuth20Service service) {
+		LOG.log(Level.INFO, String.format("Performing RefreshToken for", provider));
+		Oauth2AccessToken oauth2accessToken = null;
 		try {
-			oauth2accessToken = service.refreshAccessToken(SymmetricAESKey.decrypt(accessToken.getRefreshTokenKey()));
-			LOG.log(Level.INFO, String.format("RefreshToken created for %s",accessToken.getProvider()));
+			OAuth2AccessToken token = service.refreshAccessToken(SymmetricAESKey.decrypt(refreshToken));
+			oauth2accessToken = new Oauth2AccessToken(provider, SymmetricAESKey.encrypt(token.getAccessToken()), SymmetricAESKey.encrypt(token.getRefreshToken()));
+			LOG.log(Level.INFO, String.format("RefreshToken created for %s",provider));
 		} catch (IOException e) {
-			LOG.log(Level.WARNING, String.format("RefreshToken failure IOException %s",e.getMessage()),e);
+			LOG.log(Level.WARNING, e.getMessage(),e);
 		} catch (InterruptedException e) {
-			LOG.log(Level.WARNING, String.format("RefreshToken failure InterruptedException %s",e.getMessage()),e);
+			LOG.log(Level.WARNING, e.getMessage(),e);
 		} catch (ExecutionException e) {
-			LOG.log(Level.WARNING, String.format("RefreshToken failure ExecutionException %s",e.getMessage()),e);
+			LOG.log(Level.WARNING, e.getMessage(),e);
 		} catch (OAuthException e) {
-			LOG.log(Level.WARNING, String.format("RefreshToken failure OAuthException %s, AccessToken set to invalide",e.getMessage()),e);
-			accessToken.setIsValide(false);
-			return;
+			LOG.log(Level.WARNING, e.getMessage(),e);
 		}
-		accessToken.setAccessTokenKey(SymmetricAESKey.encrypt(oauth2accessToken.getAccessToken()));
-		accessToken.setRefreshTokenKey(SymmetricAESKey.encrypt(oauth2accessToken.getRefreshToken()));
-		LOG.log(Level.INFO, String.format("AccessToken refreshed for %s",accessToken.getProvider()));
+		return oauth2accessToken;
 	}
 
 	public static void revoke(String tokenToRevoke,OAuth20Service service) {
