@@ -160,12 +160,10 @@ public class Plugin {
 		return isExpired; 
 	}
 
-	public static void stateToken (Oauth2AccessToken oauth2AccessToken) {
-		long expireTime = Utils.getJSONDecodedAccessToken(SymmetricAESKey.decrypt(oauth2AccessToken.getAccessTokenKey())).getJSONObject("part_02").getLong("exp");
+	public static void stateToken (String token) {
+		long expireTime = Utils.getJSONDecodedAccessToken(SymmetricAESKey.decrypt(token)).getJSONObject("part_02").getLong("exp");
 		long currentTime = new Date().getTime()/1000L;
 		boolean isExpired = expireTime<currentTime;
-		LOG.log(Level.INFO,"access token decrypt : " + SymmetricAESKey.decrypt(oauth2AccessToken.getAccessTokenKey()));
-		LOG.log(Level.INFO,"refresh access token decrypt : " + SymmetricAESKey.decrypt(oauth2AccessToken.getRefreshTokenKey()));
 		LOG.log(Level.INFO,"Expire time : "+ expireTime);
 		LOG.log(Level.INFO,"Current time : "+ currentTime);
 		LOG.log(Level.INFO,"expire in : " + (expireTime - currentTime) + "secondes");

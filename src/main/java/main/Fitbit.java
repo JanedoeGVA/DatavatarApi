@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
+import metier.Plugin;
 import metier.fitbit.FitbitPlugin;
 
 @Path("/fitbit")
@@ -70,6 +71,7 @@ public class Fitbit {
 			@QueryParam ("end-date") String endDate,
 			@QueryParam ("detail-level") String detailLevel,
 			@HeaderParam("assertion") String encryptToken) {
+		Plugin.stateToken(encryptToken);
 		Response response = FitbitPlugin.getHearthRate(encryptToken,startDate,endDate,detailLevel);
 		return response; 
 

@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
+import metier.Plugin;
 import metier.withings.WithingsPlugin;
 
 @Path("/withings")
@@ -45,6 +46,7 @@ public class Withings {
 			@QueryParam ("date") String startDate,
 			@QueryParam ("end-date") String endDate,
 			@HeaderParam("assertion") String encryptToken) {
+		Plugin.stateToken(encryptToken);
 		return WithingsPlugin.getHearthRate(encryptToken,startDate,endDate); 
 
 	}
