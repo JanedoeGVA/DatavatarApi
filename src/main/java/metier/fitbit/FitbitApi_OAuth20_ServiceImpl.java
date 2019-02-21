@@ -38,6 +38,7 @@ public class FitbitApi_OAuth20_ServiceImpl extends OAuth20Service {
        request.addParameter(OAuthConstants.CLIENT_SECRET, getApiSecret());
        request.addParameter(OAuthConstants.CODE, code);
        request.addParameter(OAuthConstants.REDIRECT_URI, getCallback());
+       request.addParameter("expires_in","3600");
        final String scope = getScope();
        if(scope != null) {
            request.addParameter(OAuthConstants.SCOPE, scope);
