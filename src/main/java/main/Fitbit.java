@@ -1,5 +1,6 @@
 package main;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ws.rs.DELETE;
@@ -78,6 +79,7 @@ public class Fitbit {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response refresh (@HeaderParam("assertion") String refreshToken) {
+		LOG.log(Level.INFO, "refresh :" + refreshToken);
 		Oauth2AccessToken oauth2AccessToken = FitbitPlugin.refresh(refreshToken);
 		if (oauth2AccessToken != null) {
 			return Response.status(Response.Status.OK.getStatusCode())
