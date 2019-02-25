@@ -112,10 +112,10 @@ public class Plugin {
 			String tokenRefresh= token.getRefreshToken();
 			String encryptTokenKey = SymmetricAESKey.encrypt(tokenKey);
 			String encryptTokenRefresh= SymmetricAESKey.encrypt(tokenRefresh);
-			LOG.log(Level.INFO, String.format("Key: ", tokenKey));
-			LOG.log(Level.INFO, String.format("Refresh: ", tokenRefresh));
-			LOG.log(Level.INFO, String.format("EncryptKey: ", encryptTokenKey));
-			LOG.log(Level.INFO, String.format("EncryptRefresh: ", encryptTokenRefresh));
+			LOG.log(Level.INFO, "Key: " + tokenKey);
+			LOG.log(Level.INFO, "Refresh: " + tokenRefresh);
+			LOG.log(Level.INFO, "EncryptKey: " + encryptTokenKey);
+			LOG.log(Level.INFO, "EncryptRefresh: " + encryptTokenRefresh);
 			oauth2accessToken = new Oauth2AccessToken(provider, encryptTokenKey, encryptTokenRefresh);
 		} catch (IOException e) {
 			LOG.log(Level.WARNING, e.getMessage(),e);
