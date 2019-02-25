@@ -99,7 +99,7 @@ public class FitbitPlugin {
 					LOG.log(Level.INFO,String.format("DATA NOT EXIST"));
 					return Response
 							.status(response.getCode())
-							.entity("No Data")
+							.entity("{\"data\":\"No Data\"}")
 							.build();
 				}
 				// TODO: traitement sur entity ? parser ??
