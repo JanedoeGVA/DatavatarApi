@@ -107,8 +107,16 @@ public class Plugin {
 		Oauth2AccessToken oauth2accessToken = null;
 		try {
 			OAuth2AccessToken token = service.refreshAccessToken(SymmetricAESKey.decrypt(refreshToken));
-			oauth2accessToken = new Oauth2AccessToken(provider, SymmetricAESKey.encrypt(token.getAccessToken()), SymmetricAESKey.encrypt(token.getRefreshToken()));
 			LOG.log(Level.INFO, String.format("RefreshToken created for %s",provider));
+			String tokenKey = token.getAccessToken();
+			String tokenRefresh= token.getRefreshToken();
+			String encryptTokenKey = SymmetricAESKey.encrypt(tokenKey);
+			String encryptTokenRefresh= SymmetricAESKey.encrypt(tokenRefresh);
+			LOG.log(Level.INFO, String.format("Key: ", tokenKey));
+			LOG.log(Level.INFO, String.format("Refresh: ", tokenRefresh));
+			LOG.log(Level.INFO, String.format("EncryptKey: ", encryptTokenKey));
+			LOG.log(Level.INFO, String.format("EncryptRefresh: ", encryptTokenRefresh));
+			oauth2accessToken = new Oauth2AccessToken(provider, encryptTokenKey, encryptTokenRefresh);
 		} catch (IOException e) {
 			LOG.log(Level.WARNING, e.getMessage(),e);
 		} catch (InterruptedException e) {

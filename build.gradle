@@ -53,6 +53,12 @@ dependencies {
     // https://github.com/carsdotcom/docker-secrets-java
     compile 'com.cars:docker-secrets:0.2.0'
     
+    // https://mvnrepository.com/artifact/org.restlet.jse/org.restlet.ext.oauth
+	compile group: 'org.restlet.jse', name: 'org.restlet.ext.oauth', version: '2.3.11'
+
+
+    
+    
     project.webAppDirName = 'WebContent'
     
 }

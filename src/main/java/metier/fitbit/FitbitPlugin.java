@@ -6,9 +6,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.server.JSONP;
 import org.json.JSONObject;
-
+import static org.restlet.ext.oauth.OAuthResourceDefs.TOKEN_TYPE_BEARER;
+import static com.github.scribejava.core.model.OAuthConstants.HEADER;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
@@ -66,8 +67,8 @@ public class FitbitPlugin {
 		LOG.log(Level.INFO,String.format("Generate request with %s to URL : %s",verb,urlRequest));
 		LOG.log(Level.INFO,"Generate request... ");
 		OAuthRequest request = new OAuthRequest(verb, urlRequest);
-		request.addHeader("x-li-format", "json");
-		request.addHeader("Authorization", "Bearer " + token);
+		request.addHeader(APPLICATION_JSON, "json");
+		request.addHeader(HEADER, TOKEN_TYPE_BEARER + " " + token);
 		LOG.log(Level.INFO,"request : " + request.toString());
 		com.github.scribejava.core.model.Response response = null;
 		try {
@@ -81,9 +82,16 @@ public class FitbitPlugin {
 		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
 		if (response.getCode() == Response.Status.OK.getStatusCode()) {
 			try {
-				JSONObject jsonObj = new JSONObject(response.getBody());
-				JSONObject jsonParse = Parser.parseHearthRate(jsonObj);
-				T entityT = Plugin.unMarshallGenericJSON(jsonParse.toString(), classT);
+				T entityT;
+				if (!response.getBody().isEmpty()) {
+					LOG.log(Level.INFO,String.format("DATA EXIST"));
+					JSONObject jsonObj = new JSONObject(response.getBody());
+					JSONObject jsonParse = Parser.parseHearthRate(jsonObj);
+					entityT = Plugin.unMarshallGenericJSON(jsonParse.toString(), classT);
+				} else {
+					LOG.log(Level.INFO,String.format("DATA NOT EXIST"));
+					entityT = null;
+				}
 				// TODO: traitement sur entity ? parser ??
 				return Response
 						.status(response.getCode())
@@ -217,8 +225,8 @@ public class FitbitPlugin {
 	//			return protectedDataOauth;
 	//		}
 
-	public static Oauth2AccessToken refresh (String refreshToken) {
-		Oauth2AccessToken oauth2AccessToken = Plugin.refreshAccessToken(Constant.FITBIT_PROVIDER,refreshToken, getService());
+	public static Oauth2AccessToken refresh (String encryptRefreshToken) {
+		Oauth2AccessToken oauth2AccessToken = Plugin.refreshAccessToken(Constant.FITBIT_PROVIDER,encryptRefreshToken, getService());
 		return oauth2AccessToken;
 	}
 
