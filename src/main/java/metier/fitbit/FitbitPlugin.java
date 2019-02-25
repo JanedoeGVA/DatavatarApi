@@ -83,10 +83,11 @@ public class FitbitPlugin {
 		if (response.getCode() == Response.Status.OK.getStatusCode()) {
 			try {
 				T entityT;
-				LOG.log(Level.INFO,"Response body : " + response.getBody());
-				if (!response.getBody().isEmpty()) {
+				String body = response.getBody();
+				LOG.log(Level.INFO,"Response body : " + body);
+				if (!body.isEmpty()) {
 					LOG.log(Level.INFO,String.format("DATA EXIST"));
-					JSONObject jsonObj = new JSONObject(response.getBody());
+					JSONObject jsonObj = new JSONObject(body);
 					JSONObject jsonParse = Parser.parseHearthRate(jsonObj);
 					entityT = Plugin.unMarshallGenericJSON(jsonParse.toString(), classT);
 				} else {
