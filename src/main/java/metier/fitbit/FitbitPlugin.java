@@ -108,7 +108,7 @@ public class FitbitPlugin {
 				LOG.log(Level.WARNING,e.getMessage(),e);
 				return Response
 						.status(response.getCode())
-						.entity("error parsing")
+						.entity("{\"error\":\"code "+ response.getCode() +"\"}")
 						.build();
 			}
 
