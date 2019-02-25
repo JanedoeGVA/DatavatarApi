@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.json.JSONObject;
-import static org.restlet.ext.oauth.OAuthResourceDefs.TOKEN_TYPE_BEARER;
-import static com.github.scribejava.core.model.OAuthConstants.HEADER;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
+import com.github.scribejava.core.model.OAuthConstants;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
@@ -67,8 +68,8 @@ public class FitbitPlugin {
 		LOG.log(Level.INFO,String.format("Generate request with %s to URL : %s",verb,urlRequest));
 		LOG.log(Level.INFO,"Generate request... ");
 		OAuthRequest request = new OAuthRequest(verb, urlRequest);
-		request.addHeader(APPLICATION_JSON, "json");
-		request.addHeader(HEADER, TOKEN_TYPE_BEARER + " " + token);
+		request.addHeader(MediaType.APPLICATION_JSON, Constant.JSON_MEDIA_TYPE);
+		request.addHeader(OAuthConstants.HEADER, Constant.TOKEN_TYPE_BEARER + " " + token);
 		LOG.log(Level.INFO,"request : " + request.toString());
 		com.github.scribejava.core.model.Response response = null;
 		try {

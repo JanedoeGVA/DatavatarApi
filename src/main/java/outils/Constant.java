@@ -2,6 +2,13 @@ package outils;
 
 public class Constant {
 	
+	public static final String JSON_MEDIA_TYPE = "json";
+	public static final String TOKEN = "token";
+	public static final String EXPIRES_IN = "expires_in";
+	public static final String TOKEN_TYPE_BEARER = "Bearer";
+	
+	public static final String ONE_HOUR = "3600";
+	
 	public static final String HOST = "http://datavatar.sytes.net:8080/";
 	
 	/**Fitbit*/
