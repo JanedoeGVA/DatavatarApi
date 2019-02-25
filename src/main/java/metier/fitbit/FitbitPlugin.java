@@ -83,6 +83,7 @@ public class FitbitPlugin {
 		if (response.getCode() == Response.Status.OK.getStatusCode()) {
 			try {
 				T entityT;
+				LOG.log(Level.INFO,"Response body : " + response.getBody());
 				if (!response.getBody().isEmpty()) {
 					LOG.log(Level.INFO,String.format("DATA EXIST"));
 					JSONObject jsonObj = new JSONObject(response.getBody());
