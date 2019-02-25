@@ -11,7 +11,7 @@ public class Parser {
 		JSONObject jo = new JSONObject();
 		ArrayList<Integer> lstHearthRate = new ArrayList<>();
 		JSONArray array = json.getJSONObject("activities-heart-intraday").getJSONArray("dataset");
-		
+		if (array.length() == 0) {return null;}
 		for (int i=0; i < array.length(); i++) {
 			lstHearthRate.add(array.getJSONObject(i).getInt("value"));
 		}
