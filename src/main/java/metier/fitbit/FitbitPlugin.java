@@ -91,15 +91,19 @@ public class FitbitPlugin {
 				if (jsonParse != null) {
 					LOG.log(Level.INFO,String.format("DATA EXIST"));
 					entityT = Plugin.unMarshallGenericJSON(jsonParse.toString(), classT);
+					return Response
+							.status(response.getCode())
+							.entity(entityT)
+							.build();
 				} else {
 					LOG.log(Level.INFO,String.format("DATA NOT EXIST"));
-					entityT = null;
+					return Response
+							.status(response.getCode())
+							.entity("No Data")
+							.build();
 				}
 				// TODO: traitement sur entity ? parser ??
-				return Response
-						.status(response.getCode())
-						.entity(entityT)
-						.build();
+				
 			} catch (Exception e) {
 				LOG.log(Level.WARNING,e.getMessage(),e);
 				return Response
