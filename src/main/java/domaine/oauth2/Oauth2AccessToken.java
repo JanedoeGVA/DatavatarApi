@@ -16,13 +16,6 @@ public class Oauth2AccessToken extends OauthAccessToken {
 	public String getRefreshTokenKey() {return refreshTokenKey;}
 	
 	public void setRefreshTokenKey(String key) {this.refreshTokenKey = key;}
-
-	@Override
-	public String toString() {
-		return "Oauth2AccessToken [refreshTokenKey=" + refreshTokenKey + ", getAccessTokenKey()=" + getAccessTokenKey() + "]";
-	}
-	
-	
-	
+		
 
 }

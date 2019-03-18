@@ -7,10 +7,7 @@ import domaine.oauth.OauthAccessToken;
 public class ActivityTracker {
 	
 	private String provider;
-	@XmlElement(name = "prot")
 	private String protocol;
-	
-    @XmlElement(name = "token")
 	private OauthAccessToken token;
 	
 	public ActivityTracker() {};
