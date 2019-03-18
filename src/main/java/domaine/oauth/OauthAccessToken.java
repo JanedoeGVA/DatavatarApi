@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import domaine.oauth1a.Oauth1AccessToken;
 import domaine.oauth2.Oauth2AccessToken;
 
-@XmlRootElement(name = "OauthAccessToken")
+@XmlRootElement(name = "Token")
 @XmlSeeAlso({Oauth2AccessToken.class, Oauth1AccessToken.class})
 public abstract class OauthAccessToken {
 	
