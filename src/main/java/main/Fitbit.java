@@ -35,8 +35,32 @@ public class Fitbit {
 	@Path("/verification")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Oauth2AccessToken verification (@QueryParam ("code") String code) {
-		return FitbitPlugin.accessToken(code);
+	public Response verification (@QueryParam ("code") String code) {
+		final Oauth2AccessToken oauth2AccessToken = FitbitPlugin.accessToken(code);;
+		final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, Constant.TYPE_OAUTH2, oauth2AccessToken);
+		return Response.status(Response.Status.OK.getStatusCode())
+				.entity(activityTracker)
+				.build();
+
+
+	}
+
+	@Path("/refresh")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response refresh (@HeaderParam("assertion") String encryptRefreshToken) {
+		LOG.log(Level.INFO, "refresh :" + encryptRefreshToken);
+		Oauth2AccessToken oauth2AccessToken = FitbitPlugin.refresh(encryptRefreshToken);
+		if (oauth2AccessToken != null) {
+			final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, Constant.TYPE_OAUTH2, oauth2AccessToken);
+			return Response.status(Response.Status.OK.getStatusCode())
+					.entity(activityTracker)
+					.build();
+		} else {
+			return Response.status(Response.Status.UNAUTHORIZED.getStatusCode())
+					.entity("error: token invalid")
+					.build();
+		}
 
 	}
 
@@ -45,25 +69,6 @@ public class Fitbit {
 	public void revoke(@HeaderParam("assertion") String token) {
 		FitbitPlugin.revoke(token);
 	}
-
-//	@Path("/protecteddata/profil")
-//	@POST
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public ProtectedDataOauth<Profil,Oauth2AccessToken> protectedDataProfil (Oauth2AccessToken oauth2AccessToken) {
-//		return FitbitPlugin.getProfil(oauth2AccessToken);
-//	}
-
-//	@Path("/protecteddata/hearthrate")
-//	@POST
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public ProtectedDataOauth<HearthRateInterval, Oauth2AccessToken> protectedDataHearthRate (@QueryParam ("date") String date,Oauth2AccessToken oauth2AccessToken) {
-//		LOG.log(Level.INFO,"requesting DataHearthRate");
-//		LOG.log(Level.INFO,"date :" + date);
-//		LOG.log(Level.INFO, "token : " + oauth2AccessToken.toString());
-//		return FitbitPlugin.getHearthRate(oauth2AccessToken,date);
-//	}
-
-
 
 	@Path("/protecteddata/hearthrate")
 	@POST
@@ -79,23 +84,22 @@ public class Fitbit {
 
 	}
 
-	@Path("/refresh")
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response refresh (@HeaderParam("assertion") String encryptRefreshToken) {
-		LOG.log(Level.INFO, "refresh :" + encryptRefreshToken);
-		Oauth2AccessToken oauth2AccessToken = FitbitPlugin.refresh(encryptRefreshToken);
-		if (oauth2AccessToken != null) {
-			final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, Constant.TYPE_OAUTH2, oauth2AccessToken);
-			return Response.status(Response.Status.OK.getStatusCode())
-					.entity(oauth2AccessToken)
-					.build();
-		} else {
-			return Response.status(Response.Status.UNAUTHORIZED.getStatusCode())
-					.entity("error: token invalid")
-					.build();
-		}
+	//	@Path("/protecteddata/profil")
+	//	@POST
+	//	@Produces(MediaType.APPLICATION_JSON)
+	//	public ProtectedDataOauth<Profil,Oauth2AccessToken> protectedDataProfil (Oauth2AccessToken oauth2AccessToken) {
+	//		return FitbitPlugin.getProfil(oauth2AccessToken);
+	//	}
 
-	}
+	//	@Path("/protecteddata/hearthrate")
+	//	@POST
+	//	@Produces(MediaType.APPLICATION_JSON)
+	//	public ProtectedDataOauth<HearthRateInterval, Oauth2AccessToken> protectedDataHearthRate (@QueryParam ("date") String date,Oauth2AccessToken oauth2AccessToken) {
+	//		LOG.log(Level.INFO,"requesting DataHearthRate");
+	//		LOG.log(Level.INFO,"date :" + date);
+	//		LOG.log(Level.INFO, "token : " + oauth2AccessToken.toString());
+	//		return FitbitPlugin.getHearthRate(oauth2AccessToken,date);
+	//	}
+
 
 }
