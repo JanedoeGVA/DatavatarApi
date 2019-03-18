@@ -6,14 +6,14 @@ public class ActivityTracker {
 	
 	private String provider;
 	private String protocol;
-	private OauthAccessToken oauthAccessToken;
+	private OauthAccessToken token;
 	
 	public ActivityTracker() {};
 	
 	public ActivityTracker(String provider, String protocol, OauthAccessToken oauthAccessToken) {
 		this.provider = provider;
 		this.protocol = protocol;
-		this.oauthAccessToken = oauthAccessToken;
+		this.token = oauthAccessToken;
 	}
 	
 	public String getProvider() {
@@ -29,10 +29,10 @@ public class ActivityTracker {
 		this.protocol = protocol;
 	}
 	public OauthAccessToken getOauthAccessToken() {
-		return oauthAccessToken;
+		return token;
 	}
 	public void setOauthAccessToken(OauthAccessToken oauthAccessToken) {
-		this.oauthAccessToken = oauthAccessToken;
+		this.token = oauthAccessToken;
 	}
 	
 	
