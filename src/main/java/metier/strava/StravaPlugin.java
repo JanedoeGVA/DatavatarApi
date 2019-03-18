@@ -15,7 +15,7 @@ public class StravaPlugin {
 	}
 	
 	public static Oauth2AccessToken accessToken (String code) {
-    	Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(Constant.STRAVA_PROVIDER,code, getService());
+    	Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(code, getService());
     	return accessToken;
     }
 	

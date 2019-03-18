@@ -31,7 +31,7 @@ public class GarminPlugin {
 	}
 	
 	public static Oauth1AccessToken getAccessToken(String requestTokenKey,String encryptedRequestTokenSecret,String verifier) {
-		Oauth1AccessToken accessToken = Plugin.oauth10AccessToken(Constant.GARMIN_PROVIDER,requestTokenKey, encryptedRequestTokenSecret, verifier, getService());
+		Oauth1AccessToken accessToken = Plugin.oauth10AccessToken(requestTokenKey, encryptedRequestTokenSecret, verifier, getService());
 		return accessToken;
 	}
 	

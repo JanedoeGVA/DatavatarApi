@@ -13,10 +13,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import domaine.ActivityTracker;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.Plugin;
 import metier.fitbit.FitbitPlugin;
+import outils.Constant;
 
 @Path("/fitbit")
 public class Fitbit {
@@ -84,6 +86,7 @@ public class Fitbit {
 		LOG.log(Level.INFO, "refresh :" + encryptRefreshToken);
 		Oauth2AccessToken oauth2AccessToken = FitbitPlugin.refresh(encryptRefreshToken);
 		if (oauth2AccessToken != null) {
+			final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, Constant.TYPE_OAUTH2, oauth2AccessToken);
 			return Response.status(Response.Status.OK.getStatusCode())
 					.entity(oauth2AccessToken)
 					.build();

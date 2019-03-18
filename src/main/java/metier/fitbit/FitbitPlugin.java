@@ -15,6 +15,8 @@ import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 
+import domaine.ActivityTracker;
+import domaine.oauth.OauthAccessToken;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.Plugin;
@@ -33,7 +35,7 @@ public class FitbitPlugin {
 	}	    
 
 	public static Oauth2AccessToken accessToken (String code) {
-		Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(Constant.FITBIT_PROVIDER,code, getService());
+		Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(code, getService());
 		return accessToken;
 	}
 
@@ -233,7 +235,7 @@ public class FitbitPlugin {
 	//		}
 
 	public static Oauth2AccessToken refresh (String encryptRefreshToken) {
-		Oauth2AccessToken oauth2AccessToken = Plugin.refreshAccessToken(Constant.FITBIT_PROVIDER,encryptRefreshToken, getService());
+		final Oauth2AccessToken oauth2AccessToken = Plugin.refreshAccessToken(encryptRefreshToken, getService());
 		return oauth2AccessToken;
 	}
 

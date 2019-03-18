@@ -70,8 +70,8 @@ public class Plugin {
 		return oauth2Auth;
 	}
 
-	public static Oauth1AccessToken oauth10AccessToken(String provider,String requestTokenKey,String encryptedRequestTokenSecret,String verifier,OAuth10aService service) {
-		LOG.log(Level.INFO, String.format("Performing AccessToken OAuth1 for", provider));
+	public static Oauth1AccessToken oauth10AccessToken(String requestTokenKey,String encryptedRequestTokenSecret,String verifier,OAuth10aService service) {
+		LOG.log(Level.INFO, "Performing AccessToken OAuth1 ");
 		final OAuth1RequestToken requestToken = new OAuth1RequestToken(requestTokenKey, SymmetricAESKey.decrypt(encryptedRequestTokenSecret));
 		OAuth1AccessToken oauth1AccessToken = null;
 		try {
@@ -79,13 +79,14 @@ public class Plugin {
 		} catch (IOException | InterruptedException | ExecutionException e) {
 			LOG.log(Level.WARNING,e.getMessage(),e);
 		}
-		Oauth1AccessToken accessToken = new Oauth1AccessToken(provider,SymmetricAESKey.encrypt(oauth1AccessToken.getToken()),SymmetricAESKey.encrypt(oauth1AccessToken.getTokenSecret()));
-		LOG.log(Level.INFO, String.format("AccessToken Oauth1 for %s created successfull",provider));
+		Oauth1AccessToken accessToken = new Oauth1AccessToken(SymmetricAESKey.encrypt(oauth1AccessToken.getToken()),SymmetricAESKey.encrypt(oauth1AccessToken.getTokenSecret()));
+		
+		LOG.log(Level.INFO, "AccessToken Oauth1 created successfull");
 		return accessToken;
 	}
 
-	public static Oauth2AccessToken oauth20AccessToken (String provider,String code,OAuth20Service service) {
-		LOG.log(Level.INFO, String.format("Performing AccessToken OAuth2 for %s", provider));
+	public static Oauth2AccessToken oauth20AccessToken (String code,OAuth20Service service) {
+		LOG.log(Level.INFO, "Performing AccessToken OAuth2 ");
 		OAuth2AccessToken oauth2accessToken = null;
 		try {
 			oauth2accessToken = service.getAccessToken(code);
@@ -95,17 +96,17 @@ public class Plugin {
 			LOG.log(Level.WARNING, ex.getMessage(),ex);
 		}
 		LOG.log(Level.INFO, "creating access token");
-		Oauth2AccessToken accessToken = new Oauth2AccessToken(provider,SymmetricAESKey.encrypt(oauth2accessToken.getAccessToken()),SymmetricAESKey.encrypt(oauth2accessToken.getRefreshToken()));
-		LOG.log(Level.INFO, String.format("AccessToken Oauth2 for %s created successfull",provider));
+		Oauth2AccessToken accessToken = new Oauth2AccessToken(SymmetricAESKey.encrypt(oauth2accessToken.getAccessToken()),SymmetricAESKey.encrypt(oauth2accessToken.getRefreshToken()));
+		LOG.log(Level.INFO, "AccessToken Oauth2 created successfull");
 		return accessToken;
 	}
 
-	public static Oauth2AccessToken refreshAccessToken (String provider,String refreshToken, OAuth20Service service) {
-		LOG.log(Level.INFO, String.format("Performing RefreshToken for", provider));
+	public static Oauth2AccessToken refreshAccessToken (String refreshToken, OAuth20Service service) {
+		LOG.log(Level.INFO, "Performing RefreshToken ");
 		Oauth2AccessToken oauth2accessToken = null;
 		try {
 			OAuth2AccessToken token = service.refreshAccessToken(SymmetricAESKey.decrypt(refreshToken));
-			LOG.log(Level.INFO, String.format("RefreshToken created for %s",provider));
+			LOG.log(Level.INFO,"RefreshToken created");
 			String tokenKey = token.getAccessToken();
 			String tokenRefresh= token.getRefreshToken();
 			String encryptTokenKey = SymmetricAESKey.encrypt(tokenKey);
@@ -114,7 +115,7 @@ public class Plugin {
 			LOG.log(Level.INFO, "Refresh: " + tokenRefresh);
 			LOG.log(Level.INFO, "EncryptKey: " + encryptTokenKey);
 			LOG.log(Level.INFO, "EncryptRefresh: " + encryptTokenRefresh);
-			oauth2accessToken = new Oauth2AccessToken(provider, encryptTokenKey, encryptTokenRefresh);
+			oauth2accessToken = new Oauth2AccessToken(encryptTokenKey, encryptTokenRefresh);
 		} catch (IOException e) {
 			LOG.log(Level.WARNING, e.getMessage(),e);
 		} catch (InterruptedException e) {

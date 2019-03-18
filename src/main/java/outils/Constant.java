@@ -2,6 +2,9 @@ package outils;
 
 public class Constant {
 	
+	public static final String TYPE_OAUTH1 = "oauth1";
+	public static final String TYPE_OAUTH2 = "oauth2";
+	
 	public static final String JSON_MEDIA_TYPE = "json";
 	public static final String TOKEN = "token";
 	public static final String EXPIRES_IN = "expires_in";

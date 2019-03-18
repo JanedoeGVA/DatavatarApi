@@ -8,8 +8,8 @@ public class Oauth1AccessToken extends OauthAccessToken {
 	
 	public Oauth1AccessToken() {super();}
 	
-	public Oauth1AccessToken(String provider, String accessTokenKey, String accessTokenSecret) {
-		super(provider, accessTokenKey);
+	public Oauth1AccessToken(String accessTokenKey, String accessTokenSecret) {
+		super(accessTokenKey);
 		this.accessTokenSecret = accessTokenSecret;
 	}
 	

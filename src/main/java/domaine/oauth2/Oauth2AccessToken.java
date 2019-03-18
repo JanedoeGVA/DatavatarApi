@@ -8,8 +8,8 @@ public class Oauth2AccessToken extends OauthAccessToken {
 	
 	public Oauth2AccessToken() {super();}
 	
-	public Oauth2AccessToken(String provider, String accessTokenKey, String refreshTokenKey) {
-		super(provider, accessTokenKey);
+	public Oauth2AccessToken(String accessTokenKey, String refreshTokenKey) {
+		super(accessTokenKey);
 		this.refreshTokenKey = refreshTokenKey;
 	}
 	
@@ -19,8 +19,7 @@ public class Oauth2AccessToken extends OauthAccessToken {
 
 	@Override
 	public String toString() {
-		return "Oauth2AccessToken [refreshTokenKey=" + refreshTokenKey + ", getProvider()=" + getProvider()
-				+ ", getAccessTokenKey()=" + getAccessTokenKey() + "]";
+		return "Oauth2AccessToken [refreshTokenKey=" + refreshTokenKey + ", getAccessTokenKey()=" + getAccessTokenKey() + "]";
 	}
 	
 	

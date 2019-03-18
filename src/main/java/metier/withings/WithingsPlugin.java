@@ -31,7 +31,7 @@ public class WithingsPlugin {
 	}
 	
 	public static Oauth2AccessToken accessToken (String code) {
-    		Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(Constant.WITHINGS_PROVIDER,code, getService());
+    		Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(code, getService());
     		return accessToken;
     }
 	
@@ -41,7 +41,7 @@ public class WithingsPlugin {
     }
 	
 	public static Oauth2AccessToken refresh (String refreshToken) {
-		Oauth2AccessToken oauth2AccessToken = Plugin.refreshAccessToken(Constant.WITHINGS_PROVIDER,refreshToken, getService());
+		Oauth2AccessToken oauth2AccessToken = Plugin.refreshAccessToken(refreshToken, getService());
 		return oauth2AccessToken;
 	}
 
