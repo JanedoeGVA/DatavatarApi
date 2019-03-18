@@ -1,6 +1,12 @@
 package domaine.oauth;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import domaine.oauth1a.Oauth1AccessToken;
+import domaine.oauth2.Oauth2AccessToken;
 
+@XmlRootElement(name = "OauthAccessToken")
+@XmlSeeAlso({Oauth2AccessToken.class, Oauth1AccessToken.class})
 public abstract class OauthAccessToken {
 	
 	private String accessTokenKey;
