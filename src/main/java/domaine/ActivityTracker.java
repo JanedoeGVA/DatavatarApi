@@ -8,7 +8,7 @@ public class ActivityTracker {
 	private String protocol;
 	private Token token;
 
-	// public ActivityTracker() {};
+	public ActivityTracker() {};
 
 	public ActivityTracker(String provider, String protocol,Token token) {
 		this.provider = provider;
