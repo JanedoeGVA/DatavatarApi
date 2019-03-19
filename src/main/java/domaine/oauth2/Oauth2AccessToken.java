@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import domaine.oauth.OauthAccessToken;
 
-@XmlRootElement(name = "Oauth2AccessToken")
+@XmlRootElement
 public class Oauth2AccessToken extends OauthAccessToken {
 	
 	@XmlElement(name="refreshTokenKey")
