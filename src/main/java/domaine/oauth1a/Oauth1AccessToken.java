@@ -4,18 +4,18 @@ import domaine.authorization.Token;
 
 public class Oauth1AccessToken extends Token {
 	
-	private String tokenSecret;
+	private String secret;
 	
 	public Oauth1AccessToken() {super();}
 	
-	public Oauth1AccessToken(String key, String tokenSecret) {
+	public Oauth1AccessToken(String key, String secret) {
 		super(key);
-		this.tokenSecret = tokenSecret;
+		this.secret = secret;
 	}
 	
 	/**Accesseurs */
-	public String getTokenSecret() {return this.tokenSecret;}
+	public String getSecret() {return this.secret;}
 	
 	/**Initialisateurs */
-	public void setTokenSecret (String tokenSecret) {this.tokenSecret = tokenSecret;}
+	public void setSecret (String secret) {this.secret = secret;}
 }

@@ -8,18 +8,18 @@ import domaine.authorization.Token;
 
 public class Oauth2AccessToken extends Token {
 
-	private String refreshTokenKey;
+	private String refreshToken;
 	
 	public Oauth2AccessToken() {super();}
 	
-	public Oauth2AccessToken(String key, String refreshTokenKey) {
+	public Oauth2AccessToken(String key, String refreshToken) {
 		super(key);
-		this.refreshTokenKey = refreshTokenKey;
+		this.refreshToken = refreshToken;
 	}
 	
-	public String getRefreshTokenKey() {return refreshTokenKey;}
+	public String getRefreshToken() {return refreshToken;}
 	
-	public void setRefreshTokenKey(String key) {this.refreshTokenKey = key;}
+	public void setRefreshToken(String refreshToken) {this.refreshToken = refreshToken;}
 		
 
 }
