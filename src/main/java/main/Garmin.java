@@ -21,9 +21,9 @@ import com.cars.framework.secrets.DockerSecrets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import domaine.oauth.OauthAccessToken;
-import domaine.oauth.ProtectedListDataOauth;
-import domaine.oauth.RequestProtectedData;
+import domaine.authorization.Token;
+import domaine.authorization.ProtectedListDataOauth;
+import domaine.authorization.RequestProtectedData;
 import domaine.oauth1a.Oauth1AccessToken;
 import domaine.oauth1a.Oauth1Authorisation;
 import metier.garmin.GarminPlugin;

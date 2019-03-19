@@ -16,7 +16,7 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 
 import domaine.ActivityTracker;
-import domaine.oauth.OauthAccessToken;
+import domaine.authorization.Token;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.Plugin;

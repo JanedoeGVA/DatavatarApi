@@ -1,8 +1,8 @@
-package domaine.oauth;
+package domaine.authorization;
 
 import java.util.ArrayList;
 
-public class ProtectedListDataOauth <ProtectedDataT,T extends OauthAccessToken> {
+public class ProtectedListDataOauth <ProtectedDataT,T extends Token> {
 	
 	private T oauthAccessToken;
 	private ArrayList<ProtectedDataT> lstProtectedDataT = null;

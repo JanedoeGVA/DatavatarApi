@@ -4,11 +4,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import domaine.oauth.OauthAccessToken;
+import domaine.authorization.Token;
 
 @XmlRootElement
-@XmlType(propOrder={"key", "refreshToken"})
-public class Oauth2AccessToken extends OauthAccessToken {
+public class Oauth2AccessToken extends Token {
 
 	private String refreshTokenKey;
 	

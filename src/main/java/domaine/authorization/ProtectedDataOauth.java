@@ -1,6 +1,6 @@
-package domaine.oauth;
+package domaine.authorization;
 
-public class ProtectedDataOauth<ProtectedDataT,OauthAccessTokenT extends OauthAccessToken> {
+public class ProtectedDataOauth<ProtectedDataT,OauthAccessTokenT extends Token> {
 	
 	private OauthAccessTokenT oauthAccessTokenT;
 	private ProtectedDataT protectedDataT;

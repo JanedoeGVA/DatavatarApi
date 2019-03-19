@@ -1,9 +1,9 @@
-package domaine.oauth;
+package domaine.authorization;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestProtectedData<T extends OauthAccessToken> {
+public class RequestProtectedData<T extends Token> {
 	
 	private T oauthAccessToken;
 	private Map<String, String> hmParams = new HashMap<String, String>();

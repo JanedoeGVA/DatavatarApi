@@ -1,4 +1,4 @@
-package domaine.oauth;
+package domaine.authorization;
 
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
@@ -7,14 +7,13 @@ import domaine.oauth1a.Oauth1AccessToken;
 import domaine.oauth2.Oauth2AccessToken;
 
 @XmlSeeAlso({Oauth2AccessToken.class, Oauth1AccessToken.class})
-@XmlTransient
-public abstract class OauthAccessToken {
+public abstract class Token {
 
 	private String key;
 
-	public OauthAccessToken() {}
+	public Token() {}
 
-	public OauthAccessToken(String key) {
+	public Token(String key) {
 		this.key = key;
 	}
 

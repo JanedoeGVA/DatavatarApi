@@ -2,11 +2,11 @@ package domaine.oauth1a;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import domaine.oauth.OauthAccessToken;
+import domaine.authorization.Token;
 
 
 @XmlRootElement
-public class Oauth1AccessToken extends OauthAccessToken {
+public class Oauth1AccessToken extends Token {
 	
 	private String accessTokenSecret;
 	

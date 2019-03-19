@@ -12,8 +12,8 @@ import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 
-import domaine.oauth.ProtectedListDataOauth;
-import domaine.oauth.RequestProtectedData;
+import domaine.authorization.ProtectedListDataOauth;
+import domaine.authorization.RequestProtectedData;
 import domaine.oauth1a.Oauth1AccessToken;
 import domaine.oauth1a.Oauth1Authorisation;
 import metier.Plugin;

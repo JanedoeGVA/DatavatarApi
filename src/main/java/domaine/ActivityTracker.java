@@ -2,22 +2,21 @@ package domaine;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import domaine.oauth.OauthAccessToken;
+import domaine.authorization.Token;
 
 
 public class ActivityTracker {
 	
 	private String provider;
 	private String protocol;
-	@XmlElement(name="token")
-	private OauthAccessToken token;
+	private Token token;
 	
 	public ActivityTracker() {};
 	
-	public ActivityTracker(String provider, String protocol, OauthAccessToken oauthAccessToken) {
+	public ActivityTracker(String provider, String protocol, Token token) {
 		this.provider = provider;
 		this.protocol = protocol;
-		this.token = oauthAccessToken;
+		this.token = token;
 	}
 	
 	public String getProvider() {
@@ -32,10 +31,10 @@ public class ActivityTracker {
 	public void setProtocol(String protocol) {
 		this.protocol = protocol;
 	}
-	public OauthAccessToken getOauthAccessToken() {
+	public Token getOauthAccessToken() {
 		return token;
 	}
-	public void setOauthAccessToken(OauthAccessToken oauthAccessToken) {
+	public void setOauthAccessToken(Token oauthAccessToken) {
 		this.token = oauthAccessToken;
 	}
 	
