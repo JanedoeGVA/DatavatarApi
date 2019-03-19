@@ -87,7 +87,6 @@ public class FitbitPlugin {
 			try {
 				T entityT;
 				String body = response.getBody();
-				LOG.log(Level.INFO,"Response body : " + body);
 				JSONObject jsonObj = new JSONObject(body);
 				JSONObject jsonParse = Parser.parseHearthRate(jsonObj);
 				if (jsonParse != null) {
@@ -98,10 +97,10 @@ public class FitbitPlugin {
 							.entity(entityT)
 							.build();
 				} else {
-					LOG.log(Level.INFO,String.format("DATA NOT EXIST"));
+					LOG.log(Level.INFO,String.format("No Data"));
 					return Response
 							.status(response.getCode())
-							.entity("{}")
+							.entity("{No Data}")
 							.build();
 				}
 				// TODO: traitement sur entity ? parser ??
