@@ -31,11 +31,11 @@ public class ActivityTracker {
 	public void setProtocol(String protocol) {
 		this.protocol = protocol;
 	}
-	public Token getOauthAccessToken() {
+	public Token getToken() {
 		return token;
 	}
-	public void setOauthAccessToken(Token oauthAccessToken) {
-		this.token = oauthAccessToken;
+	public void setOauthAccessToken(Token token) {
+		this.token = token;
 	}
 	
 	
