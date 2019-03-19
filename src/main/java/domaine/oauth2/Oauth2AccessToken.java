@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import domaine.authorization.Token;
 
-@XmlRootElement
 public class Oauth2AccessToken extends Token {
 
 	private String refreshTokenKey;

@@ -6,7 +6,7 @@ import domaine.authorization.Token;
 
 
 
-@XmlRootElement
+
 public class Oauth1AccessToken extends Token {
 	
 	private String tokenSecret;
