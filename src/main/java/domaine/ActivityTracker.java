@@ -5,13 +5,15 @@ import domaine.authorization.Token;
 public class ActivityTracker {
 
 	private String provider;
+	private String protocol;
 	private Token token;
 
-	public ActivityTracker() {};
+	// public ActivityTracker() {};
 
-	public ActivityTracker(String provider, Token token) {
+	public ActivityTracker(String provider, String protocol,Token token) {
 		this.provider = provider;
 		this.token = token;
+		this.protocol = protocol;
 	}
 
 	public String getProvider() {
@@ -19,6 +21,14 @@ public class ActivityTracker {
 	}
 	public void setProvider(String provider) {
 		this.provider = provider;
+	}
+	
+	public String getProtocol() {
+		return protocol;
+	}
+
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
 	}
 
 	public Token getToken() {

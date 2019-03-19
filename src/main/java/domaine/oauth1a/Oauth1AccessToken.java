@@ -1,11 +1,6 @@
 package domaine.oauth1a;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import domaine.authorization.Token;
-
-
-
 
 public class Oauth1AccessToken extends Token {
 	

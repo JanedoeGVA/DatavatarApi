@@ -36,8 +36,9 @@ public class Fitbit {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verification (@QueryParam ("code") String code) {
-		final Oauth2AccessToken oauth2AccessToken = FitbitPlugin.accessToken(code);;
-		final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, oauth2AccessToken);
+		final Oauth2AccessToken oauth2AccessToken = FitbitPlugin.accessToken(code);
+		
+		final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER,Constant.TYPE_OAUTH2,oauth2AccessToken);
 		return Response.status(Response.Status.OK.getStatusCode())
 				.entity(activityTracker)
 				.build();
@@ -52,7 +53,7 @@ public class Fitbit {
 		LOG.log(Level.INFO, "refresh :" + encryptRefreshToken);
 		Oauth2AccessToken oauth2AccessToken = FitbitPlugin.refresh(encryptRefreshToken);
 		if (oauth2AccessToken != null) {
-			final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, oauth2AccessToken);
+			final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, Constant.TYPE_OAUTH2 ,oauth2AccessToken);
 			return Response.status(Response.Status.OK.getStatusCode())
 					.entity(activityTracker)
 					.build();
