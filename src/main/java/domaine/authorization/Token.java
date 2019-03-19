@@ -9,16 +9,16 @@ import domaine.oauth2.Oauth2AccessToken;
 @XmlSeeAlso({Oauth2AccessToken.class, Oauth1AccessToken.class})
 public abstract class Token {
 
-	private String key;
+	private String accessToken;
 
 	public Token() {}
 
-	public Token(String key) {
-		this.key = key;
+	public Token(String accessToken) {
+		this.accessToken = accessToken;
 	}
 
-	public String getKey() {return key;}
+	public String getAccessToken() {return accessToken;}
 
-	public void setKey(String key) {this.key = key;}
+	public void setAccessToken(String accessToken) {this.accessToken = accessToken;}
 }
 

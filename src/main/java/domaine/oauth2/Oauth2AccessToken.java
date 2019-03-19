@@ -1,9 +1,5 @@
 package domaine.oauth2;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
 import domaine.authorization.Token;
 
 public class Oauth2AccessToken extends Token {
@@ -12,8 +8,8 @@ public class Oauth2AccessToken extends Token {
 	
 	public Oauth2AccessToken() {super();}
 	
-	public Oauth2AccessToken(String key, String refreshToken) {
-		super(key);
+	public Oauth2AccessToken(String accessToken, String refreshToken) {
+		super(accessToken);
 		this.refreshToken = refreshToken;
 	}
 	
