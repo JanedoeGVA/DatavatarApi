@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import domaine.oauth.OauthAccessToken;
 
+
 @XmlRootElement
 public class Oauth1AccessToken extends OauthAccessToken {
 	

@@ -4,11 +4,12 @@ import javax.xml.bind.annotation.XmlElement;
 
 import domaine.oauth.OauthAccessToken;
 
+
 public class ActivityTracker {
 	
 	private String provider;
 	private String protocol;
-	@XmlElement(name="Token")
+	@XmlElement(name="token")
 	private OauthAccessToken token;
 	
 	public ActivityTracker() {};
