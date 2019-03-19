@@ -53,7 +53,7 @@ public class GarminPlugin {
 		String url = String.format(urlApiRequest,startTime,endTime);
 		ProtectedListDataOauth<T,Oauth1AccessToken> protectedT = new ProtectedListDataOauth<>();
 		protectedT.setOauthAccessToken(requestProtectedData.getOauthAccessToken());
-		final OAuth1AccessToken oAuth1AccessToken = new OAuth1AccessToken(SymmetricAESKey.decrypt(protectedT.getOauthAccessToken().getAccessTokenKey()),SymmetricAESKey.decrypt(protectedT.getOauthAccessToken().getAccessTokenSecret()));
+		final OAuth1AccessToken oAuth1AccessToken = new OAuth1AccessToken(SymmetricAESKey.decrypt(protectedT.getOauthAccessToken().getKey()),SymmetricAESKey.decrypt(protectedT.getOauthAccessToken().getAccessTokenSecret()));
 		final OAuthRequest request = new OAuthRequest(verb, url);
 		System.out.println("Headers " + request.getHeaders().toString());
 	    service.signRequest(oAuth1AccessToken, request);
@@ -86,7 +86,7 @@ public class GarminPlugin {
 
 	public static void revoke(Oauth1AccessToken oauth1AccessToken) {
 		OAuthRequest request = new OAuthRequest(Verb.DELETE,"https://healthapi.garmin.com/wellness-api/rest/user/registration");
-		OAuth1AccessToken accessToken = new OAuth1AccessToken(SymmetricAESKey.decrypt(oauth1AccessToken.getAccessTokenKey()), SymmetricAESKey.decrypt(oauth1AccessToken.getAccessTokenSecret()));
+		OAuth1AccessToken accessToken = new OAuth1AccessToken(SymmetricAESKey.decrypt(oauth1AccessToken.getKey()), SymmetricAESKey.decrypt(oauth1AccessToken.getAccessTokenSecret()));
 		getService().signRequest(accessToken, request);
 		try {
 			Response response =  getService().execute(request);

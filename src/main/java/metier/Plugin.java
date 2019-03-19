@@ -161,7 +161,7 @@ public class Plugin {
 	}
 
 	public static boolean isAccessTokenExpired (Oauth2AccessToken oauth2AccessToken) {
-		long expireTime = Utils.getJSONDecodedAccessToken(SymmetricAESKey.decrypt(oauth2AccessToken.getAccessTokenKey())).getJSONObject("part_02").getLong("exp");
+		long expireTime = Utils.getJSONDecodedAccessToken(SymmetricAESKey.decrypt(oauth2AccessToken.getKey())).getJSONObject("part_02").getLong("exp");
 		long currentTime = new Date().getTime()/1000L;
 		boolean isExpired = expireTime<currentTime;
 		return isExpired; 

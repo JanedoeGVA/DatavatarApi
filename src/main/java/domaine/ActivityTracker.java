@@ -8,6 +8,7 @@ public class ActivityTracker {
 	
 	private String provider;
 	private String protocol;
+	@XmlElement(name="Token")
 	private OauthAccessToken token;
 	
 	public ActivityTracker() {};

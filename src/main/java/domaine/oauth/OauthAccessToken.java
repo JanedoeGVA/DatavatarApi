@@ -6,19 +6,18 @@ import javax.xml.bind.annotation.XmlType;
 import domaine.oauth1a.Oauth1AccessToken;
 import domaine.oauth2.Oauth2AccessToken;
 
-@XmlType(name="Token")
 @XmlSeeAlso({Oauth2AccessToken.class, Oauth1AccessToken.class})
 public abstract class OauthAccessToken {
 	
-	private String accessTokenKey;
+	private String key;
 	
 	public OauthAccessToken() {}
 	
-	public OauthAccessToken(String accessTokenKey) {
-		this.accessTokenKey = accessTokenKey;
+	public OauthAccessToken(String key) {
+		this.key = key;
 	}
 	
-	public String getAccessTokenKey() {return accessTokenKey;}
+	public String getKey() {return key;}
 	
-	public void setAccessTokenKey(String accessTokenKey) {this.accessTokenKey = accessTokenKey;}
+	public void setKey(String key) {this.key = key;}
 }
