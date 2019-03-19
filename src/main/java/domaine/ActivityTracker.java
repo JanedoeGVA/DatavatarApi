@@ -9,6 +9,7 @@ public class ActivityTracker {
 	
 	private String provider;
 	private String protocol;
+	
 	private Token token;
 	
 	public ActivityTracker() {};
@@ -34,7 +35,7 @@ public class ActivityTracker {
 	public Token getToken() {
 		return token;
 	}
-	public void setOauthAccessToken(Token token) {
+	public void setToken(Token token) {
 		this.token = token;
 	}
 	
