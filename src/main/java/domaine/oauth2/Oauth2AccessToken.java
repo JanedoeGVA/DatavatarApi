@@ -2,13 +2,14 @@ package domaine.oauth2;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import domaine.oauth.OauthAccessToken;
 
 @XmlRootElement
+@XmlType(propOrder={"key", "refreshToken"})
 public class Oauth2AccessToken extends OauthAccessToken {
-	
-	@XmlElement(name="refreshTokenKey")
+
 	private String refreshTokenKey;
 	
 	public Oauth2AccessToken() {super();}
