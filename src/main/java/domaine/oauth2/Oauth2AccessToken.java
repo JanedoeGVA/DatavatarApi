@@ -14,8 +14,8 @@ public class Oauth2AccessToken extends OauthAccessToken {
 	
 	public Oauth2AccessToken() {super();}
 	
-	public Oauth2AccessToken(String accessTokenKey, String refreshTokenKey) {
-		super(accessTokenKey);
+	public Oauth2AccessToken(String key, String refreshTokenKey) {
+		super(key);
 		this.refreshTokenKey = refreshTokenKey;
 	}
 	

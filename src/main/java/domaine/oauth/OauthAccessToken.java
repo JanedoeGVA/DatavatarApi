@@ -10,7 +10,7 @@ import domaine.oauth2.Oauth2AccessToken;
 @XmlTransient
 public abstract class OauthAccessToken {
 
-	String key;
+	private String key;
 
 	public OauthAccessToken() {}
 
