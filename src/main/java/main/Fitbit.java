@@ -53,9 +53,9 @@ public class Fitbit {
 		LOG.log(Level.INFO, "refresh :" + encryptRefreshToken);
 		Oauth2AccessToken oauth2AccessToken = FitbitPlugin.refresh(encryptRefreshToken);
 		if (oauth2AccessToken != null) {
-			final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, Constant.TYPE_OAUTH2 ,oauth2AccessToken);
+			// final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, Constant.TYPE_OAUTH2 ,oauth2AccessToken);
 			return Response.status(Response.Status.OK.getStatusCode())
-					.entity(activityTracker)
+					.entity(oauth2AccessToken)
 					.build();
 		} else {
 			return Response.status(Response.Status.UNAUTHORIZED.getStatusCode())
