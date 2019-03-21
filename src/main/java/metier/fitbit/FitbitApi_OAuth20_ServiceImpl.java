@@ -1,8 +1,10 @@
 package metier.fitbit;
 
+import java.awt.List;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import java.util.logging.Level;
@@ -20,6 +22,7 @@ import outils.Constant;
 import com.github.scribejava.core.java8.Base64;
 import com.github.scribejava.core.model.OAuthConstants;
 import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Parameter;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 
@@ -62,9 +65,15 @@ public class FitbitApi_OAuth20_ServiceImpl extends OAuth20Service {
 		this.getApi().getClientAuthenticationType().addClientAuthentication(request, getApiKey(), getApiSecret());
 		request.addParameter(OAuthConstants.REFRESH_TOKEN, refreshToken);
 		request.addParameter(OAuthConstants.GRANT_TYPE, OAuthConstants.REFRESH_TOKEN);
-		request.addParameter(Constant.EXPIRES_IN,Constant.ONE_HOUR);
+		request.addParameter(Constant.EXPIRES_IN,"3600");
 		//this is non-OAuth2 standard, but Fitbit requires it
 		request.addHeader(OAuthConstants.HEADER, OAuthConstants.BASIC + " " + getKeyBytesForFitbitAuth());
+		// LOG //
+		final ArrayList<Parameter> lstParam = (ArrayList<Parameter>)request.getBodyParams().getParams();
+		for (Parameter parameter : lstParam) {
+			LOG.log(Level.INFO, String.format("refresh request param : key %s value %s", parameter.getKey(),parameter.getValue()));
+		}
+		// LOG
 		return request;
 	}
 
