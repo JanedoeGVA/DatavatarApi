@@ -169,6 +169,7 @@ public class Plugin {
 
 	public static void stateToken (String token) {
 		LOG.log(Level.INFO,"statetoken of  : "+ token);
+		LOG.log(Level.INFO,"decrypt of  : "+ SymmetricAESKey.decrypt(token));
 		long expireTime = Utils.getJSONDecodedAccessToken(SymmetricAESKey.decrypt(token)).getJSONObject("part_02").getLong("exp");
 		long currentTime = new Date().getTime()/1000L;
 		boolean isExpired = expireTime<currentTime;
