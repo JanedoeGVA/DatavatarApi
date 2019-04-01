@@ -51,7 +51,7 @@ public class WithingsPlugin {
 //    	return activityMeasures;
 //    }
 	
-	public static Response getHearthRate(String encryptToken, String startDate, String endDate) {
+	public static Response getHearthRate(String encryptToken, int startDate, int endDate) {
 		String url = String.format(Constant.WITHINGS_PROTECTED_RESOURCE_HEARTH_RATE_URL,startDate,endDate);
 		LOG.log(Level.INFO,"URL : " + url);
 		Response response = requestData(SymmetricAESKey.decrypt(encryptToken), getService(), ActivityMeasures.class, Verb.GET, url);
@@ -83,6 +83,11 @@ public class WithingsPlugin {
 		}
 		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
 		if (response.getCode() == Response.Status.OK.getStatusCode()) {
+			try {
+			LOG.log(Level.INFO,String.format("Response body : %s",response.getBody()));
+			} catch(Exception e) {
+				LOG.log(Level.SEVERE,e.getMessage(),e);
+			}
 			// TODO: ATTENTION IL FAUT ENVOYER LE JSON PARSE COMME POUR FITBIT
 			T entityT = Plugin.unMarshallGenericJSON("", classT);
 			return Response

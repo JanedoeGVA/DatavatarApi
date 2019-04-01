@@ -47,8 +47,8 @@ public class Withings {
 			@QueryParam ("date") String startDate,
 			@QueryParam ("end-date") String endDate,
 			@HeaderParam("assertion") String encryptToken) {
-		Plugin.stateToken(encryptToken);
-		Response response = WithingsPlugin.getHearthRate(encryptToken,startDate,endDate); 
+		// Plugin.stateToken(encryptToken);
+		Response response = WithingsPlugin.getHearthRate(encryptToken,1550966400,1550966400); 
 		return response;
 	}
 
