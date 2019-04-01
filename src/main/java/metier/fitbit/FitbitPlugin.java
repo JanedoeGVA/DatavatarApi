@@ -59,7 +59,8 @@ public class FitbitPlugin {
 	//		return protectedHearthRate;
 	//	}
 
-	public static Response getHearthRate(String encryptToken, String startDate, String endDate,String detailLevel) {
+	public static Response getHearthRate(String encryptToken, String startDate, String endDate) {
+		String detailLevel = "1min";
 		String url = String.format(Constant.FITBIT_PROTECTED_RESOURCE_HEARTH_RATE_URL,startDate,endDate,detailLevel);
 		LOG.log(Level.INFO,"URL : " + url);
 		Response response = requestData(SymmetricAESKey.decrypt(encryptToken), getService(), HearthRate.class, Verb.GET, url);

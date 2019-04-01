@@ -39,12 +39,6 @@ public class Withings {
 				.build();
 	}
 
-	//	@Path("/protecteddata/activitymeasures")
-	//	@POST
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	public ProtectedDataOauth<ActivityMeasures, Oauth2AccessToken> protectedData (Oauth2AccessToken oauth2AccessToken) {
-	//		return WithingsPlugin.getActivityMeasures(oauth2AccessToken);
-	//	}
 
 	@Path("/protecteddata/hearthrate")
 	@POST
@@ -54,8 +48,8 @@ public class Withings {
 			@QueryParam ("end-date") String endDate,
 			@HeaderParam("assertion") String encryptToken) {
 		Plugin.stateToken(encryptToken);
-		return WithingsPlugin.getHearthRate(encryptToken,startDate,endDate); 
-
+		Response response = WithingsPlugin.getHearthRate(encryptToken,startDate,endDate); 
+		return response;
 	}
 
 	@Path("/refresh")

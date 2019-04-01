@@ -76,10 +76,9 @@ public class Fitbit {
 	public Response protectedDataHearthRateResponse (
 			@QueryParam ("date") String startDate,
 			@QueryParam ("end-date") String endDate,
-			@QueryParam ("detail-level") String detailLevel,
 			@HeaderParam("assertion") String encryptToken) {
 		Plugin.stateToken(encryptToken);
-		Response response = FitbitPlugin.getHearthRate(encryptToken,startDate,endDate,detailLevel);
+		Response response = FitbitPlugin.getHearthRate(encryptToken,startDate,endDate);
 		return response; 
 
 	}

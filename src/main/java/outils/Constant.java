@@ -34,8 +34,7 @@ public class Constant {
 	private static final String WITHINGS_BASE_URL = "https://account.withings.com";
 	public static final String WITHINGS_BASE_AUTH_URL = WITHINGS_BASE_URL + "/oauth2_user/authorize2";
 	public static final String WITHINGS_TOKEN_ENDPOINT_URL = WITHINGS_BASE_URL + "/oauth2/token";
-	public static final String WITHINGS_PROTECTED_RESOURCE_HEARTH_RATE_URL= "https://wbsapi.withings.net/v2/measure?action=getintradayactivity&startdate=%s&enddate=%s&data_fields=heart_rate";
-	
+	public static final String WITHINGS_PROTECTED_RESOURCE_HEARTH_RATE_URL= "https://wbsapi.withings.net/measure?action=getmeas&access_token=%s&meastype=11&category=1&startdate=%s&enddate=%s";
 	
 	//public static final String NOKIA_HEALTH_TOKEN_REQUEST_ENDPOINT_URL = NOKIA_HEALTH_BASE_URL + "/request_token";
 	
