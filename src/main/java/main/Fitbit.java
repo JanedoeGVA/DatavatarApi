@@ -37,12 +37,11 @@ public class Fitbit {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verification (@QueryParam ("code") String code) {
 		final Oauth2AccessToken oauth2AccessToken = FitbitPlugin.accessToken(code);
-		
+
 		final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER,Constant.TYPE_OAUTH2,oauth2AccessToken);
 		return Response.status(Response.Status.OK.getStatusCode())
 				.entity(activityTracker)
 				.build();
-
 
 	}
 
@@ -84,23 +83,5 @@ public class Fitbit {
 		return response; 
 
 	}
-
-	//	@Path("/protecteddata/profil")
-	//	@POST
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	public ProtectedDataOauth<Profil,Oauth2AccessToken> protectedDataProfil (Oauth2AccessToken oauth2AccessToken) {
-	//		return FitbitPlugin.getProfil(oauth2AccessToken);
-	//	}
-
-	//	@Path("/protecteddata/hearthrate")
-	//	@POST
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	public ProtectedDataOauth<HearthRateInterval, Oauth2AccessToken> protectedDataHearthRate (@QueryParam ("date") String date,Oauth2AccessToken oauth2AccessToken) {
-	//		LOG.log(Level.INFO,"requesting DataHearthRate");
-	//		LOG.log(Level.INFO,"date :" + date);
-	//		LOG.log(Level.INFO, "token : " + oauth2AccessToken.toString());
-	//		return FitbitPlugin.getHearthRate(oauth2AccessToken,date);
-	//	}
-
 
 }

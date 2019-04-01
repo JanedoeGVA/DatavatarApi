@@ -9,10 +9,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import domaine.ActivityTracker;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.Plugin;
+import metier.fitbit.FitbitPlugin;
 import metier.withings.WithingsPlugin;
+import outils.Constant;
 
 @Path("/withings")
 public class Withings {
@@ -23,22 +27,25 @@ public class Withings {
 	public Oauth2Authorisation authorisation() { 
 		return WithingsPlugin.urlVerification();
 	}
-	
+
 	@Path("/verification")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Oauth2AccessToken verification (@QueryParam ("code") String code) {
-		return WithingsPlugin.accessToken(code);
-		
+	public Response verification (@QueryParam ("code") String code) {
+		final Oauth2AccessToken oauth2AccessToken = WithingsPlugin.accessToken(code);
+		final ActivityTracker activityTracker = new ActivityTracker(Constant.WITHINGS_PROVIDER,Constant.TYPE_OAUTH2,oauth2AccessToken);
+		return Response.status(Response.Status.OK.getStatusCode())
+				.entity(activityTracker)
+				.build();
 	}
-	
-//	@Path("/protecteddata/activitymeasures")
-//	@POST
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public ProtectedDataOauth<ActivityMeasures, Oauth2AccessToken> protectedData (Oauth2AccessToken oauth2AccessToken) {
-//		return WithingsPlugin.getActivityMeasures(oauth2AccessToken);
-//	}
-	
+
+	//	@Path("/protecteddata/activitymeasures")
+	//	@POST
+	//	@Produces(MediaType.APPLICATION_JSON)
+	//	public ProtectedDataOauth<ActivityMeasures, Oauth2AccessToken> protectedData (Oauth2AccessToken oauth2AccessToken) {
+	//		return WithingsPlugin.getActivityMeasures(oauth2AccessToken);
+	//	}
+
 	@Path("/protecteddata/hearthrate")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
@@ -50,7 +57,7 @@ public class Withings {
 		return WithingsPlugin.getHearthRate(encryptToken,startDate,endDate); 
 
 	}
-	
+
 	@Path("/refresh")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
@@ -67,6 +74,5 @@ public class Withings {
 		}
 
 	}
-	
+
 }
- 
