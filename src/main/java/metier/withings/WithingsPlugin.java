@@ -52,7 +52,7 @@ public class WithingsPlugin {
 //    }
 	
 	public static Response getHearthRate(String encryptToken, String startDate, String endDate) {
-		String url = String.format(Constant.WITHINGS_PROTECTED_RESOURCE_HEARTH_RATE_URL,startDate,endDate);
+		String url = String.format(Constant.WITHINGS_PROTECTED_RESOURCE_HEARTH_RATE_URL,encryptToken,startDate,endDate);
 		LOG.log(Level.INFO,"URL : " + url);
 		Response response = requestData(SymmetricAESKey.decrypt(encryptToken), getService(), ActivityMeasures.class, Verb.GET, url);
 		return response;
