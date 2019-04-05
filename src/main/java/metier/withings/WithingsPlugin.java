@@ -2,11 +2,14 @@ package metier.withings;
 
 import com.github.scribejava.core.oauth.OAuth20Service;
 
+import com.google.gson.JsonObject;
+import domaine.QueryParam;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.Plugin;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,9 +20,13 @@ import com.github.scribejava.core.model.OAuthConstants;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Verb;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import outils.Constant;
 import outils.SymmetricAESKey;
 import pojo.withings.ActivityMeasures;
+
+import static org.eclipse.persistence.annotations.Convert.JSON;
 
 public class WithingsPlugin {
 	
@@ -51,12 +58,15 @@ public class WithingsPlugin {
 //    	return activityMeasures;
 //    }
 	
-	public static Response getHearthRate(String encryptToken, int startDate, int endDate) {
-		String url = String.format(Constant.WITHINGS_PROTECTED_RESOURCE_HEARTH_RATE_URL,startDate,endDate);
-		LOG.log(Level.INFO,"URL : " + url);
+	public static Response getHearthRate(String encryptToken,String startDate,String endDate) {
 		LOG.log(Level.INFO,"token : " + SymmetricAESKey.decrypt(encryptToken));
-		Response response = requestData(SymmetricAESKey.decrypt(encryptToken), getService(), ActivityMeasures.class, Verb.GET, url);
-		return response;
+		final ArrayList<QueryParam> lstQueryParams = new ArrayList<>();
+		lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_ACTION,Constant.WITHINGS_PARAM_ACTION_GETMEAS));
+		lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_MEASTYPE,Constant.WITHINGS_PARAM_MEASTYPE_HR));
+		lstQueryParams.add(new QueryParam(OAuthConstants.ACCESS_TOKEN,SymmetricAESKey.decrypt(encryptToken)));
+		lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_START_DATE,startDate));
+		lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_END_DATE,endDate));
+		return requestData(getService(), ActivityMeasures.class, Verb.GET, Constant.WITHINGS_MEASURE_URL,lstQueryParams);
 	}
 	
 //	public static Response getActivityMeasures(String token) {
@@ -66,13 +76,16 @@ public class WithingsPlugin {
 //		return response;
 //	}
 	
-	public static <T> Response requestData (String token, OAuth20Service service, Class<T> classT, Verb verb, String urlRequest) {
+	private static <T> Response requestData (OAuth20Service service, Class<T> classT, Verb verb, String urlRequest, ArrayList<QueryParam> lstQueryParams) {
 		
 		LOG.log(Level.INFO,String.format("Generate request with %s to URL : %s",verb,urlRequest));
-		LOG.log(Level.INFO,"Generate request... ");
+
 		OAuthRequest request = new OAuthRequest(verb, urlRequest);
-        request.addQuerystringParameter(OAuthConstants.ACCESS_TOKEN, token);
-		LOG.log(Level.INFO,"request : " + request.toString());
+
+		for (QueryParam queryParam : lstQueryParams) {
+			request.addQuerystringParameter(queryParam.getKey(),queryParam.getValue());
+		}
+		LOG.log(Level.INFO,"Request : "+ request.getCompleteUrl());
 		com.github.scribejava.core.model.Response response = null;
 		try {
 			response = service.execute(request);
@@ -83,27 +96,54 @@ public class WithingsPlugin {
 			LOG.log(Level.SEVERE,e.getMessage(),e);
 		}
 		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
+		String body = "{}";
 		if (response.getCode() == Response.Status.OK.getStatusCode()) {
 			try {
-			LOG.log(Level.INFO,String.format("Response body : %s",response.getBody()));
+				body = response.getBody();
 			} catch(Exception e) {
 				LOG.log(Level.SEVERE,e.getMessage(),e);
 			}
-			// TODO: ATTENTION IL FAUT ENVOYER LE JSON PARSE COMME POUR FITBIT
-			T entityT = Plugin.unMarshallGenericJSON("", classT);
-			return Response
-					.status(response.getCode())
-					.entity(entityT)
-					.build();
+			JSONObject jsonObject = new JSONObject(body);
+			final int status = jsonObject.getInt(Constant.WITHINGS_STATUS_CODE);
+			LOG.log(Level.INFO,String.format("Response body : %s",body));
+			if (status == 0) {
+				JSONObject jsonMesure = new JSONObject();
+				JSONArray jsArrItems = new JSONArray();
+				JSONArray jsArray = jsonObject.getJSONObject("body").getJSONArray("mesuregrps");
+				for (int i=0; i < jsArray.length(); i++) {
+					JSONObject jsItem = jsArray.getJSONObject(i);
+					jsItem.getJSONArray()
+							// TODO
+
+				}
+				// TODO: ATTENTION IL FAUT ENVOYER LE JSON PARSE COMME POUR FITBIT
+				T entityT = Plugin.unMarshallGenericJSON("", classT);
+				// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				return Response
+						.status(Response.Status.OK.getStatusCode())
+						.entity(entityT)
+						.build();
+			} else {
+				int code;
+				if (status == Response.Status.UNAUTHORIZED.getStatusCode()) {
+					code = status;
+				} else {
+					code = Response.Status.BAD_REQUEST.getStatusCode();
+				}
+				return Response
+						.status(code)
+						.entity("{}")
+						.build();
+			}
 		} else {
-			String body = "error";
 			try {
 				body = response.getBody();
 			} catch (Exception e) {
 				LOG.log(Level.SEVERE,e.getMessage(),e);
 			}
+			int responseCode = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
 			return Response
-					.status(response.getCode())
+					.status(responseCode)
 					.entity(body)
 					.build();
 		}	

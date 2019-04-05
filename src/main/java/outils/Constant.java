@@ -34,14 +34,24 @@ public class Constant {
 	private static final String WITHINGS_BASE_URL = "https://account.withings.com";
 	public static final String WITHINGS_BASE_AUTH_URL = WITHINGS_BASE_URL + "/oauth2_user/authorize2";
 	public static final String WITHINGS_TOKEN_ENDPOINT_URL = WITHINGS_BASE_URL + "/oauth2/token";
-	public static final String WITHINGS_PROTECTED_RESOURCE_HEARTH_RATE_URL= "https://wbsapi.withings.net/measure?action=getmeas&meastype=11&category=1&startdate=%s&enddate=%s";
-	
+	public static final String WITHINGS_MEASURE_URL= "https://wbsapi.withings.net/measure";
+
+	public static final String WITHINGS_PARAM_END_DATE = "enddate";
+	public static final String WITHINGS_PARAM_START_DATE = "startdate";
+	public static final String WITHINGS_PARAM_ACTION = "action";
+	public static final String WITHINGS_PARAM_MEASTYPE = "meastype";
+
+
+	public static final String WITHINGS_PARAM_ACTION_GETMEAS = "getmeas";
+	public static final String WITHINGS_PARAM_MEASTYPE_HR = "11";
+
+	public static final String WITHINGS_STATUS_CODE = "status";
+
 	//public static final String NOKIA_HEALTH_TOKEN_REQUEST_ENDPOINT_URL = NOKIA_HEALTH_BASE_URL + "/request_token";
 	
 	
 	public static final String WITHINGS_CALLBACK_URL = "datavatarapp://withings/oauth2/verification";
-	
-	public static final String NOKIAHEALTH_ACTIVITIES = "http://api.health.nokia.com/measure?action=getmeas";
+
 	
 
 	/**Garmin*/

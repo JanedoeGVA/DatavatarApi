@@ -3,27 +3,26 @@ package outils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.apache.commons.math3.analysis.function.Log;
 import org.json.JSONObject;
-
 import com.cars.framework.secrets.DockerSecretLoadException;
 import com.cars.framework.secrets.DockerSecrets;
-import com.fasterxml.jackson.core.JsonParser;
+
 import com.google.gson.JsonElement;
+
 
 import metier.Plugin;
 
 public class Utils {
 	
 	private static final Logger LOG = Logger.getLogger(Plugin.class.getName());
-	
+
+
 	public static String getProps (String propsName, String value) {
 		try {
 			Map<String, String> secrets = DockerSecrets.loadFromFile(propsName);
