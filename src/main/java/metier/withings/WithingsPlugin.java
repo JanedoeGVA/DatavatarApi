@@ -107,15 +107,20 @@ public class WithingsPlugin {
 			final int status = jsonObject.getInt(Constant.WITHINGS_STATUS_CODE);
 			LOG.log(Level.INFO,String.format("Response body : %s",body));
 			if (status == 0) {
-				JSONObject jsonMesure = new JSONObject();
 				JSONArray jsArrItems = new JSONArray();
 				JSONArray jsArray = jsonObject.getJSONObject("body").getJSONArray("mesuregrps");
-				for (int i=0; i < jsArray.length(); i++) {
-					JSONObject jsItem = jsArray.getJSONObject(i);
-					jsItem.getJSONArray()
-							// TODO
+				final ArrayList<Integer> tot = new ArrayList<>();
+//				for (Object jsonObj : jsArray) {
+//					final JSONObject jsonMesure = ((JSONObject)jsonObj).getJSONArray("").getJSONObject(0);
+//
+//				}
+				jsArray.forEach(item-> {
+					final JSONObject jsonMesure = ((JSONObject)item).getJSONArray("").getJSONObject(0);
+					jsArrItems.put(jsonMesure.getInt(""));
+				});
 
-				}
+
+
 				// TODO: ATTENTION IL FAUT ENVOYER LE JSON PARSE COMME POUR FITBIT
 				T entityT = Plugin.unMarshallGenericJSON("", classT);
 				// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
