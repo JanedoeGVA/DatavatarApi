@@ -108,9 +108,10 @@ public class WithingsPlugin {
 			LOG.log(Level.INFO,String.format("Response body : %s",body));
 			LOG.log(Level.INFO,String.format("status : %s",status));
 			if (status == 0) {
+				LOG.log(Level.INFO,String.format("creating jsA : %s",status));
 				JSONArray jsArrItems = new JSONArray();
 				JSONArray jsArray = jsonObject.getJSONObject("body").getJSONArray("mesuregrps");
-
+				LOG.log(Level.INFO,String.format("jsArray : %s",jsArray.length()));
 				for (Object jsonObj : jsArray) {
 					final JSONObject jsonMesure = ((JSONObject)jsonObj).getJSONArray("").getJSONObject(0);
 					final int value =  jsonMesure.getInt("value")/100;
