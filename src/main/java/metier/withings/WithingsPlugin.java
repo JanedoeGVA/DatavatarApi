@@ -107,33 +107,50 @@ public class WithingsPlugin {
 			final int status = jsonObject.getInt(Constant.WITHINGS_STATUS_CODE);
 			LOG.log(Level.INFO,String.format("Response body : %s",body));
 			LOG.log(Level.INFO,String.format("status : %s",status));
+			LOG.log(Level.INFO,String.format("json obj length : %s",jsonObject.length()));
 			if (status == 0) {
 				LOG.log(Level.INFO,String.format("creating jsA : %s",status));
+				JSONObject json = new JSONObject();
 				JSONArray jsArrItems = new JSONArray();
-				JSONArray jsArray = jsonObject.getJSONObject("body").getJSONArray("mesuregrps");
-				LOG.log(Level.INFO,String.format("jsArray : %s",jsArray.length()));
-				for (Object jsonObj : jsArray) {
-					final JSONObject jsonMesure = ((JSONObject)jsonObj).getJSONArray("").getJSONObject(0);
-					final int value =  jsonMesure.getInt("value")/100;
-					LOG.log(Level.INFO,"value : " + value);
-					jsArrItems.put(value);
+				json.put("lstHearthRate",jsArrItems);
+				JSONArray jsArray = null;
+				try {
+					jsArray = jsonObject.getJSONObject("body").getJSONArray("measuregrps");
+				} catch (Exception e) {
+					LOG.log(Level.SEVERE,e.getMessage(),e);
 				}
-
-//				jsArray.forEach(item-> {
-//					final JSONObject jsonMesure = ((JSONObject)item).getJSONArray("measures").getJSONObject(0);
+				LOG.log(Level.INFO,String.format("jsArray : %s",jsArray.length()));
+//				for (Object jsonObj : jsArray) {
+//					try {
+//					final JSONObject jsonMesure = ((JSONObject)jsonObj).getJSONArray("measures").getJSONObject(0);
 //					final int value =  jsonMesure.getInt("value")/100;
 //					LOG.log(Level.INFO,"value : " + value);
 //					jsArrItems.put(value);
-//				});
+//					} catch (Exception e) {
+//						LOG.log(Level.SEVERE,e.getMessage(),e);
+//					}
+//				}
+
+				jsArray.forEach(item-> {
+					try {
+						final JSONObject jsonMesure = ((JSONObject)item).getJSONArray("measures").getJSONObject(0);
+						final int value =  jsonMesure.getInt("value")/100;
+						LOG.log(Level.INFO,"value : " + value);
+						jsArrItems.put(value);
+					} catch (Exception e) {
+						LOG.log(Level.SEVERE,e.getMessage(),e);
+					}
+				});
 
 
+				LOG.log(Level.SEVERE,"JSON = " + json.toString());
 
 				// TODO: ATTENTION IL FAUT ENVOYER LE JSON PARSE COMME POUR FITBIT
-				T entityT = Plugin.unMarshallGenericJSON("", classT);
+				// T entityT = Plugin.unMarshallGenericJSON("", classT);
 				// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				return Response
 						.status(Response.Status.OK.getStatusCode())
-						.entity(entityT)
+						.entity(json.toString())
 						.build();
 			} else {
 				int code;
