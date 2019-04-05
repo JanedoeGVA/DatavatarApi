@@ -106,18 +106,24 @@ public class WithingsPlugin {
 			JSONObject jsonObject = new JSONObject(body);
 			final int status = jsonObject.getInt(Constant.WITHINGS_STATUS_CODE);
 			LOG.log(Level.INFO,String.format("Response body : %s",body));
+			LOG.log(Level.INFO,String.format("status : %s",status));
 			if (status == 0) {
 				JSONArray jsArrItems = new JSONArray();
 				JSONArray jsArray = jsonObject.getJSONObject("body").getJSONArray("mesuregrps");
-				final ArrayList<Integer> tot = new ArrayList<>();
-//				for (Object jsonObj : jsArray) {
-//					final JSONObject jsonMesure = ((JSONObject)jsonObj).getJSONArray("").getJSONObject(0);
-//
-//				}
-				jsArray.forEach(item-> {
-					final JSONObject jsonMesure = ((JSONObject)item).getJSONArray("").getJSONObject(0);
-					jsArrItems.put(jsonMesure.getInt(""));
-				});
+
+				for (Object jsonObj : jsArray) {
+					final JSONObject jsonMesure = ((JSONObject)jsonObj).getJSONArray("").getJSONObject(0);
+					final int value =  jsonMesure.getInt("value")/100;
+					LOG.log(Level.INFO,"value : " + value);
+					jsArrItems.put(value);
+				}
+
+//				jsArray.forEach(item-> {
+//					final JSONObject jsonMesure = ((JSONObject)item).getJSONArray("measures").getJSONObject(0);
+//					final int value =  jsonMesure.getInt("value")/100;
+//					LOG.log(Level.INFO,"value : " + value);
+//					jsArrItems.put(value);
+//				});
 
 
 
