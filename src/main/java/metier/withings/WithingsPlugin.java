@@ -2,18 +2,20 @@ package metier.withings;
 
 import com.github.scribejava.core.oauth.OAuth20Service;
 
-import com.google.gson.JsonObject;
 import domaine.QueryParam;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
+import metier.exception.UnAuthorizedException;
+import pojo.HeartRate;
 import metier.Plugin;
 
-import java.io.IOException;
+
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.Response;
 
 import com.github.scribejava.core.model.OAuthConstants;
@@ -24,161 +26,126 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import outils.Constant;
 import outils.SymmetricAESKey;
-import pojo.withings.ActivityMeasures;
+import pojo.HeartRateData;
 
-import static org.eclipse.persistence.annotations.Convert.JSON;
+import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 public class WithingsPlugin {
-	
-	private static final Logger LOG = Logger.getLogger(WithingsPlugin.class.getName());
-	
-	public static Oauth2Authorisation urlVerification() {
-		Oauth2Authorisation oauth2Auth = Plugin.oauth20UrlVerification(Constant.WITHINGS_PROVIDER, getService());
+
+    private static final Logger LOG = Logger.getLogger(WithingsPlugin.class.getName());
+
+    public static Oauth2Authorisation urlVerification() {
+        Oauth2Authorisation oauth2Auth = Plugin.oauth20UrlVerification(Constant.WITHINGS_PROVIDER, getService());
         return oauth2Auth;
-	}
-	
-	public static Oauth2AccessToken accessToken (String code) {
-    		Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(code, getService());
-    		return accessToken;
     }
-	
-	private static OAuth20Service getService() {
-    		final OAuth20Service service = Plugin.getOauth2Service(Constant.WITHINGS_PROPS,Constant.WITHINGS_CALLBACK_URL,WithingsApi_Oauth20.instance());
-    		return service;
+
+    public static Oauth2AccessToken accessToken(String code) {
+        Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(code, getService());
+        return accessToken;
     }
-	
-	public static Oauth2AccessToken refresh (String refreshToken) {
-		Oauth2AccessToken oauth2AccessToken = Plugin.refreshAccessToken(refreshToken, getService());
-		return oauth2AccessToken;
-	}
+
+    private static OAuth20Service getService() {
+        final OAuth20Service service = Plugin.getOauth2Service(Constant.WITHINGS_PROPS, Constant.WITHINGS_CALLBACK_URL, WithingsApi_Oauth20.instance());
+        return service;
+    }
+
+    public static Oauth2AccessToken refresh(String refreshToken) {
+        Oauth2AccessToken oauth2AccessToken = Plugin.refreshAccessToken(refreshToken, getService());
+        return oauth2AccessToken;
+    }
+
+    private static HeartRateData parseHeartRate(JSONObject jsonObject) {
+        HeartRateData heartRateData = new HeartRateData();
+        try {
+            JSONArray jsArray = jsonObject.getJSONObject("body").getJSONArray("measuregrps");
+            LOG.log(Level.INFO, String.format("jsArray : %s", jsArray.length()));
+            jsArray.forEach(item -> {
+                final int date = ((JSONObject) item).getInt("date");
+                final JSONObject jsonMesure = ((JSONObject) item).getJSONArray("measures").getJSONObject(0);
+                final int hr = jsonMesure.getInt("value") / 100;
+                LOG.log(Level.INFO, "hearth-rate : " + hr + "date : " + date);
+                final HeartRate heartRate = new HeartRate(hr, date);
+                heartRateData.addHeartRateData(heartRate);
+
+
+            });
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, e.getMessage(), e);
+        }
+        return heartRateData;
+    }
 
 //	public static ProtectedDataOauth<ActivityMeasures,Oauth2AccessToken> getActivityMeasures (Oauth2AccessToken accessToken,String startDate,String endDate) {
 //		String url = String.format(Constant.WITHINGS_PROTECTED_RESOURCE_HEARTH_RATE_URL,startDate,endDate);
 //		ProtectedDataOauth<ActivityMeasures,Oauth2AccessToken> activityMeasures = getGenericProtectedRessources(accessToken, getService(), ActivityMeasures.class, Verb.GET, url);
 //    	return activityMeasures;
 //    }
-	
-	public static Response getHearthRate(String encryptToken,String startDate,String endDate) {
-		LOG.log(Level.INFO,"token : " + SymmetricAESKey.decrypt(encryptToken));
-		final ArrayList<QueryParam> lstQueryParams = new ArrayList<>();
-		lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_ACTION,Constant.WITHINGS_PARAM_ACTION_GETMEAS));
-		lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_MEASTYPE,Constant.WITHINGS_PARAM_MEASTYPE_HR));
-		lstQueryParams.add(new QueryParam(OAuthConstants.ACCESS_TOKEN,SymmetricAESKey.decrypt(encryptToken)));
-		lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_START_DATE,startDate));
-		lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_END_DATE,endDate));
-		return requestData(getService(), ActivityMeasures.class, Verb.GET, Constant.WITHINGS_MEASURE_URL,lstQueryParams);
-	}
-	
+
+    public static HeartRateData getHeartRate(String encryptToken, String startDate, String endDate) throws UnAuthorizedException {
+        LOG.log(Level.INFO, "token : " + SymmetricAESKey.decrypt(encryptToken));
+        final ArrayList<QueryParam> lstQueryParams = new ArrayList<>();
+        lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_ACTION, Constant.WITHINGS_PARAM_ACTION_GETMEAS));
+        lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_MEASTYPE, Constant.WITHINGS_PARAM_MEASTYPE_HR));
+        lstQueryParams.add(new QueryParam(OAuthConstants.ACCESS_TOKEN, SymmetricAESKey.decrypt(encryptToken)));
+        lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_START_DATE, startDate));
+        lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_END_DATE, endDate));
+        JSONObject jsonObject = requestData(getService(), Verb.GET, Constant.WITHINGS_MEASURE_URL, lstQueryParams);
+        return parseHeartRate(jsonObject);
+
+    }
+
 //	public static Response getActivityMeasures(String token) {
 //		String url = String.format(Constant.FITBIT_PROTECTED_RESOURCE_HEARTH_RATE_URL);
 //		LOG.log(Level.INFO,"URL : " + url);
 //		Response response = requestData(token, getService(), HearthRateInterval.class, Verb.GET, url);
 //		return response;
 //	}
-	
-	private static <T> Response requestData (OAuth20Service service, Class<T> classT, Verb verb, String urlRequest, ArrayList<QueryParam> lstQueryParams) {
-		
-		LOG.log(Level.INFO,String.format("Generate request with %s to URL : %s",verb,urlRequest));
 
-		OAuthRequest request = new OAuthRequest(verb, urlRequest);
-
-		for (QueryParam queryParam : lstQueryParams) {
-			request.addQuerystringParameter(queryParam.getKey(),queryParam.getValue());
-		}
-		LOG.log(Level.INFO,"Request : "+ request.getCompleteUrl());
-		com.github.scribejava.core.model.Response response = null;
-		try {
-			response = service.execute(request);
-			LOG.log(Level.INFO,"Response success");
-		} catch (InterruptedException | ExecutionException | IOException e1) {
-			LOG.log(Level.SEVERE,e1.getMessage(),e1);
-		} catch(Exception e) {
-			LOG.log(Level.SEVERE,e.getMessage(),e);
-		}
-		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
-		String body = "{}";
-		if (response.getCode() == Response.Status.OK.getStatusCode()) {
-			try {
-				body = response.getBody();
-			} catch(Exception e) {
-				LOG.log(Level.SEVERE,e.getMessage(),e);
-			}
-			JSONObject jsonObject = new JSONObject(body);
-			final int status = jsonObject.getInt(Constant.WITHINGS_STATUS_CODE);
-			LOG.log(Level.INFO,String.format("Response body : %s",body));
-			LOG.log(Level.INFO,String.format("status : %s",status));
-			LOG.log(Level.INFO,String.format("json obj length : %s",jsonObject.length()));
-			if (status == 0) {
-				LOG.log(Level.INFO,String.format("creating jsA : %s",status));
-				JSONObject json = new JSONObject();
-				JSONArray jsArrItems = new JSONArray();
-				json.put("lstHearthRate",jsArrItems);
-				JSONArray jsArray = null;
-				try {
-					jsArray = jsonObject.getJSONObject("body").getJSONArray("measuregrps");
-				} catch (Exception e) {
-					LOG.log(Level.SEVERE,e.getMessage(),e);
-				}
-				LOG.log(Level.INFO,String.format("jsArray : %s",jsArray.length()));
-//				for (Object jsonObj : jsArray) {
-//					try {
-//					final JSONObject jsonMesure = ((JSONObject)jsonObj).getJSONArray("measures").getJSONObject(0);
-//					final int value =  jsonMesure.getInt("value")/100;
-//					LOG.log(Level.INFO,"value : " + value);
-//					jsArrItems.put(value);
-//					} catch (Exception e) {
-//						LOG.log(Level.SEVERE,e.getMessage(),e);
-//					}
-//				}
-
-				jsArray.forEach(item-> {
-					try {
-						final JSONObject jsonMesure = ((JSONObject)item).getJSONArray("measures").getJSONObject(0);
-						final int value =  jsonMesure.getInt("value")/100;
-						LOG.log(Level.INFO,"value : " + value);
-						jsArrItems.put(value);
-					} catch (Exception e) {
-						LOG.log(Level.SEVERE,e.getMessage(),e);
-					}
-				});
+    private static JSONObject requestData(OAuth20Service service, Verb verb, String urlRequest, ArrayList<QueryParam> lstQueryParams) throws UnAuthorizedException {
+        LOG.log(Level.INFO, String.format("Generate request with %s to URL : %s", verb, urlRequest));
+        OAuthRequest request = new OAuthRequest(verb, urlRequest);
+        for (QueryParam queryParam : lstQueryParams) {
+            request.addQuerystringParameter(queryParam.getKey(), queryParam.getValue());
+        }
+        LOG.log(Level.INFO, "Request : " + request.getCompleteUrl());
+        com.github.scribejava.core.model.Response response = null;
+        try {
+            response = service.execute(request);
+            LOG.log(Level.INFO, "Response success");
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, e.getMessage(), e);
+        }
+        LOG.log(Level.INFO, String.format("Response code/message : %s / %s", response.getCode(), response.getMessage()));
+        String body = "{}";
+        if (response.getCode() == Response.Status.OK.getStatusCode()) {
+            try {
+                body = response.getBody();
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, e.getMessage(), e);
+            }
+            JSONObject jsonObject = new JSONObject(body);
+            final int status = jsonObject.getInt(Constant.WITHINGS_STATUS_CODE);
+            LOG.log(Level.INFO, String.format("Response body : %s", body));
+            LOG.log(Level.INFO, String.format("status : %s", status));
+            LOG.log(Level.INFO, String.format("json obj length : %s", jsonObject.length()));
+            if (status == 0) {
+                LOG.log(Level.INFO, String.format("creating jsA : %s", status));
+                return jsonObject;
+            } else {
+                if (status == UNAUTHORIZED.getStatusCode()) {
+                    throw new UnAuthorizedException("");
+                } else {
+                    throw new BadRequestException();
+                }
+            }
+        } else {
+            throw new InternalServerErrorException();
+        }
+    }
+}
 
 
-				LOG.log(Level.SEVERE,"JSON = " + json.toString());
-
-				// TODO: ATTENTION IL FAUT ENVOYER LE JSON PARSE COMME POUR FITBIT
-				// T entityT = Plugin.unMarshallGenericJSON("", classT);
-				// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				return Response
-						.status(Response.Status.OK.getStatusCode())
-						.entity(json.toString())
-						.build();
-			} else {
-				int code;
-				if (status == Response.Status.UNAUTHORIZED.getStatusCode()) {
-					code = status;
-				} else {
-					code = Response.Status.BAD_REQUEST.getStatusCode();
-				}
-				return Response
-						.status(code)
-						.entity("{}")
-						.build();
-			}
-		} else {
-			try {
-				body = response.getBody();
-			} catch (Exception e) {
-				LOG.log(Level.SEVERE,e.getMessage(),e);
-			}
-			int responseCode = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
-			return Response
-					.status(responseCode)
-					.entity(body)
-					.build();
-		}	
-	}
-	
-//	public static <T> ProtectedDataOauth<T,Oauth2AccessToken> getGenericProtectedRessources(Oauth2AccessToken accessToken, OAuth20Service service, Class<T> classT, Verb verb, String urlRequest) { 
+//	public static <T> ProtectedDataOauth<T,Oauth2AccessToken> getGenericProtectedRessources(Oauth2AccessToken accessToken, OAuth20Service service, Class<T> classT, Verb verb, String urlRequest) {
 //        OAuthRequest request = new OAuthRequest(verb, urlRequest);
 //        request.addQuerystringParameter(OAuthConstants.ACCESS_TOKEN, SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
 //        /* for getmeas
@@ -228,7 +195,7 @@ public class WithingsPlugin {
 		ProtectedDataOauth<ActivityMeasures, Oauth1AccessToken> protectedAct = getProtectedDataT(accessToken, getService(), ActivityMeasures.class, url);
 		return protectedAct;
 	}*/
-	
+
 //	private static <T>ProtectedDataOauth<T, Oauth1AccessToken> getProtectedDataT(Oauth1AccessToken accessToken,OAuth10aService service, Class<T> classT, String urlRequest) {
 //		final OAuth1AccessToken oAuth1AccessToken = new OAuth1AccessToken(SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()),SymmetricAESKey.decrypt(accessToken.getAccessTokenSecret()));
 //		final OAuthRequest request = new OAuthRequest(Verb.GET, urlRequest);
@@ -253,5 +220,5 @@ public class WithingsPlugin {
 //	    protectedDataOauth.setProtectedDataT(t);
 //	    return protectedDataOauth;
 //	}
-	
-}
+
+
