@@ -25,8 +25,13 @@ public class Constant {
     public static final String FITBIT_CALLBACK_URL = "datavatarapp://fitbit/oauth2/verification";
     
 	public static final String FITBIT_PROTECTED_RESOURCE_PROFIL_URL = " https://api.fitbit.com/1/user/-/profile.json";
-	public static final String FITBIT_PROTECTED_RESOURCE_HEARTH_RATE_URL = "https://api.fitbit.com/1/user/-/activities/heart/date/%s/%s/%s.json";
-	
+
+	public static final String FITBIT_TEMPLATE_HEART_RATE_URL = "https://api.fitbit.com/1/user/-/activities/heart/date/{date}/{end-date}/{detail-lvl}.json";
+	public static final String FITBIT_DETAIL_LVL_MIN = "1min";
+	public static final String FITBIT_PARAM_DATE = "date";
+	public static final String FITBIT_PARAM_END_DATE = "end-date";
+	public static final String FITBIT_PARAM_DETAIL_LVL = "detail-lvl";
+
 	/**Withings*/
 	public static final String WITHINGS_PROPS = "withings.properties";
 	public static final String WITHINGS_PROVIDER = "Withings";

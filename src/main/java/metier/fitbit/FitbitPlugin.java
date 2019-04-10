@@ -1,13 +1,23 @@
 package metier.fitbit;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
+import domaine.QueryParam;
+import metier.exception.UnAuthorizedException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.github.scribejava.core.model.OAuthConstants;
@@ -22,7 +32,13 @@ import domaine.oauth2.Oauth2Authorisation;
 import metier.Plugin;
 import outils.Constant;
 import outils.SymmetricAESKey;
+import outils.Utils;
+import pojo.HeartRate;
+import pojo.HeartRateData;
 import pojo.fitbit.hearthrate.HearthRate;
+
+import static javax.ws.rs.core.Response.Status.OK;
+import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 
 public class FitbitPlugin {
@@ -31,6 +47,7 @@ public class FitbitPlugin {
 
 	public static Oauth2Authorisation urlVerification() {
 		Oauth2Authorisation oauth2Auth = Plugin.oauth20UrlVerification(Constant.FITBIT_PROVIDER, getService());
+
 		return oauth2Auth;
 	}	    
 
@@ -59,20 +76,49 @@ public class FitbitPlugin {
 	//		return protectedHearthRate;
 	//	}
 
-	public static Response getHearthRate(String encryptToken, String startDate, String endDate) {
-		String detailLevel = "1min";
-		String url = String.format(Constant.FITBIT_PROTECTED_RESOURCE_HEARTH_RATE_URL,startDate,endDate,detailLevel);
-		LOG.log(Level.INFO,"URL : " + url);
-		Response response = requestData(SymmetricAESKey.decrypt(encryptToken), getService(), HearthRate.class, Verb.GET, url);
-		return response;
+	public static HeartRateData getHearthRate(String encryptToken, long startDate, long endDate) {
+		Map<String, String> parameters = new HashMap<>();
+		parameters.put(Constant.FITBIT_PARAM_DATE,Utils.formatDateTime(startDate));
+		parameters.put(Constant.FITBIT_PARAM_END_DATE,Utils.formatDateTime(endDate));
+		parameters.put(Constant.FITBIT_PARAM_DETAIL_LVL,Constant.FITBIT_DETAIL_LVL_MIN);
+		URI uri = Utils.formatUrl(Constant.FITBIT_TEMPLATE_HEART_RATE_URL,parameters);
+		final ArrayList<QueryParam> lstQueryParams = new ArrayList<>();
+		lstQueryParams.add(new QueryParam(OAuthConstants.ACCESS_TOKEN, SymmetricAESKey.decrypt(encryptToken)));
+		JSONObject jsonObject = requestData(getService(), Verb.GET, uri.toASCIIString(),lstQueryParams);
+		return parseHeartRate(jsonObject);
 	}
 
-	public static <T> Response requestData (String token, OAuth20Service service, Class<T> classT, Verb verb, String urlRequest) { 
+	private static HeartRateData parseHeartRate(JSONObject jsonObject) {
+		HeartRateData heartRateData = new HeartRateData();
+		try {
+			JSONObject jo = new JSONObject();
+			ArrayList<Integer> lstHearthRate = new ArrayList<>();
+			JSONArray array = jsonObject.getJSONObject("activities-heart-intraday").getJSONArray("dataset");
+			if (array.length() == 0) {
+				return null;
+			}
+			for (int i = 0; i < array.length(); i++) {
+				lstHearthRate.add(array.getJSONObject(i).getInt("value"));
+			}
+			JSONArray jsArray = new JSONArray(lstHearthRate);
+			jo.put("start", array.getJSONObject(0).getString("time"));
+			jo.put("end", array.getJSONObject(array.length() - 1).getString("time"));
+			jo.put("lstHearthRate", jsArray);
+
+			return heartRateData;
+		}
+	}
+
+
+	public static JSONObject requestData (OAuth20Service service, Verb verb, String urlRequest,ArrayList<QueryParam> lstQueryParams) throws UnAuthorizedException,ForbiddenException,IOException{
 		LOG.log(Level.INFO,String.format("Generate request with %s to URL : %s",verb,urlRequest));
 		LOG.log(Level.INFO,"Generate request... ");
+
+
 		OAuthRequest request = new OAuthRequest(verb, urlRequest);
-		request.addHeader(MediaType.APPLICATION_JSON, Constant.JSON_MEDIA_TYPE);
-		request.addHeader(OAuthConstants.HEADER, Constant.TOKEN_TYPE_BEARER + " " + token);
+		for (QueryParam queryParam : lstQueryParams) {
+			request.addQuerystringParameter(queryParam.getKey(), queryParam.getValue());
+		}
 		LOG.log(Level.INFO,"request : " + request.toString());
 		com.github.scribejava.core.model.Response response = null;
 		try {
@@ -84,51 +130,32 @@ public class FitbitPlugin {
 			LOG.log(Level.SEVERE,e.getMessage(),e);
 		}
 		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
-		if (response.getCode() == Response.Status.OK.getStatusCode()) {
+		final int code = response.getCode();
+		if (code == OK.getStatusCode()) {
 			try {
-				T entityT;
 				String body = response.getBody();
 				JSONObject jsonObj = new JSONObject(body);
-				JSONObject jsonParse = Parser.parseHearthRate(jsonObj);
-				if (jsonParse != null) {
-					LOG.log(Level.INFO,String.format("DATA EXIST"));
-					entityT = Plugin.unMarshallGenericJSON(jsonParse.toString(), classT);
-					return Response
-							.status(response.getCode())
-							.entity(entityT)
-							.build();
-				} else {
-					LOG.log(Level.INFO,String.format("No Data"));
-					return Response
-							.status(response.getCode())
-							.entity("{No Data}")
-							.build();
-				}
-				// TODO: traitement sur entity ? parser ??
-				
-			} catch (Exception e) {
+				return jsonObj;
+			} catch (IOException e) {
 				LOG.log(Level.WARNING,e.getMessage(),e);
-				return Response
-						.status(response.getCode())
-						.entity("{\"error\":\"code "+ response.getCode() +"\"}")
-						.build();
+				throw new IOException();
 			}
-
-
+		} else if (code == UNAUTHORIZED.getStatusCode()) {
+			throw new UnAuthorizedException("");
 		} else {
-			String body = "error";
-			try {
-				body = response.getBody();
-			} catch (Exception e) {
-				LOG.log(Level.SEVERE,e.getMessage(),e);
-			}
-			return Response
-					.status(response.getCode())
-					.entity(body)
-					.build();
-		}	
+			throw new ForbiddenException();
+		}
 	}
 
+	public static Oauth2AccessToken refresh (String encryptRefreshToken) {
+		final Oauth2AccessToken oauth2AccessToken = Plugin.refreshAccessToken(encryptRefreshToken, getService());
+		return oauth2AccessToken;
+	}
+
+	public static void revoke (String token) {
+		LOG.log(Level.INFO,"revoking token");
+		Plugin.revoke(token, getService());
+	}
 
 	//		LOG.log(Level.INFO,"Generate request... ");
 	//		OAuthRequest request = new OAuthRequest(verb, urlRequest);
@@ -234,13 +261,5 @@ public class FitbitPlugin {
 	//			return protectedDataOauth;
 	//		}
 
-	public static Oauth2AccessToken refresh (String encryptRefreshToken) {
-		final Oauth2AccessToken oauth2AccessToken = Plugin.refreshAccessToken(encryptRefreshToken, getService());
-		return oauth2AccessToken;
-	}
 
-	public static void revoke (String token) {
-		LOG.log(Level.INFO,"revoking token");
-		Plugin.revoke(token, getService());
-	}
 }

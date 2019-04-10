@@ -2,13 +2,15 @@ package outils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.net.URI;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.glassfish.jersey.uri.UriTemplate;
 import org.json.JSONObject;
 import com.cars.framework.secrets.DockerSecretLoadException;
 import com.cars.framework.secrets.DockerSecrets;
@@ -18,10 +20,27 @@ import com.google.gson.JsonElement;
 
 import metier.Plugin;
 
+import javax.ws.rs.core.UriBuilder;
+
 public class Utils {
 	
 	private static final Logger LOG = Logger.getLogger(Plugin.class.getName());
 
+	private static String DATE_PATTERN = "yyyy-MM-dd";
+
+	private static DateFormat df = new SimpleDateFormat(DATE_PATTERN);
+
+	public static URI formatUrl(String template,Map<String, String> parameters) {
+		UriBuilder builder = UriBuilder.fromPath(template);
+		URI uri = builder.buildFromMap(parameters);
+		return uri;
+	}
+
+
+	public static String formatDateTime(long epoch) {
+		Date date = new Date(epoch);
+		return df.format(date);
+	}
 
 	public static String getProps (String propsName, String value) {
 		try {

@@ -9,6 +9,7 @@ import domaine.ActivityTracker;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.exception.UnAuthorizedException;
+import metier.fitbit.FitbitPlugin;
 import metier.withings.WithingsPlugin;
 import outils.Constant;
 
@@ -25,6 +26,7 @@ public class Withings {
 	@Path("/authorization")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	// TODO must return a response, code, error ?
 	public Oauth2Authorisation authorisation() { 
 		return WithingsPlugin.urlVerification();
 	}
@@ -40,6 +42,30 @@ public class Withings {
 				.build();
 	}
 
+	@Path("/refresh")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response refresh (@HeaderParam("assertion") String refreshToken) {
+		Oauth2AccessToken oauth2AccessToken = WithingsPlugin.refresh(refreshToken);
+		if (oauth2AccessToken != null) {
+			return Response.status(OK)
+					.entity(oauth2AccessToken)
+					.build();
+		} else {
+			return Response.status(UNAUTHORIZED)
+					.entity("error: token invalid")
+					.build();
+		}
+
+	}
+
+	@Path("/revoke")
+	@DELETE
+	public Response revoke(@HeaderParam("assertion") String token) {
+		return Response.status(NOT_IMPLEMENTED)
+				.entity("https://account.withings.com/partner/partner")
+				.build();
+	}
 
 	@Path("/protecteddata/hearthrate")
 	@POST
@@ -61,23 +87,4 @@ public class Withings {
 			return Response.status(INTERNAL_SERVER_ERROR).entity("InternalServerErrorException").build();
 		}
 	}
-
-
-	@Path("/refresh")
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response refresh (@HeaderParam("assertion") String refreshToken) {
-		Oauth2AccessToken oauth2AccessToken = WithingsPlugin.refresh(refreshToken);
-		if (oauth2AccessToken != null) {
-			return Response.status(OK)
-					.entity(oauth2AccessToken)
-					.build();
-		} else {
-			return Response.status(UNAUTHORIZED)
-					.entity("error: token invalid")
-					.build();
-		}
-
-	}
-
 }
