@@ -2,8 +2,9 @@ package metier.fitbit;
 
 import java.io.IOException;
 import java.net.URI;
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -11,13 +12,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
 import domaine.QueryParam;
+import metier.exception.InvalidJSONException;
 import metier.exception.UnAuthorizedException;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.github.scribejava.core.model.OAuthConstants;
@@ -25,8 +25,6 @@ import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 
-import domaine.ActivityTracker;
-import domaine.authorization.Token;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.Plugin;
@@ -35,7 +33,7 @@ import outils.SymmetricAESKey;
 import outils.Utils;
 import pojo.HeartRate;
 import pojo.HeartRateData;
-import pojo.fitbit.hearthrate.HearthRate;
+
 
 import static javax.ws.rs.core.Response.Status.OK;
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
@@ -52,6 +50,7 @@ public class FitbitPlugin {
 	}	    
 
 	public static Oauth2AccessToken accessToken (String code) {
+
 		Oauth2AccessToken accessToken = Plugin.oauth20AccessToken(code, getService());
 		return accessToken;
 	}
@@ -76,41 +75,42 @@ public class FitbitPlugin {
 	//		return protectedHearthRate;
 	//	}
 
-	public static HeartRateData getHearthRate(String encryptToken, long startDate, long endDate) {
+	public static HeartRateData getHearthRate(String encryptToken, long startDate, long endDate) throws UnAuthorizedException,ForbiddenException,IOException,InvalidJSONException {
 		Map<String, String> parameters = new HashMap<>();
 		parameters.put(Constant.FITBIT_PARAM_DATE,Utils.formatDateTime(startDate));
 		parameters.put(Constant.FITBIT_PARAM_END_DATE,Utils.formatDateTime(endDate));
 		parameters.put(Constant.FITBIT_PARAM_DETAIL_LVL,Constant.FITBIT_DETAIL_LVL_MIN);
 		URI uri = Utils.formatUrl(Constant.FITBIT_TEMPLATE_HEART_RATE_URL,parameters);
 		final ArrayList<QueryParam> lstQueryParams = new ArrayList<>();
+		LOG.log(Level.INFO,"TOKEN : " + SymmetricAESKey.decrypt(encryptToken));
 		lstQueryParams.add(new QueryParam(OAuthConstants.ACCESS_TOKEN, SymmetricAESKey.decrypt(encryptToken)));
 		JSONObject jsonObject = requestData(getService(), Verb.GET, uri.toASCIIString(),lstQueryParams);
 		return parseHeartRate(jsonObject);
 	}
 
-	private static HeartRateData parseHeartRate(JSONObject jsonObject) {
-		HeartRateData heartRateData = new HeartRateData();
+	private static HeartRateData parseHeartRate(JSONObject jsonObject) throws InvalidJSONException {
 		try {
-			JSONObject jo = new JSONObject();
-			ArrayList<Integer> lstHearthRate = new ArrayList<>();
-			JSONArray array = jsonObject.getJSONObject("activities-heart-intraday").getJSONArray("dataset");
-			if (array.length() == 0) {
+			HeartRateData heartRateData = new HeartRateData();
+			JSONArray jsArray = jsonObject.getJSONObject("activities-heart-intraday").getJSONArray("dataset");
+			String dateTime = jsonObject.getJSONArray("activities-heart").getJSONObject(0).getString("dateTime");
+			if (jsArray.length() == 0) {
 				return null;
 			}
-			for (int i = 0; i < array.length(); i++) {
-				lstHearthRate.add(array.getJSONObject(i).getInt("value"));
+			for (int i = 0; i < jsArray.length(); i++) {
+				int value = jsArray.getJSONObject(i).getInt("value");
+				long dt = Utils.convertDateHourToDateTime(dateTime, jsArray.getJSONObject(i).getString("time"));
+				HeartRate hr = new HeartRate(value, dt);
+				heartRateData.addHeartRateData(hr);
 			}
-			JSONArray jsArray = new JSONArray(lstHearthRate);
-			jo.put("start", array.getJSONObject(0).getString("time"));
-			jo.put("end", array.getJSONObject(array.length() - 1).getString("time"));
-			jo.put("lstHearthRate", jsArray);
-
 			return heartRateData;
+		} catch (JSONException | ParseException e) {
+			throw new InvalidJSONException("error parsing", e);
 		}
 	}
 
 
-	public static JSONObject requestData (OAuth20Service service, Verb verb, String urlRequest,ArrayList<QueryParam> lstQueryParams) throws UnAuthorizedException,ForbiddenException,IOException{
+
+	public static JSONObject requestData (OAuth20Service service, Verb verb, String urlRequest,ArrayList<QueryParam> lstQueryParams) throws UnAuthorizedException,ForbiddenException,IOException {
 		LOG.log(Level.INFO,String.format("Generate request with %s to URL : %s",verb,urlRequest));
 		LOG.log(Level.INFO,"Generate request... ");
 

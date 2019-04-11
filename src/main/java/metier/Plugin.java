@@ -96,6 +96,7 @@ public class Plugin {
 			LOG.log(Level.WARNING, ex.getMessage(),ex);
 		}
 		LOG.log(Level.INFO, "creating access token");
+		LOG.log(Level.INFO,"TOKEN created : " + oauth2accessToken.getAccessToken());
 		Oauth2AccessToken accessToken = new Oauth2AccessToken(SymmetricAESKey.encrypt(oauth2accessToken.getAccessToken()),SymmetricAESKey.encrypt(oauth2accessToken.getRefreshToken()));
 		LOG.log(Level.INFO, "AccessToken Oauth2 created successfull");
 		return accessToken;

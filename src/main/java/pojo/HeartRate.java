@@ -7,10 +7,10 @@ public class HeartRate {
 
     @XmlElement(name = "heart-rate")
     private int heartRate;
-    private int date;
+    private long date;
 
 
-    public HeartRate(int heartRate, int date) {
+    public HeartRate(int heartRate, long date) {
         this.heartRate = heartRate;
         this.date = date;
     }
@@ -19,9 +19,9 @@ public class HeartRate {
 
     }
 
-    public int getDate() {return date; }
+    public long getDate() {return date; }
     public int getHeartRate() {return heartRate;}
 
-    public void setDate(int date) {this.date = date;}
+    public void setDate(long date) {this.date = date;}
     public void setHeartRate(int heartRate) {this.heartRate = heartRate; }
 }

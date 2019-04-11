@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -27,13 +28,19 @@ public class Utils {
 	private static final Logger LOG = Logger.getLogger(Plugin.class.getName());
 
 	private static String DATE_PATTERN = "yyyy-MM-dd";
+	private static String DATE_HOUR_PATTERN = "yyyy-MM-dd hh:mm:ss";
 
 	private static DateFormat df = new SimpleDateFormat(DATE_PATTERN);
+	private static DateFormat dfWithTime = new SimpleDateFormat(DATE_HOUR_PATTERN);
 
 	public static URI formatUrl(String template,Map<String, String> parameters) {
 		UriBuilder builder = UriBuilder.fromPath(template);
 		URI uri = builder.buildFromMap(parameters);
 		return uri;
+	}
+
+	public static long convertDateHourToDateTime(String date, String hour) throws ParseException {
+			return dfWithTime.parse(date + " " + hour).getTime()/1000;
 	}
 
 

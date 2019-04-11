@@ -101,7 +101,7 @@ public class WithingsPlugin {
 //		return response;
 //	}
 
-    private static JSONObject requestData(OAuth20Service service, Verb verb, String urlRequest, ArrayList<QueryParam> lstQueryParams) throws UnAuthorizedException {
+    private static JSONObject requestData(OAuth20Service service, Verb verb, String urlRequest, ArrayList<QueryParam> lstQueryParams) throws UnAuthorizedException,BadRequestException,InternalServerErrorException {
         LOG.log(Level.INFO, String.format("Generate request with %s to URL : %s", verb, urlRequest));
         OAuthRequest request = new OAuthRequest(verb, urlRequest);
         for (QueryParam queryParam : lstQueryParams) {

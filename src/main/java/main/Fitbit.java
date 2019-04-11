@@ -1,5 +1,6 @@
 package main;
 
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +17,9 @@ import javax.ws.rs.core.Response;
 import domaine.ActivityTracker;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
-import metier.Plugin;
+
+import metier.exception.InvalidJSONException;
+
 import metier.exception.UnAuthorizedException;
 import metier.fitbit.FitbitPlugin;
 import outils.Constant;
@@ -84,13 +87,21 @@ public class Fitbit {
 			@HeaderParam("assertion") String encryptToken) {
 		try {
 			FitbitPlugin.getHearthRate(encryptToken,startDate,endDate);
-			return Response.status(Response.Status.OK.getStatusCode())
+			return Response.status(OK)
 					.entity(null)
 					.build();
-		} catch (Exception e) {
-			LOG.log(Level.WARNING, "UnAuthorizedException : " + e.getMessage());
+
+			// TODO catch all exception
+		} catch (InvalidJSONException e) {
+			LOG.log(Level.SEVERE, "InvalidJSONException : il y a eu un probleme avec le parsing du JSON" + e.getMessage());
+			return Response.status(INTERNAL_SERVER_ERROR).build();
+		} catch (UnAuthorizedException e) {
 			return Response.status(UNAUTHORIZED).build();
+		}  catch (IOException e) {
+			LOG.log(Level.SEVERE, "IOException" + e.getMessage());
+			return Response.status(INTERNAL_SERVER_ERROR).build();
 		}
+
 
 
 	}
