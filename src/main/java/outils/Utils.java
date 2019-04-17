@@ -45,7 +45,8 @@ public class Utils {
 
 
 	public static String formatDateTime(long epoch) {
-		Date date = new Date(epoch);
+		Date date = new Date(epoch*1000);
+		LOG.log(Level.INFO,"date : " + date.toString());
 		return df.format(date);
 	}
 

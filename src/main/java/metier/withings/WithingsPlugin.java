@@ -2,7 +2,7 @@ package metier.withings;
 
 import com.github.scribejava.core.oauth.OAuth20Service;
 
-import domaine.QueryParam;
+import domaine.Param;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.exception.UnAuthorizedException;
@@ -83,13 +83,14 @@ public class WithingsPlugin {
 
     public static HeartRateData getHeartRate(String encryptToken, String startDate, String endDate) throws UnAuthorizedException {
         LOG.log(Level.INFO, "token : " + SymmetricAESKey.decrypt(encryptToken));
-        final ArrayList<QueryParam> lstQueryParams = new ArrayList<>();
-        lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_ACTION, Constant.WITHINGS_PARAM_ACTION_GETMEAS));
-        lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_MEASTYPE, Constant.WITHINGS_PARAM_MEASTYPE_HR));
-        lstQueryParams.add(new QueryParam(OAuthConstants.ACCESS_TOKEN, SymmetricAESKey.decrypt(encryptToken)));
-        lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_START_DATE, startDate));
-        lstQueryParams.add(new QueryParam(Constant.WITHINGS_PARAM_END_DATE, endDate));
-        JSONObject jsonObject = requestData(getService(), Verb.GET, Constant.WITHINGS_MEASURE_URL, lstQueryParams);
+
+        final ArrayList<Param> lstParams = new ArrayList<>();
+        lstParams.add(new Param(Constant.WITHINGS_PARAM_ACTION, Constant.WITHINGS_PARAM_ACTION_GETMEAS,Param.TypeParam.QUERY_PARAM));
+        lstParams.add(new Param(Constant.WITHINGS_PARAM_MEASTYPE, Constant.WITHINGS_PARAM_MEASTYPE_HR,Param.TypeParam.QUERY_PARAM));
+        lstParams.add(new Param(OAuthConstants.ACCESS_TOKEN, SymmetricAESKey.decrypt(encryptToken),Param.TypeParam.QUERY_PARAM));
+        lstParams.add(new Param(Constant.WITHINGS_PARAM_START_DATE, startDate,Param.TypeParam.QUERY_PARAM));
+        lstParams.add(new Param(Constant.WITHINGS_PARAM_END_DATE, endDate,Param.TypeParam.QUERY_PARAM));
+        JSONObject jsonObject = requestData(getService(), Verb.GET, Constant.WITHINGS_MEASURE_URL, lstParams);
         return parseHeartRate(jsonObject);
 
     }
@@ -101,11 +102,16 @@ public class WithingsPlugin {
 //		return response;
 //	}
 
-    private static JSONObject requestData(OAuth20Service service, Verb verb, String urlRequest, ArrayList<QueryParam> lstQueryParams) throws UnAuthorizedException,BadRequestException,InternalServerErrorException {
+    private static JSONObject requestData(OAuth20Service service, Verb verb, String urlRequest, ArrayList<Param> lstParams) throws UnAuthorizedException,BadRequestException,InternalServerErrorException {
         LOG.log(Level.INFO, String.format("Generate request with %s to URL : %s", verb, urlRequest));
         OAuthRequest request = new OAuthRequest(verb, urlRequest);
-        for (QueryParam queryParam : lstQueryParams) {
-            request.addQuerystringParameter(queryParam.getKey(), queryParam.getValue());
+        for (Param param : lstParams) {
+            if (param.getType() == Param.TypeParam.QUERY_PARAM) {
+                request.addQuerystringParameter(param.getKey(), param.getValue());
+            } else {
+                request.addHeader(param.getKey(), param.getValue());
+            }
+
         }
         LOG.log(Level.INFO, "Request : " + request.getCompleteUrl());
         com.github.scribejava.core.model.Response response = null;

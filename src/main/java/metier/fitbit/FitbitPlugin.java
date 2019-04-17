@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 import javax.ws.rs.ForbiddenException;
 
-import domaine.QueryParam;
+import domaine.Param;
 import metier.exception.InvalidJSONException;
 import metier.exception.UnAuthorizedException;
 import org.json.JSONArray;
@@ -77,18 +77,23 @@ public class FitbitPlugin {
 
 	public static HeartRateData getHearthRate(String encryptToken, long startDate, long endDate) throws UnAuthorizedException,ForbiddenException,IOException,InvalidJSONException {
 		Map<String, String> parameters = new HashMap<>();
+		LOG.log(Level.INFO, "startDate : " + startDate);
+		LOG.log(Level.INFO, "endDate : " + endDate);
+		LOG.log(Level.INFO, " format startDate : " + Utils.formatDateTime(startDate));
+		LOG.log(Level.INFO, "format endDate : " + Utils.formatDateTime(endDate));
 		parameters.put(Constant.FITBIT_PARAM_DATE,Utils.formatDateTime(startDate));
-		parameters.put(Constant.FITBIT_PARAM_END_DATE,Utils.formatDateTime(endDate));
+		parameters.put(Constant.FITBIT_PARAM_END_DATE,"1d");
 		parameters.put(Constant.FITBIT_PARAM_DETAIL_LVL,Constant.FITBIT_DETAIL_LVL_MIN);
 		URI uri = Utils.formatUrl(Constant.FITBIT_TEMPLATE_HEART_RATE_URL,parameters);
-		final ArrayList<QueryParam> lstQueryParams = new ArrayList<>();
+		final ArrayList<Param> lstParams = new ArrayList<>();
 		LOG.log(Level.INFO,"TOKEN : " + SymmetricAESKey.decrypt(encryptToken));
-		lstQueryParams.add(new QueryParam(OAuthConstants.ACCESS_TOKEN, SymmetricAESKey.decrypt(encryptToken)));
-		JSONObject jsonObject = requestData(getService(), Verb.GET, uri.toASCIIString(),lstQueryParams);
+		lstParams.add(new Param(OAuthConstants.HEADER, "Bearer " + SymmetricAESKey.decrypt(encryptToken),Param.TypeParam.HEADER_PARAM));
+		JSONObject jsonObject = requestData(getService(), Verb.GET, uri.toASCIIString(),lstParams);
 		return parseHeartRate(jsonObject);
 	}
 
 	private static HeartRateData parseHeartRate(JSONObject jsonObject) throws InvalidJSONException {
+		LOG.log(Level.INFO,"json to parse" + jsonObject.toString());
 		try {
 			HeartRateData heartRateData = new HeartRateData();
 			JSONArray jsArray = jsonObject.getJSONObject("activities-heart-intraday").getJSONArray("dataset");
@@ -110,14 +115,19 @@ public class FitbitPlugin {
 
 
 
-	public static JSONObject requestData (OAuth20Service service, Verb verb, String urlRequest,ArrayList<QueryParam> lstQueryParams) throws UnAuthorizedException,ForbiddenException,IOException {
+	public static JSONObject requestData (OAuth20Service service, Verb verb, String urlRequest,ArrayList<Param> lstParams) throws UnAuthorizedException,ForbiddenException,IOException {
 		LOG.log(Level.INFO,String.format("Generate request with %s to URL : %s",verb,urlRequest));
 		LOG.log(Level.INFO,"Generate request... ");
 
 
 		OAuthRequest request = new OAuthRequest(verb, urlRequest);
-		for (QueryParam queryParam : lstQueryParams) {
-			request.addQuerystringParameter(queryParam.getKey(), queryParam.getValue());
+		for (Param param : lstParams) {
+			if (param.getType() == Param.TypeParam.QUERY_PARAM) {
+				request.addQuerystringParameter(param.getKey(), param.getValue());
+			} else {
+				request.addHeader(param.getKey(), param.getValue());
+			}
+
 		}
 		LOG.log(Level.INFO,"request : " + request.toString());
 		com.github.scribejava.core.model.Response response = null;
