@@ -75,7 +75,7 @@ public class FitbitPlugin {
 	//		return protectedHearthRate;
 	//	}
 
-	public static HeartRateData getHearthRate(String encryptToken, long startDate, long endDate) throws UnAuthorizedException,ForbiddenException,IOException,InvalidJSONException {
+	public static HeartRateData getHeartRate(String encryptToken, long startDate, long endDate) throws UnAuthorizedException,ForbiddenException,IOException,InvalidJSONException {
 		Map<String, String> parameters = new HashMap<>();
 		LOG.log(Level.INFO, "startDate : " + startDate);
 		LOG.log(Level.INFO, "endDate : " + endDate);

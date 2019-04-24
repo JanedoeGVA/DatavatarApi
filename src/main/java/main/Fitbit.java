@@ -23,6 +23,7 @@ import metier.exception.InvalidJSONException;
 import metier.exception.UnAuthorizedException;
 import metier.fitbit.FitbitPlugin;
 import outils.Constant;
+import outils.SymmetricAESKey;
 import pojo.HeartRateData;
 
 import static javax.ws.rs.core.Response.Status.*;
@@ -59,11 +60,11 @@ public class Fitbit {
 	// TODO replace return token null with try catch in plugin and thorw error
 	public Response refresh (@HeaderParam("assertion") String encryptRefreshToken) {
 		LOG.log(Level.INFO, "refresh :" + encryptRefreshToken);
-		LOG.log(Level.INFO, "refresh decrypt:" + FitbitPlugin.refresh(encryptRefreshToken));
+		LOG.log(Level.INFO, "refresh decrypt:" + SymmetricAESKey.decrypt(encryptRefreshToken));
 		Oauth2AccessToken oauth2AccessToken = FitbitPlugin.refresh(encryptRefreshToken);
 		if (oauth2AccessToken != null) {
 			// final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, Constant.TYPE_OAUTH2 ,oauth2AccessToken);
-			return Response.status(Response.Status.OK.getStatusCode())
+			return Response.status(OK)
 					.entity(oauth2AccessToken)
 					.build();
 		} else {
@@ -88,7 +89,7 @@ public class Fitbit {
 			@QueryParam ("end-date") long endDate,
 			@HeaderParam("assertion") String encryptToken) {
 		try {
-			HeartRateData heartRateData = FitbitPlugin.getHearthRate(encryptToken,startDate,endDate);
+			HeartRateData heartRateData = FitbitPlugin.getHeartRate(encryptToken,startDate,endDate);
 			return Response.status(OK)
 					.entity(heartRateData)
 					.build();

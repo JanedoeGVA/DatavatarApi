@@ -1,39 +1,36 @@
 package main;
 
-import java.lang.reflect.Type;
-import java.util.Map;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.GenericType;
+import java.lang.reflect.Type;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+import javax.ws.rs.*;
+
 import javax.ws.rs.core.MediaType;
 
-import org.eclipse.persistence.internal.jaxb.WrappedValue;
-
-import com.cars.framework.secrets.DockerSecretLoadException;
-import com.cars.framework.secrets.DockerSecrets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import domaine.authorization.Token;
+
 import domaine.authorization.ProtectedListDataOauth;
 import domaine.authorization.RequestProtectedData;
 import domaine.oauth1a.Oauth1AccessToken;
 import domaine.oauth1a.Oauth1Authorisation;
 import metier.garmin.GarminPlugin;
-import outils.Constant;
+
+import outils.SymmetricAESKey;
 import pojo.garmin.Epoch;
-import pojo.garmin.sleep.Sleep;
+
+
+
 
 
 @Path("/garmin")
 public class Garmin {
+
+	private static final Logger LOG = Logger.getLogger(Garmin.class.getName());
 	
 	@Path("/authorization")
 	@GET
@@ -51,26 +48,73 @@ public class Garmin {
 			@QueryParam ("verifier") String verifier) {
 		return GarminPlugin.getAccessToken(requestTokenKey,requestTokenSecret,verifier);
 	}
-	
+
+
 	@Path("/protecteddata/epochs")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public ProtectedListDataOauth<Epoch, Oauth1AccessToken> getEpochs (String genericJson) {
-		RequestProtectedData<Oauth1AccessToken> requestProtectedData = deserializeRequestProtectedData(genericJson);
-		ProtectedListDataOauth<Epoch, Oauth1AccessToken> protectedEpoch = GarminPlugin.protectedEpoch(requestProtectedData);
-		return protectedEpoch;
+	public ProtectedListDataOauth<Epoch, Oauth1AccessToken> getEpochs (@QueryParam ("date") long startDate,
+																	   @QueryParam ("end-date") long endDate,
+																	   @HeaderParam("token") String encryptToken,
+																	   @HeaderParam("secret") String encryptSecret) {
+		LOG.log(Level.INFO,"protecteddata");
+		LOG.log(Level.INFO,"encryptToken" + encryptToken);
+		LOG.log(Level.INFO,"encryptSecret" + encryptSecret);
+		Oauth1AccessToken oauth1AccessToken = new Oauth1AccessToken(SymmetricAESKey.decrypt(encryptToken),SymmetricAESKey.decrypt(encryptSecret));
+		LOG.log(Level.INFO,"token" + oauth1AccessToken.getAccessToken());
+		LOG.log(Level.INFO,"secret" + oauth1AccessToken.getSecret());
+		try {
+			GarminPlugin.protectedEpoch(startDate,endDate,oauth1AccessToken);
+		} catch (Exception e) {
+			LOG.log(Level.WARNING,"Exception :" + e.getMessage());
+		}
+		return null;
 	}
+
+//	public Response protectedDataHearthRateResponse(
+//			@QueryParam ("date") long startDate,
+//			@QueryParam ("end-date") long endDate,
+//			@HeaderParam("assertion") String encryptToken) {
+//		try {
+//			HeartRateData heartRateData = FitbitPlugin.getHearthRate(encryptToken,startDate,endDate);
+//			return Response.status(OK)
+//					.entity(heartRateData)
+//					.build();
+//
+//			// TODO catch all exception
+//		} catch (InvalidJSONException e) {
+//			LOG.log(Level.SEVERE, "InvalidJSONException : il y a eu un probleme avec le parsing du JSON" + e.getMessage());
+//			return Response.status(INTERNAL_SERVER_ERROR).build();
+//		} catch (UnAuthorizedException e) {
+//			return Response.status(UNAUTHORIZED).build();
+//		}  catch (IOException e) {
+//			LOG.log(Level.SEVERE, "IOException" + e.getMessage());
+//			return Response.status(INTERNAL_SERVER_ERROR).build();
+//		}
+
+
+
+	// }
+
+//	@Path("/protecteddata/epochs")
+//	@POST
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public ProtectedListDataOauth<Epoch, Oauth1AccessToken> getEpochs (String genericJson) {
+//		RequestProtectedData<Oauth1AccessToken> requestProtectedData = deserializeRequestProtectedData(genericJson);
+//		ProtectedListDataOauth<Epoch, Oauth1AccessToken> protectedEpoch = GarminPlugin.protectedEpoch(requestProtectedData);
+//		return protectedEpoch;
+//	}
 	
 	
-	@Path("/protecteddata/sleeps")
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	//TODO trouver un moyen d'envoyer directement un RequestProtectedData<Oauth1AccessToken> � la place du String 
-	public ProtectedListDataOauth<Sleep, Oauth1AccessToken> getSleeps (String genericJson) {
-		RequestProtectedData<Oauth1AccessToken> requestProtectedData = deserializeRequestProtectedData(genericJson);
-		ProtectedListDataOauth<Sleep, Oauth1AccessToken> protectedListDataOauth = GarminPlugin.protectedSleep(requestProtectedData);
-		return protectedListDataOauth;
-	}
+//	@Path("/protecteddata/sleeps")
+//	@POST
+//	@Produces(MediaType.APPLICATION_JSON)
+//	//TODO trouver un moyen d'envoyer directement un RequestProtectedData<Oauth1AccessToken> � la place du String
+//	public ProtectedListDataOauth<Sleep, Oauth1AccessToken> getSleeps (String genericJson) {
+//		RequestProtectedData<Oauth1AccessToken> requestProtectedData = deserializeRequestProtectedData(genericJson);
+//		ProtectedListDataOauth<Sleep, Oauth1AccessToken> protectedListDataOauth = GarminPlugin.protectedSleep(requestProtectedData);
+//		return protectedListDataOauth;
+//	}
 	
 	@Path("/revoke")
 	@DELETE

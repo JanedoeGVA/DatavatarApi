@@ -1,17 +1,29 @@
 package main;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import domaine.ActivityTracker;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
+import metier.exception.UnAuthorizedException;
 import metier.strava.StravaPlugin;
+import outils.Constant;
+import outils.SymmetricAESKey;
+import pojo.HeartRate;
+import pojo.HeartRateData;
+
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static javax.ws.rs.core.Response.Status.*;
 
 @Path("/strava")
 public class Strava {
+
+	private static final Logger LOG = Logger.getLogger(Strava.class.getName());
 	
 	@Path("/authorization")
 	@GET
@@ -19,13 +31,74 @@ public class Strava {
 	public Oauth2Authorisation authorisation() { 
 		return StravaPlugin.urlVerification();
 	}
-	
+
+
 	@Path("/verification")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Oauth2AccessToken verification (@QueryParam ("code") String code) {
-		return StravaPlugin.accessToken(code);
-		
+	// TODO throw error ?
+	public Response verification (@QueryParam ("code") String code) {
+		final Oauth2AccessToken oauth2AccessToken = StravaPlugin.accessToken(code);
+
+		final ActivityTracker activityTracker = new ActivityTracker(Constant.STRAVA_PROVIDER, Constant.TYPE_OAUTH2,oauth2AccessToken);
+		return Response.status(OK)
+				.entity(activityTracker)
+				.build();
 	}
+
+	@Path("/refresh")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	// TODO replace return token null with try catch in plugin and thorw error
+	public Response refresh (@HeaderParam("assertion") String encryptRefreshToken) {
+		LOG.log(Level.INFO, "refresh :" + encryptRefreshToken);
+		LOG.log(Level.INFO, "refresh decrypt:" + SymmetricAESKey.decrypt(encryptRefreshToken));
+		Oauth2AccessToken oauth2AccessToken = StravaPlugin.refresh(encryptRefreshToken);
+		if (oauth2AccessToken != null) {
+			// final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, Constant.TYPE_OAUTH2 ,oauth2AccessToken);
+			return Response.status(OK)
+					.entity(oauth2AccessToken)
+					.build();
+		} else {
+			return Response.status(UNAUTHORIZED)
+					.entity("error: token invalid")
+					.build();
+		}
+
+	}
+
+
+
+
+
+	@Path("/protecteddata/hearthrate")
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response protectedDataHearthRateResponse(
+			@QueryParam ("date") long startDate,
+			@QueryParam ("end-date") long endDate,
+			@HeaderParam("assertion") String encryptToken) {
+
+		try {
+			StravaPlugin.getHeartRate(encryptToken, startDate, endDate);
+			HeartRateData heartRateData = new HeartRateData();
+			HeartRate hr = new HeartRate(190, 122334);
+			heartRateData.addHeartRateData(hr);
+			return Response.status(OK)
+					.entity(heartRateData)
+					.build();
+		} catch (UnAuthorizedException e) {
+			return Response.status(INTERNAL_SERVER_ERROR)
+					.build();
+		} catch (IOException e) {
+			return Response.status(INTERNAL_SERVER_ERROR)
+					.build();
+		}
+
+	}
+
+
+
+
 
 }

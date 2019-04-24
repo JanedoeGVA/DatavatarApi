@@ -89,6 +89,11 @@ public class Constant {
 	public static final String STRAVA_BASE_URL = "https://www.strava.com/oauth/authorize";
 	public static final String STRAVA_TOKEN_ENDPOINT_URL = "https://www.strava.com/oauth/token";
 	//public static final String STRAVA_REVOKE_ENDPOINT_URL= "https://api.fitbit.com/oauth2/revoke";
+
+	public static final String STRAVA_URL_ACTIVITIES = "https://www.strava.com/api/v3//athlete/activities";
+
+	public static final String STRAVA_PARAM_BEFORE = "before";
+	public static final String STRAVA_PARAM_AFTER = "after";
     
     public static final String STRAVA_CALLBACK_URL = "datavatarapp://strava/oauth2/verification";
 	

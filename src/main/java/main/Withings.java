@@ -9,7 +9,7 @@ import domaine.ActivityTracker;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.exception.UnAuthorizedException;
-import metier.fitbit.FitbitPlugin;
+
 import metier.withings.WithingsPlugin;
 import outils.Constant;
 
