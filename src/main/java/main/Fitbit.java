@@ -81,7 +81,7 @@ public class Fitbit {
 		FitbitPlugin.revoke(token);
 	}
 
-	@Path("/protecteddata/hearthrate")
+	@Path("/protecteddata/heart-rate")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response protectedDataHearthRateResponse(

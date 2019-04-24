@@ -1,6 +1,7 @@
 package main;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -9,6 +10,7 @@ import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.exception.UnAuthorizedException;
 import metier.strava.StravaPlugin;
+import org.json.JSONObject;
 import outils.Constant;
 import outils.SymmetricAESKey;
 import pojo.HeartRate;
@@ -71,13 +73,14 @@ public class Strava {
 
 
 
-	@Path("/protecteddata/hearthrate")
+	@Path("/protecteddata/heart-rate")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response protectedDataHearthRateResponse(
 			@QueryParam ("date") long startDate,
 			@QueryParam ("end-date") long endDate,
-			@HeaderParam("assertion") String encryptToken) {
+			@HeaderParam(HttpHeaders.AUTHORIZATION) String bearer) {
+		String encryptToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
 
 		try {
 			StravaPlugin.getHeartRate(encryptToken, startDate, endDate);

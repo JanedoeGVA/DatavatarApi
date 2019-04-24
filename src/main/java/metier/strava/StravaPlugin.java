@@ -66,11 +66,11 @@ public class StravaPlugin {
 		final ArrayList<Param> lstParams = new ArrayList<>();
 		LOG.log(Level.INFO, "startDate : " + startDate);
 		LOG.log(Level.INFO, "endDate : " + endDate);
-		lstParams.add(new Param(Constant.STRAVA_PARAM_BEFORE,String.valueOf(endDate),QUERY_PARAM));
-		lstParams.add(new Param(Constant.STRAVA_PARAM_AFTER,String.valueOf(startDate),QUERY_PARAM));
+		// lstParams.add(new Param(Constant.STRAVA_PARAM_BEFORE,String.valueOf(endDate),QUERY_PARAM));
+		// lstParams.add(new Param(Constant.STRAVA_PARAM_AFTER,String.valueOf(startDate),QUERY_PARAM));
 		lstParams.add(new Param(OAuthConstants.HEADER, "Bearer " + SymmetricAESKey.decrypt(encryptToken),Param.TypeParam.HEADER_PARAM));
 		LOG.log(Level.INFO,"TOKEN : " + SymmetricAESKey.decrypt(encryptToken));
-		JSONObject jsonObject = requestData(getService(), Verb.GET, Constant.STRAVA_URL_ACTIVITIES,lstParams);
+		JSONObject jsonObject = requestData(getService(), Verb.GET, "https://www.strava.com/api/v3/activities/2312724975/streams",lstParams);
 		return parseHeartRate(jsonObject);
 	}
 
@@ -101,6 +101,7 @@ public class StravaPlugin {
 		if (code == OK.getStatusCode()) {
 			try {
 				String body = response.getBody();
+				LOG.log(Level.INFO,String.format("Response body : %s  ",body));
 				JSONObject jsonObj = new JSONObject(body);
 				return jsonObj;
 			} catch (IOException e) {

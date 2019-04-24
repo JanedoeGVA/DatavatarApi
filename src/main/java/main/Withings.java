@@ -5,6 +5,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
+
 import domaine.ActivityTracker;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
@@ -67,13 +69,14 @@ public class Withings {
 				.build();
 	}
 
-	@Path("/protecteddata/hearthrate")
+	@Path("/protecteddata/heart-rate")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response protectedDataHeartRateResponse (
 			@QueryParam ("date") String startDate,
 			@QueryParam ("end-date") String endDate,
-			@HeaderParam("assertion") String encryptToken) {
+			@HeaderParam(AUTHORIZATION) String bearer) {
+		String encryptToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
 		try {
 			return Response.status(OK).entity(WithingsPlugin.getHeartRate(encryptToken, startDate, endDate)).build();
 		} catch (UnAuthorizedException e) {

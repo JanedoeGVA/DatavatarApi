@@ -2,29 +2,35 @@ package main;
 
 
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 import javax.ws.rs.*;
 
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 
+import domaine.ActivityTracker;
 import domaine.authorization.ProtectedListDataOauth;
 import domaine.authorization.RequestProtectedData;
 import domaine.oauth1a.Oauth1AccessToken;
 import domaine.oauth1a.Oauth1Authorisation;
 import metier.garmin.GarminPlugin;
 
+import org.json.JSONObject;
+import outils.Constant;
 import outils.SymmetricAESKey;
 import pojo.garmin.Epoch;
 
-
-
+import static javax.ws.rs.core.Response.Status.OK;
 
 
 @Path("/garmin")
@@ -42,27 +48,32 @@ public class Garmin {
 	@Path("/verification")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Oauth1AccessToken verification (
+	public Response verification (
 			@QueryParam ("req_token_key") String requestTokenKey,
 			@QueryParam ("req_token_secret") String requestTokenSecret,
 			@QueryParam ("verifier") String verifier) {
-		return GarminPlugin.getAccessToken(requestTokenKey,requestTokenSecret,verifier);
+		final Oauth1AccessToken oauth1AccessToken = GarminPlugin.getAccessToken(requestTokenKey,requestTokenSecret,verifier);
+		final ActivityTracker activityTracker = new ActivityTracker(Constant.GARMIN_PROVIDER,Constant.TYPE_OAUTH1,oauth1AccessToken);
+		return Response.status(OK)
+				.entity(activityTracker)
+				.build();
 	}
 
 
-	@Path("/protecteddata/epochs")
+	@Path("/protecteddata/heart-rate")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public ProtectedListDataOauth<Epoch, Oauth1AccessToken> getEpochs (@QueryParam ("date") long startDate,
 																	   @QueryParam ("end-date") long endDate,
-																	   @HeaderParam("token") String encryptToken,
-																	   @HeaderParam("secret") String encryptSecret) {
-		LOG.log(Level.INFO,"protecteddata");
-		LOG.log(Level.INFO,"encryptToken" + encryptToken);
-		LOG.log(Level.INFO,"encryptSecret" + encryptSecret);
-		Oauth1AccessToken oauth1AccessToken = new Oauth1AccessToken(SymmetricAESKey.decrypt(encryptToken),SymmetricAESKey.decrypt(encryptSecret));
-		LOG.log(Level.INFO,"token" + oauth1AccessToken.getAccessToken());
-		LOG.log(Level.INFO,"secret" + oauth1AccessToken.getSecret());
+																	   @HeaderParam(HttpHeaders.AUTHORIZATION) String bearer)
+	{
+		String encryptToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
+		String decodeToken = new String(Base64.getDecoder().decode(encryptToken), StandardCharsets.UTF_8);
+		LOG.log(Level.INFO,"decodeToken" + decodeToken);
+		JSONObject jsonObject = new JSONObject(decodeToken);
+		Oauth1AccessToken oauth1AccessToken = new Oauth1AccessToken(SymmetricAESKey.decrypt(jsonObject.getString("accessToken")),SymmetricAESKey.decrypt(jsonObject.getString("secret")));
+		LOG.log(Level.INFO,"token " + oauth1AccessToken.getAccessToken());
+		LOG.log(Level.INFO,"secret " + oauth1AccessToken.getSecret());
 		try {
 			GarminPlugin.protectedEpoch(startDate,endDate,oauth1AccessToken);
 		} catch (Exception e) {
