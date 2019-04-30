@@ -69,8 +69,11 @@ public class Strava {
 
 	}
 
-
-
+	@Path("/revoke")
+	@DELETE
+	public void revoke(@HeaderParam("assertion") String token) {
+		StravaPlugin.revoke(token);
+	}
 
 
 	@Path("/protecteddata/heart-rate")
@@ -81,6 +84,7 @@ public class Strava {
 			@QueryParam ("end-date") long endDate,
 			@HeaderParam(HttpHeaders.AUTHORIZATION) String bearer) {
 		String encryptToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
+		LOG.log(Level.INFO,"decrypt token" + SymmetricAESKey.decrypt(encryptToken));
 
 		try {
 			StravaPlugin.getHeartRate(encryptToken, startDate, endDate);

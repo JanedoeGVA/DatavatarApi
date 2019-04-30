@@ -35,12 +35,10 @@ public class StravaApi_OAuth20 extends DefaultApi20 {
 	public String getRefreshTokenEndpoint() {
 		return Constant.STRAVA_TOKEN_ENDPOINT_URL;
 	}
-/*
+
 	@Override
-	public String getRevokeTokenEndpoint() {
-		return Constant.STRAVA_REVOKE_ENDPOINT_URL;
-	}
-*/
+	public String getRevokeTokenEndpoint() { return Constant.STRAVA_REVOKE_ENDPOINT_URL; }
+
 	@Override
 	public OAuth20Service createService(String apiKey, String apiSecret, String callback, String scope,
 			OutputStream debugStream, String state, String responseType, String userAgent,

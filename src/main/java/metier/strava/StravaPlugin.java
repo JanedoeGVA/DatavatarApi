@@ -53,6 +53,11 @@ public class StravaPlugin {
 		return oauth2AccessToken;
 	}
 
+	public static void revoke (String token) {
+		LOG.log(Level.INFO,"revoking token");
+		Plugin.revoke(token, getService());
+	}
+
 	private static HeartRateData parseHeartRate(JSONObject jsonObject)  {
 		HeartRateData heartRateData = new HeartRateData();
 		// TODO

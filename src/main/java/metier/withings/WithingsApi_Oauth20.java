@@ -36,6 +36,11 @@ public class WithingsApi_Oauth20 extends DefaultApi20 {
 		return Constant.WITHINGS_TOKEN_ENDPOINT_URL;
 	}
 
+    @Override
+    public String getRevokeTokenEndpoint() {
+        throw new RuntimeException("Not implemented yet");
+    }
+
 	@Override
 	public OAuth20Service createService(String apiKey, String apiSecret, String callback, String scope,
 			OutputStream debugStream, String state, String responseType, String userAgent,

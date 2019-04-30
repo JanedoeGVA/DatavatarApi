@@ -21,6 +21,8 @@ public class Constant {
 	public static final String FITBIT_BASE_URL = "https://www.fitbit.com/oauth2/authorize";
 	public static final String FITBIT_TOKEN_ENDPOINT_URL = "https://api.fitbit.com/oauth2/token";
 	public static final String FITBIT_REVOKE_ENDPOINT_URL= "https://api.fitbit.com/oauth2/revoke";
+
+
     
     public static final String FITBIT_CALLBACK_URL = "datavatarapp://fitbit/oauth2/verification";
     
@@ -88,7 +90,7 @@ public class Constant {
 	
 	public static final String STRAVA_BASE_URL = "https://www.strava.com/oauth/authorize";
 	public static final String STRAVA_TOKEN_ENDPOINT_URL = "https://www.strava.com/oauth/token";
-	//public static final String STRAVA_REVOKE_ENDPOINT_URL= "https://api.fitbit.com/oauth2/revoke";
+	public static final String STRAVA_REVOKE_ENDPOINT_URL= "https://www.strava.com/oauth/deauthorize";
 
 	public static final String STRAVA_URL_ACTIVITIES = "https://www.strava.com/api/v3//athlete/activities";
 

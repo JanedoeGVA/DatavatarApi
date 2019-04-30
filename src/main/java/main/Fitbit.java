@@ -11,6 +11,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -26,6 +27,7 @@ import outils.Constant;
 import outils.SymmetricAESKey;
 import pojo.HeartRateData;
 
+import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static javax.ws.rs.core.Response.Status.*;
 
 @Path("/fitbit")
@@ -87,7 +89,9 @@ public class Fitbit {
 	public Response protectedDataHearthRateResponse(
 			@QueryParam ("date") long startDate,
 			@QueryParam ("end-date") long endDate,
-			@HeaderParam("assertion") String encryptToken) {
+			@HeaderParam(AUTHORIZATION) String bearer) {
+		String encryptToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
+		LOG.log(Level.INFO,"decrypt token" + SymmetricAESKey.decrypt(encryptToken));
 		try {
 			HeartRateData heartRateData = FitbitPlugin.getHeartRate(encryptToken,startDate,endDate);
 			return Response.status(OK)

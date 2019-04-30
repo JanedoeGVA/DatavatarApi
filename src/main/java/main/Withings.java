@@ -14,6 +14,7 @@ import metier.exception.UnAuthorizedException;
 
 import metier.withings.WithingsPlugin;
 import outils.Constant;
+import outils.SymmetricAESKey;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,6 +78,7 @@ public class Withings {
 			@QueryParam ("end-date") String endDate,
 			@HeaderParam(AUTHORIZATION) String bearer) {
 		String encryptToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
+		LOG.log(Level.INFO,"decrypt token" + SymmetricAESKey.decrypt(encryptToken));
 		try {
 			return Response.status(OK).entity(WithingsPlugin.getHeartRate(encryptToken, startDate, endDate)).build();
 		} catch (UnAuthorizedException e) {
