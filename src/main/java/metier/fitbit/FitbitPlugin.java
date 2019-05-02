@@ -164,7 +164,11 @@ public class FitbitPlugin {
 
 	public static void revoke (String token) {
 		LOG.log(Level.INFO,"revoking token");
-		Plugin.revoke(token, getService());
+		try {
+			Plugin.revoke(token, getService());
+		} catch (Exception e) {
+
+		}
 	}
 
 	//		LOG.log(Level.INFO,"Generate request... ");

@@ -12,7 +12,6 @@ import metier.exception.UnAuthorizedException;
 import metier.strava.StravaPlugin;
 import org.json.JSONObject;
 import outils.Constant;
-import outils.SymmetricAESKey;
 import pojo.HeartRate;
 import pojo.HeartRateData;
 
@@ -54,7 +53,6 @@ public class Strava {
 	// TODO replace return token null with try catch in plugin and thorw error
 	public Response refresh (@HeaderParam("assertion") String encryptRefreshToken) {
 		LOG.log(Level.INFO, "refresh :" + encryptRefreshToken);
-		LOG.log(Level.INFO, "refresh decrypt:" + SymmetricAESKey.decrypt(encryptRefreshToken));
 		Oauth2AccessToken oauth2AccessToken = StravaPlugin.refresh(encryptRefreshToken);
 		if (oauth2AccessToken != null) {
 			// final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, Constant.TYPE_OAUTH2 ,oauth2AccessToken);
@@ -72,7 +70,11 @@ public class Strava {
 	@Path("/revoke")
 	@DELETE
 	public void revoke(@HeaderParam("assertion") String token) {
+		try {
 		StravaPlugin.revoke(token);
+		} catch (Exception e) {
+
+		}
 	}
 
 
@@ -84,8 +86,6 @@ public class Strava {
 			@QueryParam ("end-date") long endDate,
 			@HeaderParam(HttpHeaders.AUTHORIZATION) String bearer) {
 		String encryptToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
-		LOG.log(Level.INFO,"decrypt token" + SymmetricAESKey.decrypt(encryptToken));
-
 		try {
 			StravaPlugin.getHeartRate(encryptToken, startDate, endDate);
 			HeartRateData heartRateData = new HeartRateData();

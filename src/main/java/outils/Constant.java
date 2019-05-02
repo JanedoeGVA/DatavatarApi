@@ -4,6 +4,8 @@ public class Constant {
 	
 	public static final String TYPE_OAUTH1 = "oauth1";
 	public static final String TYPE_OAUTH2 = "oauth2";
+
+	public static final String REVOKING_NOT_SUPPORT = "This API doesn't support revoking tokens";
 	
 	public static final String JSON_MEDIA_TYPE = "json";
 	public static final String TOKEN = "token";
@@ -54,10 +56,9 @@ public class Constant {
 
 	public static final String WITHINGS_STATUS_CODE = "status";
 
-	//public static final String NOKIA_HEALTH_TOKEN_REQUEST_ENDPOINT_URL = NOKIA_HEALTH_BASE_URL + "/request_token";
-	
-	
 	public static final String WITHINGS_CALLBACK_URL = "datavatarapp://withings/oauth2/verification";
+
+	public static final String WITHINGS_URL_UI_REVOKE = "https://account.withings.com/partner/partner";
 
 	
 

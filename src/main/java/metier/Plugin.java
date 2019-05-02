@@ -2,6 +2,7 @@ package metier;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -61,6 +63,7 @@ public class Plugin {
 		return oauth1Auth;
 	}
 
+
 	public static Oauth2Authorisation oauth20UrlVerification(String provider,OAuth20Service service) {
 		LOG.log(Level.INFO, String.format("Setting URL verification OAUTH2 for %s", provider));
 		Oauth2Authorisation oauth2Auth = new Oauth2Authorisation();
@@ -102,11 +105,11 @@ public class Plugin {
 		return accessToken;
 	}
 
-	public static Oauth2AccessToken refreshAccessToken (String refreshToken, OAuth20Service service) {
+	public static Oauth2AccessToken refreshAccessToken (String encyptRefreshToken, OAuth20Service service) {
 		LOG.log(Level.INFO, "Performing RefreshToken ");
 		Oauth2AccessToken oauth2accessToken = null;
 		try {
-			OAuth2AccessToken token = service.refreshAccessToken(SymmetricAESKey.decrypt(refreshToken));
+			OAuth2AccessToken token = service.refreshAccessToken(SymmetricAESKey.decrypt(encyptRefreshToken));
 			LOG.log(Level.INFO,"RefreshToken created");
 			String tokenKey = token.getAccessToken();
 			String tokenRefresh= token.getRefreshToken();
@@ -129,15 +132,9 @@ public class Plugin {
 		return oauth2accessToken;
 	}
 
-	public static void revoke(String tokenToRevoke,OAuth20Service service) {
+	public static void revoke(String encryptToken,OAuth20Service service) throws IOException,InterruptedException,ExecutionException {
 		LOG.log(Level.INFO, String.format("Revoking Token on %s", service.getApi().getRevokeTokenEndpoint()));
-		try {
-			service.revokeToken(SymmetricAESKey.decrypt(tokenToRevoke));
-			LOG.log(Level.INFO, "Revoke success");
-		} catch (IOException | InterruptedException | ExecutionException e) {
-			LOG.log(Level.INFO, String.format("Revoke fail %s",e.getMessage()),e);
-		}
-
+		service.revokeToken(SymmetricAESKey.decrypt(encryptToken));
 	}
 
 	public static OAuth10aService getOauth1Service(String props,String callBackURL,DefaultApi10a api) {

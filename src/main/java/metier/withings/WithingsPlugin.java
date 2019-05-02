@@ -10,13 +10,17 @@ import pojo.HeartRate;
 import metier.Plugin;
 
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import com.github.scribejava.core.model.OAuthConstants;
 import com.github.scribejava.core.model.OAuthRequest;
@@ -36,7 +40,15 @@ public class WithingsPlugin {
 
     public static Oauth2Authorisation urlVerification() {
         Oauth2Authorisation oauth2Auth = Plugin.oauth20UrlVerification(Constant.WITHINGS_PROVIDER, getService());
+
         return oauth2Auth;
+    }
+
+    public static Oauth2Authorisation urlVerificationWithPrompt() {
+        Oauth2Authorisation oauth2Authorisation = urlVerification();
+        final URI uri = UriBuilder.fromUri("https://account.withings.com/logout").queryParam("r",oauth2Authorisation.getUrlVerification()).build();
+        oauth2Authorisation.setUrlVerification(uri.toASCIIString());
+        return oauth2Authorisation;
     }
 
     public static Oauth2AccessToken accessToken(String code) {
@@ -49,9 +61,14 @@ public class WithingsPlugin {
         return service;
     }
 
-    public static Oauth2AccessToken refresh(String refreshToken) {
-        Oauth2AccessToken oauth2AccessToken = Plugin.refreshAccessToken(refreshToken, getService());
+    public static Oauth2AccessToken refresh(String encryptRefreshToken) {
+        Oauth2AccessToken oauth2AccessToken = Plugin.refreshAccessToken(encryptRefreshToken, getService());
         return oauth2AccessToken;
+    }
+
+    public static void revoke (String token) throws IOException,InterruptedException, ExecutionException {
+        LOG.log(Level.INFO,"revoking token");
+        Plugin.revoke(token, getService());
     }
 
     private static HeartRateData parseHeartRate(JSONObject jsonObject) {

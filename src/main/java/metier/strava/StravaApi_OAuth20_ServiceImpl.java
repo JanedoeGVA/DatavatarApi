@@ -44,4 +44,6 @@ public class StravaApi_OAuth20_ServiceImpl extends OAuth20Service {
 	        request.addParameter(OAuthConstants.GRANT_TYPE, OAuthConstants.REFRESH_TOKEN);
 	        return request;
 	    }
+
+
 }

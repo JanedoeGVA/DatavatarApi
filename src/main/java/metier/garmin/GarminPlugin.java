@@ -56,17 +56,17 @@ public class GarminPlugin {
 //		return protectedSleep;
 //	}
 
-	public static Epoch protectedEpoch(long startTime,long endTime,Oauth1AccessToken token) throws UnAuthorizedException {
+	public static Epoch protectedEpoch(long startTime,long endTime,String encryptedToken,String encryptSecret) throws UnAuthorizedException {
 		String url = String.format(Constant.GARMIN_EPOCHS,startTime,endTime);
-		JSONObject jsObj = getProtectedRessources(url,token,getService(),Verb.GET);
+		JSONObject jsObj = getProtectedRessources(url,encryptedToken,encryptSecret,getService(),Verb.GET);
 		return null;
 	}
 
 
 
 	
-	public static JSONObject getProtectedRessources(String url, Oauth1AccessToken token ,OAuth10aService service, Verb verb) throws UnAuthorizedException,InternalServerErrorException {
-		final OAuth1AccessToken oAuth1AccessToken = new OAuth1AccessToken(token.getAccessToken(),token.getSecret());
+	public static JSONObject getProtectedRessources(String url, String encryptToken,String encryptSecret ,OAuth10aService service, Verb verb) throws UnAuthorizedException,InternalServerErrorException {
+		final OAuth1AccessToken oAuth1AccessToken = new OAuth1AccessToken(SymmetricAESKey.decrypt(encryptToken),SymmetricAESKey.decrypt(encryptSecret));
 		final OAuthRequest request = new OAuthRequest(verb, url);
 	    service.signRequest(oAuth1AccessToken, request);
 		try {

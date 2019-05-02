@@ -27,7 +27,6 @@ import metier.garmin.GarminPlugin;
 
 import org.json.JSONObject;
 import outils.Constant;
-import outils.SymmetricAESKey;
 import pojo.garmin.Epoch;
 
 import static javax.ws.rs.core.Response.Status.OK;
@@ -71,11 +70,11 @@ public class Garmin {
 		String decodeToken = new String(Base64.getDecoder().decode(encryptToken), StandardCharsets.UTF_8);
 		LOG.log(Level.INFO,"decodeToken" + decodeToken);
 		JSONObject jsonObject = new JSONObject(decodeToken);
-		Oauth1AccessToken oauth1AccessToken = new Oauth1AccessToken(SymmetricAESKey.decrypt(jsonObject.getString("accessToken")),SymmetricAESKey.decrypt(jsonObject.getString("secret")));
-		LOG.log(Level.INFO,"token " + oauth1AccessToken.getAccessToken());
-		LOG.log(Level.INFO,"secret " + oauth1AccessToken.getSecret());
+		// Oauth1AccessToken oauth1AccessToken = new Oauth1AccessToken(SymmetricAESKey.decrypt(jsonObject.getString("accessToken")),SymmetricAESKey.decrypt(jsonObject.getString("secret")));
+		// LOG.log(Level.INFO,"token " + oauth1AccessToken.getAccessToken());
+		// LOG.log(Level.INFO,"secret " + oauth1AccessToken.getSecret());
 		try {
-			GarminPlugin.protectedEpoch(startDate,endDate,oauth1AccessToken);
+			GarminPlugin.protectedEpoch(startDate,endDate,jsonObject.getString("accessToken"),jsonObject.getString("secret"));
 		} catch (Exception e) {
 			LOG.log(Level.WARNING,"Exception :" + e.getMessage());
 		}

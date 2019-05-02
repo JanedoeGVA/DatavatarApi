@@ -11,7 +11,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -24,7 +23,6 @@ import metier.exception.InvalidJSONException;
 import metier.exception.UnAuthorizedException;
 import metier.fitbit.FitbitPlugin;
 import outils.Constant;
-import outils.SymmetricAESKey;
 import pojo.HeartRateData;
 
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
@@ -38,7 +36,6 @@ public class Fitbit {
 	@Path("/authorization")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	// TODO must return a response, code, throw error ?
 	public Oauth2Authorisation authorisation() { 
 		return FitbitPlugin.urlVerification();
 	}
@@ -59,10 +56,9 @@ public class Fitbit {
 	@Path("/refresh")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	// TODO replace return token null with try catch in plugin and thorw error
+	// TODO replace return token null with try catch in plugin and throw error
 	public Response refresh (@HeaderParam("assertion") String encryptRefreshToken) {
 		LOG.log(Level.INFO, "refresh :" + encryptRefreshToken);
-		LOG.log(Level.INFO, "refresh decrypt:" + SymmetricAESKey.decrypt(encryptRefreshToken));
 		Oauth2AccessToken oauth2AccessToken = FitbitPlugin.refresh(encryptRefreshToken);
 		if (oauth2AccessToken != null) {
 			// final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER, Constant.TYPE_OAUTH2 ,oauth2AccessToken);
@@ -91,7 +87,7 @@ public class Fitbit {
 			@QueryParam ("end-date") long endDate,
 			@HeaderParam(AUTHORIZATION) String bearer) {
 		String encryptToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
-		LOG.log(Level.INFO,"decrypt token" + SymmetricAESKey.decrypt(encryptToken));
+		LOG.log(Level.INFO,"crypted token" + encryptToken);
 		try {
 			HeartRateData heartRateData = FitbitPlugin.getHeartRate(encryptToken,startDate,endDate);
 			return Response.status(OK)

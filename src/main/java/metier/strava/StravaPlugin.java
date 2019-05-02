@@ -53,7 +53,7 @@ public class StravaPlugin {
 		return oauth2AccessToken;
 	}
 
-	public static void revoke (String token) {
+	public static void revoke (String token) throws IOException,InterruptedException,ExecutionException {
 		LOG.log(Level.INFO,"revoking token");
 		Plugin.revoke(token, getService());
 	}
