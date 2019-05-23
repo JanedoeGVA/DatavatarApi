@@ -10,7 +10,6 @@ import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.exception.UnAuthorizedException;
 import metier.strava.StravaPlugin;
-import org.json.JSONObject;
 import outils.Constant;
 import pojo.HeartRate;
 import pojo.HeartRateData;
