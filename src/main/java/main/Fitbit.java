@@ -1,6 +1,7 @@
 package main;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,10 +74,27 @@ public class Fitbit {
 
 	}
 
+//	@Path("/revoke")
+//	@POST
+//	public void revoke(@HeaderParam("assertion") String token) {
+//		FitbitPlugin.revoke(token);
+//	}
+
+	// Could return SEE_OTHER (302)
+	// TODO set revoke method and url in api.properties file ?????
 	@Path("/revoke")
-	@DELETE
-	public void revoke(@HeaderParam("assertion") String token) {
-		FitbitPlugin.revoke(token);
+	@POST
+	public Response revoke(@HeaderParam(AUTHORIZATION) String bearer) {
+		String encryptToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
+		LOG.log(Level.INFO,"crypted token" +encryptToken);
+		try {
+			// Could return code SEE_OTHER (302) if revoke not implemented
+			FitbitPlugin.revoke(encryptToken);
+			return Response.status(OK).build();
+		} catch (IOException | InterruptedException | ExecutionException e) {
+			LOG.log(Level.SEVERE,"Error during revoking token : " , e);
+			return Response.serverError().build();
+		}
 	}
 
 	@Path("/protecteddata/heart-rate")

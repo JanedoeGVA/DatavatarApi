@@ -1,6 +1,5 @@
 package main;
 
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -12,6 +11,8 @@ import domaine.oauth2.Oauth2AccessToken;
 import metier.exception.UnAuthorizedException;
 
 import metier.withings.WithingsPlugin;
+import org.json.JSONException;
+import org.json.JSONObject;
 import outils.Constant;
 
 import java.io.IOException;
@@ -62,6 +63,14 @@ public class Withings {
 		}
 
 	}
+
+    @Path("/revoke-method")
+    @GET
+    public Response getRevokeMethod() {
+		LOG.log(Level.INFO,"revoke-method called");
+		final String json = "{\"method\":\"web\",\"uri\":\"" + Constant.WITHINGS_URL_UI_REVOKE + "\"}";
+        return Response.status(OK).entity(json).build();
+    }
 
 	// Could return SEE_OTHER (302)
 	// TODO set revoke method and url in api.properties file ?????

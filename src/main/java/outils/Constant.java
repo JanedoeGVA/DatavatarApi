@@ -58,7 +58,7 @@ public class Constant {
 
 	public static final String WITHINGS_CALLBACK_URL = "datavatarapp://withings/oauth2/verification";
 
-	public static final String WITHINGS_URL_UI_REVOKE = "https://account.withings.com/partner/partner";
+	public static final String WITHINGS_URL_UI_REVOKE = "https://account.withings.com/partner";
 
 	
 

@@ -127,7 +127,7 @@ public class Garmin {
 //	}
 	
 	@Path("/revoke")
-	@DELETE
+	@POST
 	public void revoke(Oauth1AccessToken oauth1AccessToken ) {
 		GarminPlugin.revoke(oauth1AccessToken);
 	}

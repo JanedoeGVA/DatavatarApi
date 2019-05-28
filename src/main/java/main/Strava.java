@@ -67,7 +67,7 @@ public class Strava {
 	}
 
 	@Path("/revoke")
-	@DELETE
+	@POST
 	public void revoke(@HeaderParam("assertion") String token) {
 		try {
 		StravaPlugin.revoke(token);

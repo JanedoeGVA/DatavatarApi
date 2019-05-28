@@ -133,8 +133,11 @@ public class Plugin {
 	}
 
 	public static void revoke(String encryptToken,OAuth20Service service) throws IOException,InterruptedException,ExecutionException {
-		LOG.log(Level.INFO, String.format("Revoking Token on %s", service.getApi().getRevokeTokenEndpoint()));
-		service.revokeToken(SymmetricAESKey.decrypt(encryptToken));
+		// LOG.log(Level.INFO, String.format("Revoking Token ", service.getApi().getRevokeTokenEndpoint()));
+		LOG.log(Level.INFO, "Revoking Token ");
+		final String token =  SymmetricAESKey.decrypt(encryptToken);
+		LOG.log(Level.INFO, "Token to revoke : " + token);
+		service.revokeToken(token);
 	}
 
 	public static OAuth10aService getOauth1Service(String props,String callBackURL,DefaultApi10a api) {

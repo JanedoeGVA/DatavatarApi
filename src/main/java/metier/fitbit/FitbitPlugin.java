@@ -162,13 +162,9 @@ public class FitbitPlugin {
 		return oauth2AccessToken;
 	}
 
-	public static void revoke (String token) {
+	public static void revoke (String token) throws IOException,InterruptedException, ExecutionException {
 		LOG.log(Level.INFO,"revoking token");
-		try {
 			Plugin.revoke(token, getService());
-		} catch (Exception e) {
-
-		}
 	}
 
 	//		LOG.log(Level.INFO,"Generate request... ");
