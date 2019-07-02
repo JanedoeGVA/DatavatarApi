@@ -29,9 +29,11 @@ public class Utils {
 
 	private static String DATE_PATTERN = "yyyy-MM-dd";
 	private static String DATE_HOUR_PATTERN = "yyyy-MM-dd hh:mm:ss";
+	private static String UTC_ISO_8601_PATTERN = "yyyy-MM-ddTHH:mm:ssZ";
 
 	private static DateFormat df = new SimpleDateFormat(DATE_PATTERN);
 	private static DateFormat dfWithTime = new SimpleDateFormat(DATE_HOUR_PATTERN);
+	private static DateFormat dfUtcIso8601 = new SimpleDateFormat(UTC_ISO_8601_PATTERN);
 
 	public static URI formatUrl(String template,Map<String, String> parameters) {
 		UriBuilder builder = UriBuilder.fromPath(template);
@@ -41,6 +43,11 @@ public class Utils {
 
 	public static long convertDateHourToDateTime(String date, String hour) throws ParseException {
 			return dfWithTime.parse(date + " " + hour).getTime()/1000;
+	}
+
+	public static long convertDateUTCToDateTime(String dateGMT0) throws ParseException {
+		Date date = dfUtcIso8601.parse(dateGMT0);
+		return date.getTime()/1000;
 	}
 
 

@@ -5,16 +5,17 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import domaine.Activity;
 import domaine.ActivityTracker;
 import domaine.oauth2.Oauth2AccessToken;
 import domaine.oauth2.Oauth2Authorisation;
 import metier.exception.UnAuthorizedException;
 import metier.strava.StravaPlugin;
 import outils.Constant;
-import pojo.HeartRate;
 import pojo.HeartRateData;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,7 +40,6 @@ public class Strava {
 	// TODO throw error ?
 	public Response verification (@QueryParam ("code") String code) {
 		final Oauth2AccessToken oauth2AccessToken = StravaPlugin.accessToken(code);
-
 		final ActivityTracker activityTracker = new ActivityTracker(Constant.STRAVA_PROVIDER, Constant.TYPE_OAUTH2,oauth2AccessToken);
 		return Response.status(OK)
 				.entity(activityTracker)
@@ -86,10 +86,8 @@ public class Strava {
 			@HeaderParam(HttpHeaders.AUTHORIZATION) String bearer) {
 		String encryptToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
 		try {
-			StravaPlugin.getHeartRate(encryptToken, startDate, endDate);
-			HeartRateData heartRateData = new HeartRateData();
-			HeartRate hr = new HeartRate(190, 122334);
-			heartRateData.addHeartRateData(hr);
+			final ArrayList<Activity> lstActivity = StravaPlugin.ListActivitiesId(startDate,endDate,encryptToken);
+			final HeartRateData heartRateData = StravaPlugin.getHeartRate(lstActivity,encryptToken);
 			return Response.status(OK)
 					.entity(heartRateData)
 					.build();
