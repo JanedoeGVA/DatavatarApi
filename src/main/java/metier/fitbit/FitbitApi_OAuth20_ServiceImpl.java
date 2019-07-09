@@ -17,6 +17,7 @@ import com.github.scribejava.core.httpclient.HttpClientConfig;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.github.scribejava.core.revoke.TokenTypeHint;
 
+import metier.exception.UnAuthorizedException;
 import outils.Constant;
 
 import com.github.scribejava.core.java8.Base64;
@@ -100,7 +101,7 @@ public class FitbitApi_OAuth20_ServiceImpl extends OAuth20Service {
 	private void checkForErrorRevokeToken(Response response) throws IOException {
 		LOG.log(Level.INFO,"Body revoke token = " + response.getBody());
 		LOG.log(Level.INFO,"Code revoke token = " + response.getCode());
-		if (response.getCode() != 200) {
+		if (!(response.getCode() == 200 || response.getCode()== 401)) {
 			OAuth2AccessTokenJsonExtractor.instance().generateError(response.getBody());
 		}
 	}

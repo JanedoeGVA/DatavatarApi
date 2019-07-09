@@ -44,6 +44,7 @@ public class FitbitPlugin {
 	private static final Logger LOG = Logger.getLogger(FitbitPlugin.class.getName());
 
 	public static Oauth2Authorisation urlVerification() {
+		LOG.log(Level.INFO,"urlVerification call");
 		Oauth2Authorisation oauth2Auth = Plugin.oauth20UrlVerification(Constant.FITBIT_PROVIDER, getService());
 
 		return oauth2Auth;

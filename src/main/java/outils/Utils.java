@@ -19,21 +19,19 @@ import com.cars.framework.secrets.DockerSecrets;
 import com.google.gson.JsonElement;
 
 
-import metier.Plugin;
-
 import javax.ws.rs.core.UriBuilder;
 
 public class Utils {
 	
-	private static final Logger LOG = Logger.getLogger(Plugin.class.getName());
+	private static final Logger LOG = Logger.getLogger(Utils.class.getName());
 
-	private static String DATE_PATTERN = "yyyy-MM-dd";
-	private static String DATE_HOUR_PATTERN = "yyyy-MM-dd hh:mm:ss";
-	private static String UTC_ISO_8601_PATTERN = "yyyy-MM-ddTHH:mm:ssZ";
+	private static final String DATE_PATTERN = "yyyy-MM-dd";
+	private static final String DATE_HOUR_PATTERN = "yyyy-MM-dd hh:mm:ss";
+	private static final String UTC_ISO_8601_PATTERN = "yyyy-MM-dd'T'hh:mm:ss'Z'";
 
-	private static DateFormat df = new SimpleDateFormat(DATE_PATTERN);
-	private static DateFormat dfWithTime = new SimpleDateFormat(DATE_HOUR_PATTERN);
-	private static DateFormat dfUtcIso8601 = new SimpleDateFormat(UTC_ISO_8601_PATTERN);
+	// private static DateFormat df = new SimpleDateFormat(DATE_PATTERN);
+	// private static DateFormat dfWithTime = new SimpleDateFormat(DATE_HOUR_PATTERN);
+	// private static DateFormat dfUtcIso8601 = new SimpleDateFormat(UTC_ISO_8601_PATTERN);
 
 	public static URI formatUrl(String template,Map<String, String> parameters) {
 		UriBuilder builder = UriBuilder.fromPath(template);
@@ -42,22 +40,26 @@ public class Utils {
 	}
 
 	public static long convertDateHourToDateTime(String date, String hour) throws ParseException {
-			return dfWithTime.parse(date + " " + hour).getTime()/1000;
+		final DateFormat df = new SimpleDateFormat(DATE_HOUR_PATTERN);
+		return df.parse(date + " " + hour).getTime()/1000;
 	}
 
 	public static long convertDateUTCToDateTime(String dateGMT0) throws ParseException {
-		Date date = dfUtcIso8601.parse(dateGMT0);
+		final DateFormat df = new SimpleDateFormat(UTC_ISO_8601_PATTERN);
+		final Date date = df.parse(dateGMT0);
 		return date.getTime()/1000;
 	}
 
 
 	public static String formatDateTime(long epoch) {
-		Date date = new Date(epoch*1000);
+		final DateFormat df = new SimpleDateFormat(DATE_PATTERN);
+		final Date date = new Date(epoch*1000);
 		LOG.log(Level.INFO,"date : " + date.toString());
 		return df.format(date);
 	}
 
 	public static String getProps (String propsName, String value) {
+		LOG.log(Level.INFO,"getProps");
 		try {
 			Map<String, String> secrets = DockerSecrets.loadFromFile(propsName);
 			return secrets.get(value);

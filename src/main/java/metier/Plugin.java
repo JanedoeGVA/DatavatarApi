@@ -141,7 +141,7 @@ public class Plugin {
 	}
 
 	public static OAuth10aService getOauth1Service(String props,String callBackURL,DefaultApi10a api) {
-		LOG.log(Level.INFO, String.format("Getting OAUTH1 Service"));
+		LOG.log(Level.INFO, "Getting OAUTH1 Service");
 		final OAuth10aService service = new ServiceBuilder(Utils.getProps(props,OAuthConstants.CLIENT_ID))
 				.apiSecret(Utils.getProps(props,OAuthConstants.CLIENT_SECRET))
 				.callback(callBackURL)
@@ -150,8 +150,11 @@ public class Plugin {
 	}
 
 	public static OAuth20Service getOauth2Service(String props,String callBackUrl,DefaultApi20 api) {
-		LOG.log(Level.INFO, String.format("Getting OAUTH2 Service"));
+		LOG.log(Level.INFO, "Getting OAUTH2 Service");
 		final String secretState = "secret" + new Random().nextInt(999_999);
+		LOG.log(Level.INFO, "Getting props");
+		String prop = Utils.getProps(props,OAuthConstants.CLIENT_ID);
+		LOG.log(Level.INFO, "props= " + prop);
 		final OAuth20Service service = new ServiceBuilder(Utils.getProps(props,OAuthConstants.CLIENT_ID))
 				.apiSecret(Utils.getProps(props,OAuthConstants.CLIENT_SECRET))
 				.scope(Utils.getProps(props,OAuthConstants.SCOPE))

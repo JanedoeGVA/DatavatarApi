@@ -38,6 +38,8 @@ public class Fitbit {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Oauth2Authorisation authorisation() { 
+
+		LOG.log(Level.INFO,"authorization call");
 		return FitbitPlugin.urlVerification();
 	}
 
@@ -80,6 +82,17 @@ public class Fitbit {
 //		FitbitPlugin.revoke(token);
 //	}
 
+	@Path("/revoke-method")
+	@GET
+	public Response getRevokeMethod() {
+		LOG.log(Level.INFO,"revoke-method called");
+		//final String json = "{\"method\":\"web\",\"uri\":\"" + Constant.WITHINGS_URL_UI_REVOKE + "\"}";
+		final String json = "{\"method\":\"post\"}";
+		return Response.status(OK).entity(json).build();
+	}
+
+
+
 	// Could return SEE_OTHER (302)
 	// TODO set revoke method and url in api.properties file ?????
 	@Path("/revoke")
@@ -91,9 +104,13 @@ public class Fitbit {
 			// Could return code SEE_OTHER (302) if revoke not implemented
 			FitbitPlugin.revoke(encryptToken);
 			return Response.status(OK).build();
+
 		} catch (IOException | InterruptedException | ExecutionException e) {
 			LOG.log(Level.SEVERE,"Error during revoking token : " , e);
 			return Response.serverError().build();
+	} catch (Exception ex) {
+			LOG.log(Level.SEVERE, "error Exception ", ex);
+			return Response.status(500).build();
 		}
 	}
 
