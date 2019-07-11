@@ -50,7 +50,7 @@ public class WithingsApi_Oauth20 extends DefaultApi20 {
         }
 }
 
-	@Override
+    @Override
 	public OAuth20Service createService(String apiKey, String apiSecret, String callback, String scope,
 			OutputStream debugStream, String state, String responseType, String userAgent,
 			HttpClientConfig httpClientConfig, HttpClient httpClient) {
