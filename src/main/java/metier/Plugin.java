@@ -18,6 +18,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
+
+import com.github.scribejava.core.model.*;
+import com.github.scribejava.core.oauth.OAuthService;
+import domaine.Param;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.eclipse.persistence.jaxb.xmlmodel.ObjectFactory;
@@ -26,11 +30,6 @@ import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.builder.api.DefaultApi10a;
 import com.github.scribejava.core.builder.api.DefaultApi20;
 import com.github.scribejava.core.exceptions.OAuthException;
-import com.github.scribejava.core.model.OAuth1AccessToken;
-import com.github.scribejava.core.model.OAuth1RequestToken;
-import com.github.scribejava.core.model.OAuth2AccessToken;
-import com.github.scribejava.core.model.OAuthConstants;
-import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import com.github.scribejava.core.oauth.OAuth20Service;
 
@@ -61,6 +60,16 @@ public class Plugin {
 		oauth1Auth.setProvider(provider);
 		LOG.log(Level.INFO, "Request token created");
 		return oauth1Auth;
+	}
+
+	public static OAuthRequest createOAuth20Request(String code, OAuth20Service service) {
+		final OAuthRequest request = new OAuthRequest(service.getApi().getAccessTokenVerb(),service.getApi().getAccessTokenEndpoint());
+		service.getApi().getClientAuthenticationType().addClientAuthentication(request, service.getApiKey(), service.getApiSecret());
+		request.addParameter(OAuthConstants.CLIENT_ID, service.getApiKey());
+		request.addParameter(OAuthConstants.CLIENT_SECRET, service.getApiSecret());
+		request.addParameter(OAuthConstants.CODE, code);
+		request.addParameter(OAuthConstants.REDIRECT_URI, service.getCallback());
+		return request;
 	}
 
 
@@ -162,6 +171,29 @@ public class Plugin {
 				.state(secretState)
 				.build(api);
 		return service;
+	}
+
+	public static com.github.scribejava.core.model.Response getResponse (OAuthService service,String urlRequest, Verb verb, ArrayList<Param> lstParams) {
+		OAuthRequest request = new OAuthRequest(verb, urlRequest);
+		for (Param param : lstParams) {
+			if (param.getType() == Param.TypeParam.QUERY_PARAM) {
+				request.addQuerystringParameter(param.getKey(), param.getValue());
+			} else {
+				request.addHeader(param.getKey(), param.getValue());
+			}
+		}
+		LOG.log(Level.INFO,"request : " + request.toString());
+		com.github.scribejava.core.model.Response response = null;
+		try {
+			response = service.execute(request);
+			LOG.log(Level.INFO,"Response success");
+		} catch (InterruptedException | ExecutionException | IOException e1) {
+			LOG.log(Level.SEVERE,e1.getMessage(),e1);
+		} catch(Exception e) {
+			LOG.log(Level.SEVERE,e.getMessage(),e);
+		}
+		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
+		return response;
 	}
 
 	public static boolean isAccessTokenExpired (Oauth2AccessToken oauth2AccessToken) {

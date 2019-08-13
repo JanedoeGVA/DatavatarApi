@@ -94,12 +94,6 @@ public class WithingsPlugin {
         return heartRateData;
     }
 
-//	public static ProtectedDataOauth<ActivityMeasures,Oauth2AccessToken> getActivityMeasures (Oauth2AccessToken accessToken,String startDate,String endDate) {
-//		String url = String.format(Constant.WITHINGS_PROTECTED_RESOURCE_HEARTH_RATE_URL,startDate,endDate);
-//		ProtectedDataOauth<ActivityMeasures,Oauth2AccessToken> activityMeasures = getGenericProtectedRessources(accessToken, getService(), ActivityMeasures.class, Verb.GET, url);
-//    	return activityMeasures;
-//    }
-
     public static HeartRateData getHeartRate(String encryptToken, String startDate, String endDate) throws UnAuthorizedException {
         LOG.log(Level.INFO, "token : " + SymmetricAESKey.decrypt(encryptToken));
 
@@ -114,33 +108,9 @@ public class WithingsPlugin {
 
     }
 
-//	public static Response getActivityMeasures(String token) {
-//		String url = String.format(Constant.FITBIT_PROTECTED_RESOURCE_HEARTH_RATE_URL);
-//		LOG.log(Level.INFO,"URL : " + url);
-//		Response response = requestData(token, getService(), HearthRateInterval.class, Verb.GET, url);
-//		return response;
-//	}
-
     private static JSONObject requestData(OAuth20Service service, Verb verb, String urlRequest, ArrayList<Param> lstParams) throws UnAuthorizedException,BadRequestException,InternalServerErrorException {
         LOG.log(Level.INFO, String.format("Generate request with %s to URL : %s", verb, urlRequest));
-        OAuthRequest request = new OAuthRequest(verb, urlRequest);
-        for (Param param : lstParams) {
-            if (param.getType() == Param.TypeParam.QUERY_PARAM) {
-                request.addQuerystringParameter(param.getKey(), param.getValue());
-            } else {
-                request.addHeader(param.getKey(), param.getValue());
-            }
-
-        }
-        LOG.log(Level.INFO, "Request : " + request.getCompleteUrl());
-        com.github.scribejava.core.model.Response response = null;
-        try {
-            response = service.execute(request);
-            LOG.log(Level.INFO, "Response success");
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, e.getMessage(), e);
-        }
-        LOG.log(Level.INFO, String.format("Response code/message : %s / %s", response.getCode(), response.getMessage()));
+        com.github.scribejava.core.model.Response response = Plugin.getResponse(service,urlRequest,verb,lstParams);
         String body = "{}";
         if (response.getCode() == Response.Status.OK.getStatusCode()) {
             try {
@@ -168,82 +138,3 @@ public class WithingsPlugin {
         }
     }
 }
-
-
-//	public static <T> ProtectedDataOauth<T,Oauth2AccessToken> getGenericProtectedRessources(Oauth2AccessToken accessToken, OAuth20Service service, Class<T> classT, Verb verb, String urlRequest) {
-//        OAuthRequest request = new OAuthRequest(verb, urlRequest);
-//        request.addQuerystringParameter(OAuthConstants.ACCESS_TOKEN, SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
-//        /* for getmeas
-//        		&meastype=[INTEGER]
-//        		&category=[INT]
-//        		&startdate=[INT]
-//        		&enddate=[INT]
-//        		&offset=[INT]*/
-//        Response response = null;
-//		try {
-//			response = service.execute(request);
-//		} catch (InterruptedException | ExecutionException | IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//        System.out.println("Response code/message : " + response.getCode() + response.getMessage());
-//        ProtectedDataOauth<T,Oauth2AccessToken> protectedDataOauth = new ProtectedDataOauth<>();
-//        if (response.getCode() == javax.ws.rs.core.Response.Status.UNAUTHORIZED.getStatusCode()) {
-//        	System.out.println("Refreshing processing...");
-//        	Plugin.refreshAccessToken(accessToken, service);
-//        	if (accessToken.getIsValide()) {
-//        		request = new OAuthRequest(verb, urlRequest);
-//                request.addHeader("x-li-format", "json");
-//                //add header for authentication (Fitbit complication..... :()
-//                request.addHeader("Authorization", "Bearer " + SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()));
-//            	try {
-//    				response = service.execute(request);
-//    			} catch (InterruptedException | ExecutionException | IOException e) {
-//    				// TODO Auto-generated catch block
-//    				e.printStackTrace();
-//    			}
-//        	} else {
-//        		protectedDataOauth.setOauthAccessTokenT(accessToken);
-//        		System.out.println("Invalide token...");
-//        		return protectedDataOauth;
-//        	}
-//        }
-//        T t = Plugin.unMarshallGenericJSON(response,classT);
-//        protectedDataOauth.setOauthAccessTokenT(accessToken);
-//        protectedDataOauth.setProtectedDataT(t);
-//        System.out.println("is valide : " + accessToken.getIsValide()); 
-//        return protectedDataOauth;
-//	}
-	
-	/*public static ProtectedDataOauth<ActivityMeasures, Oauth1AccessToken> getActivityMeasures(Oauth1AccessToken accessToken) {
-		String url = Constant.NOKIAHEALTH_ACTIVITIES;
-		ProtectedDataOauth<ActivityMeasures, Oauth1AccessToken> protectedAct = getProtectedDataT(accessToken, getService(), ActivityMeasures.class, url);
-		return protectedAct;
-	}*/
-
-//	private static <T>ProtectedDataOauth<T, Oauth1AccessToken> getProtectedDataT(Oauth1AccessToken accessToken,OAuth10aService service, Class<T> classT, String urlRequest) {
-//		final OAuth1AccessToken oAuth1AccessToken = new OAuth1AccessToken(SymmetricAESKey.decrypt(accessToken.getAccessTokenKey()),SymmetricAESKey.decrypt(accessToken.getAccessTokenSecret()));
-//		final OAuthRequest request = new OAuthRequest(Verb.GET, urlRequest);
-//		service.signRequest(oAuth1AccessToken, request);
-//	    Response response = null;
-//	    ProtectedDataOauth<T, Oauth1AccessToken> protectedDataOauth = new ProtectedDataOauth<>();
-//	    protectedDataOauth.setOauthAccessTokenT(accessToken);
-//		try {
-//			response = service.execute(request);
-//			System.out.println("response " + response.getCode() + response.getBody());
-//			if (new JSONObject(response.getBody()).getInt("status") == Constant.STATUS_TOKEN_NOT_FIND) {
-//				//token a �t� r�voqu�
-//				protectedDataOauth.getOauthAccessTokenT().setIsValide(false);
-//				return protectedDataOauth;
-//			}
-//		} catch (InterruptedException | ExecutionException | IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//	    T t = Plugin.unMarshallGenericJSON(response,classT);
-//	    protectedDataOauth.setOauthAccessTokenT(accessToken);
-//	    protectedDataOauth.setProtectedDataT(t);
-//	    return protectedDataOauth;
-//	}
-
-

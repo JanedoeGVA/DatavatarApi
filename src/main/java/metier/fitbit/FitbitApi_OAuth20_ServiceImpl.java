@@ -17,6 +17,7 @@ import com.github.scribejava.core.httpclient.HttpClientConfig;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.github.scribejava.core.revoke.TokenTypeHint;
 
+import metier.Plugin;
 import metier.exception.UnAuthorizedException;
 import outils.Constant;
 
@@ -40,12 +41,7 @@ public class FitbitApi_OAuth20_ServiceImpl extends OAuth20Service {
 
 	@Override
 	protected OAuthRequest createAccessTokenRequest(String code) {
-		final OAuthRequest request = new OAuthRequest(this.getApi().getAccessTokenVerb(),this.getApi().getAccessTokenEndpoint());
-		this.getApi().getClientAuthenticationType().addClientAuthentication(request, getApiKey(), getApiSecret());
-		request.addParameter(OAuthConstants.CLIENT_ID, getApiKey());
-		request.addParameter(OAuthConstants.CLIENT_SECRET, getApiSecret());
-		request.addParameter(OAuthConstants.CODE, code);
-		request.addParameter(OAuthConstants.REDIRECT_URI, getCallback());
+		final OAuthRequest request = Plugin.createOAuth20Request(code,this);
 		request.addParameter(Constant.EXPIRES_IN,"3600");
 		final String scope = getScope();
 		if(scope != null) {

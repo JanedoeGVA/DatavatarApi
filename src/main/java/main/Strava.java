@@ -16,8 +16,11 @@ import pojo.HeartRateData;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
 import static javax.ws.rs.core.Response.Status.*;
 
@@ -66,13 +69,29 @@ public class Strava {
 
 	}
 
+	@Path("/revoke-method")
+	@GET
+	public Response getRevokeMethod() {
+		LOG.log(Level.INFO,"revoke-method called");
+		final String json = "{\"method\":\"post\"}";
+		return Response.status(OK).entity(json).build();
+	}
+
 	@Path("/revoke")
 	@POST
-	public void revoke(@HeaderParam("assertion") String token) {
+	public Response revoke(@HeaderParam(AUTHORIZATION) String bearer) {
+		String encryptToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
+		LOG.log(Level.INFO,"crypted token" + encryptToken);
 		try {
-		StravaPlugin.revoke(token);
-		} catch (Exception e) {
-
+			// Could return code SEE_OTHER (302) if revoke not implemented
+			StravaPlugin.revoke(encryptToken);
+			return Response.status(OK).build();
+		} catch (IOException | InterruptedException | ExecutionException e) {
+			LOG.log(Level.SEVERE,"Error during revoking token : " , e);
+			return Response.serverError().build();
+		} catch (Exception ex) {
+			LOG.log(Level.SEVERE, "error Exception ", ex);
+			return Response.status(500).build();
 		}
 	}
 

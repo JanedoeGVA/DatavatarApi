@@ -136,26 +136,7 @@ public class StravaPlugin {
 	public static String requestData (OAuth20Service service, Verb verb, String urlRequest,ArrayList<Param> lstParams) throws IOException, UnAuthorizedException, ForbiddenException {
 		LOG.log(Level.INFO,String.format("Generate request with %s to URL : %s",verb,urlRequest));
 		LOG.log(Level.INFO,"Generate request... ");
-		OAuthRequest request = new OAuthRequest(verb, urlRequest);
-		for (Param param : lstParams) {
-			if (param.getType() == QUERY_PARAM) {
-				request.addQuerystringParameter(param.getKey(), param.getValue());
-			} else {
-				request.addHeader(param.getKey(), param.getValue());
-			}
-
-		}
-		LOG.log(Level.INFO,"request : " + request.toString());
-		com.github.scribejava.core.model.Response response = null;
-		try {
-			response = service.execute(request);
-			LOG.log(Level.INFO,"Response success");
-		} catch (InterruptedException | ExecutionException | IOException e1) {
-			LOG.log(Level.SEVERE,e1.getMessage(),e1);
-		} catch(Exception e) {
-			LOG.log(Level.SEVERE,e.getMessage(),e);
-		}
-		LOG.log(Level.INFO,String.format("Response code/message : %s / %s",response.getCode(),response.getMessage()));
+		com.github.scribejava.core.model.Response response = Plugin.getResponse(service,urlRequest,verb,lstParams);
 		final int code = response.getCode();
 		if (code == OK.getStatusCode()) {
 			try {

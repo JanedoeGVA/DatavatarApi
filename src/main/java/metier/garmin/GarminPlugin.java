@@ -102,35 +102,4 @@ public class GarminPlugin {
 		}
 	}
 
-//	public static <T> ProtectedListDataOauth<T,Oauth1AccessToken> getGenericListProtectedRessources(RequestProtectedData<Oauth1AccessToken> requestProtectedData,OAuth10aService service,Verb verb,Class<T> classT,String urlApiRequest) {
-//		long startTime = Long.parseLong(requestProtectedData.getHmParams().get("start_time"));
-//		long endTime = Long.parseLong(requestProtectedData.getHmParams().get("end_time"));
-//		String url = String.format(urlApiRequest,startTime,endTime);
-//		ProtectedListDataOauth<T,Oauth1AccessToken> protectedT = new ProtectedListDataOauth<>();
-//		protectedT.setOauthAccessToken(requestProtectedData.getOauthAccessToken());
-//		final OAuth1AccessToken oAuth1AccessToken = new OAuth1AccessToken(SymmetricAESKey.decrypt(protectedT.getOauthAccessToken().getAccessToken()),SymmetricAESKey.decrypt(protectedT.getOauthAccessToken().getSecret()));
-//		final OAuthRequest request = new OAuthRequest(verb, url);
-//		System.out.println("Headers " + request.getHeaders().toString());
-//		service.signRequest(oAuth1AccessToken, request);
-//		System.out.println("Owner token " + oAuth1AccessToken.getToken());
-//		System.out.println("Owner secret " + oAuth1AccessToken.getTokenSecret());
-//		Response resp = null;
-//		try {
-//			resp = service.execute(request);
-//			System.out.println("response " + resp.getCode() + resp.getBody());
-//			System.out.println("Request body : " + resp.getBody());
-//			if (resp.getCode() == javax.ws.rs.core.Response.Status.FORBIDDEN.getStatusCode()) { //error 403 token has been revoke
-//				// protectedT.getOauthAccessToken().setIsValide(false);
-//				return protectedT;
-//			}
-//		} catch (InterruptedException | ExecutionException | IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		System.out.println("Request code : " + resp.getCode());
-//		ArrayList<T> lstT = Plugin.unMarshallGenJSONArray(resp,classT);
-//		protectedT.setLstProtectedDataT(lstT);
-//		// System.out.println("is valide : " +protectedT.getOauthAccessToken().getIsValide());
-//		return protectedT;
-//	}
 }
