@@ -18,6 +18,8 @@ import com.github.scribejava.core.oauth.OAuth20Service;
 import com.github.scribejava.core.revoke.TokenTypeHint;
 import outils.Constant;
 
+import static com.github.scribejava.core.model.OAuthConstants.ACCESS_TOKEN;
+
 public class StravaApi_OAuth20_ServiceImpl extends OAuth20Service {
 
 	private static final Logger LOG = Logger.getLogger(StravaApi_OAuth20_ServiceImpl.class.getName());
@@ -58,7 +60,7 @@ public class StravaApi_OAuth20_ServiceImpl extends OAuth20Service {
 	@Override
 	protected OAuthRequest createRevokeTokenRequest(String tokenToRevoke, TokenTypeHint tokenTypeHint) {
 		final OAuthRequest request = new OAuthRequest(Verb.POST, this.getApi().getRevokeTokenEndpoint());
-		request.addParameter(Constant.TOKEN, tokenToRevoke);
+		request.addParameter(ACCESS_TOKEN, tokenToRevoke);
 		return request;
 	}
 
