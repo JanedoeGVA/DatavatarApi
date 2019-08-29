@@ -49,9 +49,9 @@ public class Withings {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response refresh (@HeaderParam("Authorization") String bearer) {
-		String encryptToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
-		LOG.log(Level.INFO,"crypted token" + encryptToken);
-		Oauth2AccessToken oauth2AccessToken = WithingsPlugin.refresh(encryptToken);
+		String encryptRefreshToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
+		LOG.log(Level.INFO,"crypted token" + encryptRefreshToken);
+		Oauth2AccessToken oauth2AccessToken = WithingsPlugin.refresh(encryptRefreshToken);
 		if (oauth2AccessToken != null) {
 			return Response.status(OK)
 					.entity(oauth2AccessToken)

@@ -26,8 +26,8 @@ public class Utils {
 	private static final Logger LOG = Logger.getLogger(Utils.class.getName());
 
 	private static final String DATE_PATTERN = "yyyy-MM-dd";
-	private static final String DATE_HOUR_PATTERN = "yyyy-MM-dd hh:mm:ss";
-	private static final String UTC_ISO_8601_PATTERN = "yyyy-MM-dd'T'hh:mm:ss'Z'";
+	private static final String DATE_HOUR_PATTERN = "yyyy-MM-dd HH:mm:ss";
+	private static final String UTC_ISO_8601_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
 	// private static DateFormat df = new SimpleDateFormat(DATE_PATTERN);
 	// private static DateFormat dfWithTime = new SimpleDateFormat(DATE_HOUR_PATTERN);

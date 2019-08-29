@@ -52,8 +52,9 @@ public class Strava {
 	@Path("/refresh")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	// TODO replace return token null with try catch in plugin and thorw error
-	public Response refresh (@HeaderParam("assertion") String encryptRefreshToken) {
+	// TODO replace return token null with try catch in plugin and throw error
+	public Response refresh (@HeaderParam("Authorization") String bearer) {
+		String encryptRefreshToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
 		LOG.log(Level.INFO, "refresh :" + encryptRefreshToken);
 		Oauth2AccessToken oauth2AccessToken = StravaPlugin.refresh(encryptRefreshToken);
 		if (oauth2AccessToken != null) {
@@ -111,8 +112,7 @@ public class Strava {
 					.entity(heartRateData)
 					.build();
 		} catch (UnAuthorizedException e) {
-			return Response.status(INTERNAL_SERVER_ERROR)
-					.build();
+			return Response.status(UNAUTHORIZED).build();
 		} catch (IOException e) {
 			return Response.status(INTERNAL_SERVER_ERROR)
 					.build();

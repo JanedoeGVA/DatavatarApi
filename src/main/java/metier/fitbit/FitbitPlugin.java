@@ -84,7 +84,10 @@ public class FitbitPlugin {
 			}
 			for (int i = 0; i < jsArray.length(); i++) {
 				int value = jsArray.getJSONObject(i).getInt("value");
+				// BUG: 12:00 -> 0:00
 				long dt = Utils.convertDateHourToDateTime(dateTime, jsArray.getJSONObject(i).getString("time"));
+//				LOG.log(Level.INFO,"date : " + jsArray.getJSONObject(i).getString("time"));
+//				LOG.log(Level.INFO,"dt : " + dt);
 				HeartRate hr = new HeartRate(value, dt);
 				heartRateData.addHeartRateData(hr);
 			}

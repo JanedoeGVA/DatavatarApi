@@ -49,7 +49,7 @@ public class Fitbit {
 	// TODO throw error ?
 	public Response verification (@QueryParam ("code") String code) {
 		final Oauth2AccessToken oauth2AccessToken = FitbitPlugin.accessToken(code);
-
+		LOG.log(Level.INFO, "refresh :" + oauth2AccessToken.getRefreshToken());
 		final ActivityTracker activityTracker = new ActivityTracker(Constant.FITBIT_PROVIDER,Constant.TYPE_OAUTH2,oauth2AccessToken);
 		return Response.status(OK)
 				.entity(activityTracker)
@@ -60,7 +60,8 @@ public class Fitbit {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	// TODO replace return token null with try catch in plugin and throw error
-	public Response refresh (@HeaderParam("assertion") String encryptRefreshToken) {
+	public Response refresh (@HeaderParam("Authorization") String bearer) {
+		String encryptRefreshToken = bearer.substring(bearer.lastIndexOf(" ") + 1 );
 		LOG.log(Level.INFO, "refresh :" + encryptRefreshToken);
 		Oauth2AccessToken oauth2AccessToken = FitbitPlugin.refresh(encryptRefreshToken);
 		if (oauth2AccessToken != null) {
